@@ -4,6 +4,7 @@ import "./globals.css";
 import Link from "next/link";
 import { Search, ShoppingBag } from "lucide-react";
 import { MainNav } from "@/components/main-nav";
+import Header from "@/components/header";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -30,24 +31,7 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased`}
             >
-                <header className="border-b">
-                    <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                        <Link href="/" className="font-bold text-xl">
-                            Project At
-                        </Link>
-
-                        <MainNav />
-
-                        <div className="flex items-center gap-4">
-                            <button aria-label="Search">
-                                <Search className="h-5 w-5" />
-                            </button>
-                            <button aria-label="Cart">
-                                <ShoppingBag className="h-5 w-5" />
-                            </button>
-                        </div>
-                    </div>
-                </header>
+                <Header />
 
                 {children}
 

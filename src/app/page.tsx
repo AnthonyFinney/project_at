@@ -19,8 +19,9 @@ export default function Home() {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{
                         backgroundImage:
-                            "url('https://placehold.co/500x1200/000000/FFFFFF/png')",
+                            "url('https://images.unsplash.com/photo-1474112704314-8162b7749a90?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
                         backgroundSize: "cover",
+                        filter: "brightness(0.8)",
                     }}
                 >
                     <div className="absolute inset-0 bg-black/20"></div>
@@ -43,14 +44,14 @@ export default function Home() {
                         </p>
                         <Button
                             variant="default"
-                            className="bg-black hover:bg-black/80 rounded-none px-8"
+                            className="bg-black rounded-none px-8 hover:text-neutral-600 transition-colors"
                         >
                             SHOP NOW
                         </Button>
                     </div>
                 </div>
 
-                <div className="absolute bottom-6 left-6 flex items-center gap-4 text-white">
+                {/* <div className="absolute bottom-6 left-6 flex items-center gap-4 text-white">
                     <span className="text-sm">01/03</span>
                     <div className="flex gap-2">
                         <button className="p-1 border border-white/50 rounded-full">
@@ -60,7 +61,7 @@ export default function Home() {
                             <ChevronRight className="h-4 w-4" />
                         </button>
                     </div>
-                </div>
+                </div> */}
             </section>
 
             <section className="py-12 bg-neutral-100">
@@ -86,8 +87,12 @@ export default function Home() {
                                 </CarouselItem>
                             ))}
                         </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
+                        <div className="absolute top-1/2 left-1 flex items-center justify-center">
+                            <CarouselPrevious className="relative left-0 translate-x-0 hover:translate-x-0 hover:bg-primary/90" />
+                        </div>
+                        <div className="absolute top-1/2 right-1 flex items-center justify-center">
+                            <CarouselNext className="relative right-0 translate-x-0 hover:translate-x-0 hover:bg-primary/90" />
+                        </div>
                     </Carousel>
                 </div>
             </section>

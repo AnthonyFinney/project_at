@@ -6,26 +6,15 @@ export default function Footer() {
             <div className="container px-4 py-8">
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <p className="text-sm mb-4 md:mb-0 lg:ml-24">
-                        © 2025 OLFACTIVE. All rights reserved.
+                        © 2025 All rights reserved.
                     </p>
                     <div className="flex space-x-4 lg:mr-16">
                         <Link
-                            href="#"
+                            href="https://www.facebook.com/profile.php?id=61566971972126"
                             className="text-sm uppercase tracking-widest hover:underline"
+                            target="blank"
                         >
-                            Instagram
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-sm uppercase tracking-widest hover:underline"
-                        >
-                            Twitter
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-sm uppercase tracking-widest hover:underline"
-                        >
-                            Pinterest
+                            Facebook
                         </Link>
                     </div>
                 </div>

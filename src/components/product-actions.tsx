@@ -8,9 +8,6 @@ export default function ProductAction() {
             <Button className="w-full py-6 taxt-base" size="lg">
                 ADD TO CART
             </Button>
-            <Button className="w-full py-6 taxt-base" size="lg">
-                BUY NOW
-            </Button>
         </div>
     );
 }

@@ -29,25 +29,21 @@ export default function Home() {
 
                 <div className="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
                     <div className="max-w-md text-white">
-                        <h1 className="text-5xl font-light mb-2">
-                            TRENDING <span className="italic">Styles</span>
+                        <h1 className="text-4xl font-light mb-2">
+                            THE <span className="italic">ESSENCE OF YOU</span>
                         </h1>
-                        <h2 className="text-2xl font-medium mb-4">
-                            OUR MOST POPULAR
-                            <br />
-                            SILHOUETTES
-                        </h2>
                         <p className="mb-6 text-sm">
-                            The most versatile silhouettes of the moment,
-                            discover best-selling Air Jordan, ASICS and adidas
-                            in shades to suit every season.
+                            Embrace your distinctive spirit with an exquisite
+                            perfume from The Kanza Royal Perfumery, from elegant
+                            Nepalese Deer Musk to captivating Honeysuckle and
+                            White Lotus.
                         </p>
-                        <Button
-                            variant="default"
+                        <Link
+                            href="/products"
                             className="bg-black rounded-none px-8 hover:text-neutral-600 transition-colors"
                         >
                             SHOP NOW
-                        </Button>
+                        </Link>
                     </div>
                 </div>
 

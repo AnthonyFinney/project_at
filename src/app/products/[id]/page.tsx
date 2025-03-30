@@ -34,6 +34,29 @@ export default async function Page({
                         PRODUCT TITLE!!
                     </h1>
 
+                    <p>
+                        Description Re-releasing on the 16th November, keep your
+                        eyes peeled for new pairs of the Air Jordan 4 Retro Fear
+                        to hit the market, with the same iconic design and
+                        style. The Air Jordan 4 provides an unmatched retro
+                        styling if you’re a fan of semi-translucent features and
+                        chunky rubber additions. The Air Jordan 4 Retro Fear
+                        sneaker comes with washed dark and light grey nubuck
+                        along the front toe panels, toe box, and running across
+                        the bottom of the upper to the heel. This is then
+                        complemented by a bold black mesh fabric for the top of
+                        the upper, a black rubber side strap, extra-large white
+                        rubber eyestay accessories, and a black and white
+                        tongue. The black laces contrast nicely with the white
+                        eyestays, while the sole of the Air Jordan 4 Retro Fear
+                        shoe switches to a black and white speckled mudguard and
+                        a curved light grey mid-to-outer sole. There is also a
+                        visible Air Unit in the heel to complete the Air Jordan
+                        4 Retro Fear's look. Details Brand: Air Jordan Style
+                        Code: FQ8138-002 Categories: Air Jordan 4, Air Jordan 4
+                        Black Year Released: 2024 Colour: black
+                    </p>
+
                     <p className="text-3xl font-bold">{"\u09F3"}500</p>
 
                     <ProductAction />

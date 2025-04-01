@@ -14,6 +14,14 @@ export default async function Page({
 }: {
     params: Promise<{ id: string }>;
 }) {
+    const product = {
+        id: Math.random().toString(),
+        name: "AIR JORDAN 4 RETRO FEAR (2024)",
+        brand: "Air Jordan",
+        price: 215,
+        imageLink: "https://placehold.co/600x400/000000/FFFFFF/png",
+    };
+
     const { id } = await params;
     return (
         <div className="max-w-7x1 mx-auto px-4 py-8">
@@ -59,7 +67,7 @@ export default async function Page({
 
                     <p className="text-3xl font-bold">{"\u09F3"}500</p>
 
-                    <ProductAction />
+                    <ProductAction product={product} />
                 </div>
             </div>
 
@@ -77,7 +85,7 @@ export default async function Page({
                                     className="basis-1/2 sm:basis-1/3 lg:basis-1/5"
                                 >
                                     <ProductCard
-                                        image="https://placehold.co/300x300/000000/FFFFFF/png"
+                                        imageLink="https://placehold.co/300x300/000000/FFFFFF/png"
                                         brand="Nike"
                                         name="Air Max 95"
                                         price={169.99}

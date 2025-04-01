@@ -65,7 +65,7 @@ export default function Page() {
                             {[...Array(10)].map((_, index) => (
                                 <ProductCard
                                     key={index}
-                                    image="https://placehold.co/300x300/000000/FFFFFF/png"
+                                    imageLink="https://placehold.co/300x300/000000/FFFFFF/png"
                                     brand="Nike"
                                     name="Air Max 95"
                                     price={169.99}

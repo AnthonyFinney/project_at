@@ -9,9 +9,8 @@ interface CartItemProps {
         id: string;
         name: string;
         brand: string;
-        size: string;
         price: number;
-        image: string;
+        imageLink: string;
     };
     onRemove: () => void;
 }
@@ -22,7 +21,7 @@ export function CartItem({ item, onRemove }: CartItemProps) {
             {/* Product image */}
             <div className="w-24 h-24 relative flex-shrink-0">
                 <Image
-                    src={item.image || "/placeholder.svg"}
+                    src={item.imageLink || "/placeholder.svg"}
                     alt={item.name}
                     fill
                     className="object-contain"
@@ -38,7 +37,6 @@ export function CartItem({ item, onRemove }: CartItemProps) {
                 >
                     {item.name}
                 </Link>
-                <div className="text-sm mt-1">Size: {item.size}</div>
                 <div className="font-medium mt-2">£{item.price.toFixed(2)}</div>
             </div>
 

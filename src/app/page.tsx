@@ -1,8 +1,5 @@
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Search, ShoppingBag } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
-import { MainNav } from "@/components/main-nav";
 import {
     Carousel,
     CarouselContent,
@@ -74,7 +71,7 @@ export default function Home() {
                                     className="basis-1/2 sm:basis-1/3 lg:basis-1/5"
                                 >
                                     <ProductCard
-                                        image="https://placehold.co/300x300/000000/FFFFFF/png"
+                                        imageLink="https://placehold.co/300x300/000000/FFFFFF/png"
                                         brand="Nike"
                                         name="Air Max 95"
                                         price={169.99}

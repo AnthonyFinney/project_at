@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronLeft, Info } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/components/cart-item";
 
@@ -11,76 +10,25 @@ interface CartItemType {
     id: string;
     name: string;
     brand: string;
-    size: string;
     price: number;
-    image: string;
+    imageLink: string;
 }
 
 export default function Page() {
     // State to toggle between empty and filled cart for demo purposes
     const [cartItems, setCartItems] = useState<CartItemType[]>([]);
 
-    // Demo function to add an item to cart
-    const addDemoItem = () => {
-        setCartItems([
-            {
-                id: "1",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-            {
-                id: "2",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-            {
-                id: "3",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-            {
-                id: "4",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-            {
-                id: "5",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-            {
-                id: "6",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-            {
-                id: "7",
-                name: "AIR JORDAN 4 RETRO FEAR (2024)",
-                brand: "Air Jordan",
-                size: "UK 9.5",
-                price: 215,
-                image: "https://placehold.co/600x400/000000/FFFFFF/png",
-            },
-        ]);
-    };
+    useEffect(() => {
+        const storedCart = localStorage.getItem("cart");
+        if (storedCart) {
+            try {
+                setCartItems(JSON.parse(storedCart));
+            } catch (err) {
+                console.log(err);
+                setCartItems([]);
+            }
+        }
+    }, []);
 
     // Demo function to remove an item from cart
     const removeItem = (id: string) => {
@@ -152,23 +100,6 @@ export default function Page() {
                     </div>
                 </div>
             )}
-
-            {/* Demo button to toggle cart state - this would not exist in a real implementation */}
-            <div className="mt-8 text-center">
-                <Button
-                    variant="outline"
-                    onClick={
-                        cartItems.length === 0
-                            ? addDemoItem
-                            : () => setCartItems([])
-                    }
-                    className="border-black"
-                >
-                    {cartItems.length === 0
-                        ? "Demo: Add Item to Cart"
-                        : "Demo: Empty Cart"}
-                </Button>
-            </div>
         </div>
     );
 }

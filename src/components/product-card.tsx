@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface ProductCardProps {
-    image: string;
+    imageLink: string;
     brand: string;
     name: string;
     productLink: string;
@@ -10,7 +10,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({
-    image,
+    imageLink,
     brand,
     name,
     productLink,
@@ -22,13 +22,14 @@ export function ProductCard({
                 <div className="relative aspect-square overflow-hidden">
                     <Image
                         src={
-                            image ||
+                            imageLink ||
                             "https://placehold.co/600x400/000000/FFFFFF/png" ||
                             "/placeholder.svg"
                         }
                         alt={`${brand} ${name}`}
                         fill
                         className="object-cover transition-transform group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                     />
                 </div>
             </div>

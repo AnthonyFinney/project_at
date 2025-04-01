@@ -15,34 +15,34 @@ interface CartItemType {
 }
 
 export default function Page() {
-    // State to toggle between empty and filled cart for demo purposes
-    const [cartItems, setCartItems] = useState<CartItemType[]>([]);
+    const [cart, setCart] = useState<CartItemType[]>([]);
 
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");
         if (storedCart) {
             try {
-                setCartItems(JSON.parse(storedCart));
+                setCart(JSON.parse(storedCart));
             } catch (err) {
                 console.log(err);
-                setCartItems([]);
+                setCart([]);
             }
         }
     }, []);
 
-    // Demo function to remove an item from cart
-    const removeItem = (id: string) => {
-        setCartItems(cartItems.filter((item) => item.id !== id));
+    const removeFromCart = (id: string) => {
+        setCart((prevCart) => {
+            const updatedCart = prevCart.filter((item) => item.id !== id);
+            localStorage.setItem("cart", JSON.stringify(updatedCart));
+            return updatedCart;
+        });
     };
 
-    // Calculate totals
-    const subtotal = cartItems.reduce((total, item) => total + item.price, 0);
-    const shipping = cartItems.length > 0 ? 10 : 0;
+    const subtotal = cart.reduce((total, item) => total + item.price, 0);
+    const shipping = cart.length > 0 ? 10 : 0;
     const total = subtotal + shipping;
 
     return (
         <div className="mx-auto px-4 py-8 min-h-screen">
-            {/* Back to home link */}
             <Link
                 href="/"
                 className="inline-flex items-center text-sm mb-6 hover:underline"
@@ -53,27 +53,23 @@ export default function Page() {
 
             <h1 className="text-2xl font-bold mb-6">YOUR CART SUMMARY</h1>
 
-            {cartItems.length === 0 ? (
-                // Empty cart state
+            {cart.length === 0 ? (
                 <div className="bg-blue-100 p-4 flex items-start gap-3 rounded">
                     <Info className="h-6 w-6 text-blue-500 mt-0.5" />
                     <p>Your bag is empty</p>
                 </div>
             ) : (
-                // Cart with items
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Cart items - takes up 2/3 of the space on desktop */}
                     <div className="lg:col-span-2 space-y-4">
-                        {cartItems.map((item) => (
+                        {cart.map((item) => (
                             <CartItem
                                 key={item.id}
                                 item={item}
-                                onRemove={() => removeItem(item.id)}
+                                onRemove={() => removeFromCart(item.id)}
                             />
                         ))}
                     </div>
 
-                    {/* Order summary - takes up 1/3 of the space on desktop */}
                     <div className="bg-white p-6 h-fit">
                         <h2 className="text-lg font-medium mb-4">
                             Order Summary

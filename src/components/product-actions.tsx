@@ -35,16 +35,11 @@ export default function ProductAction({ product }: { product: CartItemType }) {
 
     const addToCart = () => {
         setCart((prevCart) => {
-            const updatedCart = [...prevCart, product];
+            const newProduct = { ...product, id: Math.random().toString() };
+            const updatedCart = [...prevCart, newProduct];
             console.log(updatedCart);
             return updatedCart;
         });
-    };
-
-    const clearStorage = () => {
-        if (typeof window !== "undefined") {
-            localStorage.clear();
-        }
     };
 
     return (
@@ -55,13 +50,6 @@ export default function ProductAction({ product }: { product: CartItemType }) {
                 onClick={addToCart}
             >
                 ADD TO CART
-            </Button>
-            <Button
-                className="w-full py-6 taxt-base"
-                size="lg"
-                onClick={clearStorage}
-            >
-                Clear
             </Button>
         </div>
     );

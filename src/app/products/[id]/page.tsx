@@ -15,7 +15,7 @@ export default async function Page({
     params: Promise<{ id: string }>;
 }) {
     const product = {
-        id: Math.random().toString(),
+        id: "1",
         name: "AIR JORDAN 4 RETRO FEAR (2024)",
         brand: "Air Jordan",
         price: 215,

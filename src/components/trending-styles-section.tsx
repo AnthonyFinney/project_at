@@ -15,7 +15,7 @@ const slides = [
     },
     {
         id: 2,
-        title: "TRENDING Styles",
+        title: "TRENDING",
         subtitle: "OUR MOST POPULAR SILHOUETTES",
         description:
             "The most versatile silhouettes of the moment, discover best-selling Air Jordan, ASICS and adidas in shades to suit every season.",

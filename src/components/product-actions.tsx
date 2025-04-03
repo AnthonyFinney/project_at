@@ -3,16 +3,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 
-interface CartItemType {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    imageLink: string;
-}
-
-export default function ProductAction({ product }: { product: CartItemType }) {
-    const [cart, setCart] = useState<CartItemType[]>([]);
+export default function ProductAction({ product }: { product: ProductType }) {
+    const [cart, setCart] = useState<ProductType[]>([]);
 
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");

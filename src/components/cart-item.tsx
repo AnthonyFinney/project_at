@@ -4,17 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
 
-interface CartItemProps {
-    item: {
-        id: string;
-        name: string;
-        brand: string;
-        price: number;
-        imageLink: string;
-    };
-    onRemove: () => void;
-}
-
 export function CartItem({ item, onRemove }: CartItemProps) {
     return (
         <div className="bg-white p-4 flex gap-4 relative">

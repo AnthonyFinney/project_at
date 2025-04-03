@@ -15,9 +15,9 @@ export default function ProductGallery({
         "https://placehold.co/600x600/png",
     ],
     className = "",
-    mainImageSize = "aspect-square", // Control main image aspect ratio
-    thumbnailSize = "small", // "small", "medium", "large"
-    maxWidth = "", // Optional max-width constraint
+    mainImageSize = "aspect-square",
+    thumbnailSize = "small",
+    maxWidth = "",
 }) {
     const [selectedImage, setSelectedImage] = useState(0);
     const [isZoomed, setIsZoomed] = useState(false);
@@ -34,7 +34,6 @@ export default function ProductGallery({
         setIsZoomed((prev) => !prev);
     };
 
-    // Determine thumbnail size classes
     const thumbnailSizeClass =
         {
             small: "h-16 w-16",
@@ -50,12 +49,11 @@ export default function ProductGallery({
                 className
             )}
         >
-            {/* Main image container */}
             <div className="relative w-full overflow-hidden rounded-lg border bg-background">
                 <div
                     className={cn(
                         "relative w-full transition-all duration-300 ease-in-out",
-                        mainImageSize, // Apply custom aspect ratio
+                        mainImageSize,
                         isZoomed
                             ? "scale-150 cursor-zoom-out"
                             : "cursor-zoom-in"
@@ -88,7 +86,6 @@ export default function ProductGallery({
                     )}
                 </div>
 
-                {/* Navigation arrows - visible on all screen sizes */}
                 <div className="absolute inset-0 flex items-center justify-between p-2 pointer-events-none">
                     <Button
                         variant="secondary"
@@ -112,7 +109,6 @@ export default function ProductGallery({
                 </div>
             </div>
 
-            {/* Thumbnails - desktop */}
             <div className="hidden md:flex gap-2 overflow-x-auto">
                 {images.slice(0, 5).map((image, index) => (
                     <button
@@ -139,7 +135,6 @@ export default function ProductGallery({
                 ))}
             </div>
 
-            {/* Dots for mobile */}
             <div className="flex md:hidden justify-center gap-2">
                 {images.map((_, index) => (
                     <button

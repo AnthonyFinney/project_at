@@ -43,18 +43,6 @@ export default function Home() {
                         </Link>
                     </div>
                 </div>
-
-                {/* <div className="absolute bottom-6 left-6 flex items-center gap-4 text-white">
-                    <span className="text-sm">01/03</span>
-                    <div className="flex gap-2">
-                        <button className="p-1 border border-white/50 rounded-full">
-                            <ChevronLeft className="h-4 w-4" />
-                        </button>
-                        <button className="p-1 border border-white/50 rounded-full">
-                            <ChevronRight className="h-4 w-4" />
-                        </button>
-                    </div>
-                </div> */}
             </section>
 
             <section className="py-12 bg-neutral-100">

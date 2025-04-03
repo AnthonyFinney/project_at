@@ -6,16 +6,8 @@ import { ChevronLeft, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/components/cart-item";
 
-interface CartItemType {
-    id: string;
-    name: string;
-    brand: string;
-    price: number;
-    imageLink: string;
-}
-
 export default function Page() {
-    const [cart, setCart] = useState<CartItemType[]>([]);
+    const [cart, setCart] = useState<ProductType[]>([]);
 
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");

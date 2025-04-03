@@ -1,14 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 
-interface ProductCardProps {
-    imageLink: string;
-    brand: string;
-    name: string;
-    productLink: string;
-    price: number;
-}
-
 export function ProductCard({
     imageLink,
     brand,

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 
 export default function Page() {

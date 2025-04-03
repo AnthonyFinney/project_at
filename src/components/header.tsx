@@ -1,23 +1,12 @@
 "use client";
 
-import {
-    X,
-    Menu,
-    Search,
-    ShoppingBag,
-    ChevronDown,
-    ChevronDownIcon,
-} from "lucide-react";
+import { Menu, Search, ShoppingBag, ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-import { MainNav } from "./main-nav";
 import { Button } from "./ui/button";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
-
-    // const [menuOpen, setMenuOpen] = useState(false);
-    // const toggleMenu = () => setMenuOpen(!menuOpen);
 
     return (
         <header className="border-b">
@@ -76,22 +65,6 @@ export default function Header() {
                     KANZA
                 </Link>
 
-                {/* <div className="hidden md:flex">
-                    <MainNav isOpen={menuOpen} toggleMenu={toggleMenu} />
-                </div>
-
-                <button
-                    className="mr-2 md:hidden p-2"
-                    onClick={toggleMenu}
-                    aria-label="Toggle menu"
-                >
-                    {menuOpen ? (
-                        <X className="h-6 w-6" />
-                    ) : (
-                        <Menu className="h-6 w-6" />
-                    )}
-                </button> */}
-
                 <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
@@ -111,12 +84,6 @@ export default function Header() {
                     </Button>
                 </div>
             </div>
-
-            {/* {menuOpen && (
-                <div className="md:hidden px-4 py-2 border-t">
-                    <MainNav isOpen={menuOpen} toggleMenu={toggleMenu} />
-                </div>
-            )} */}
         </header>
     );
 }

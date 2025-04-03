@@ -14,12 +14,13 @@ export default async function Page({
 }: {
     params: Promise<{ id: string }>;
 }) {
-    const product = {
+    const product: ProductType = {
         id: "1",
         name: "AIR JORDAN 4 RETRO FEAR (2024)",
         brand: "Air Jordan",
         price: 215,
         imageLink: "https://placehold.co/600x400/000000/FFFFFF/png",
+        category: "",
     };
 
     const { id } = await params;

@@ -29,7 +29,6 @@ export default function ProductAction({ product }: { product: ProductType }) {
         setCart((prevCart) => {
             const newProduct = { ...product, id: Math.random().toString() };
             const updatedCart = [...prevCart, newProduct];
-            console.log(updatedCart);
             return updatedCart;
         });
     };

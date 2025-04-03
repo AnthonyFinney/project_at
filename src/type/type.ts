@@ -4,6 +4,7 @@ interface ProductType {
     brand: string;
     price: number;
     imageLink: string;
+    category: string;
 }
 
 interface CartItemProps {

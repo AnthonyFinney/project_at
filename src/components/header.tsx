@@ -1,6 +1,12 @@
 "use client";
 
-import { Menu, Search, ShoppingBag, ChevronDownIcon } from "lucide-react";
+import {
+    Menu,
+    Search,
+    ShoppingBag,
+    ChevronDownIcon,
+    UserRound,
+} from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -80,6 +86,15 @@ export default function Header() {
                     >
                         <Link href="/cart">
                             <ShoppingBag className="h-5 w-5" />
+                        </Link>
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        className="inline-flex items-center"
+                        aria-label="Cart"
+                    >
+                        <Link href="/account">
+                            <UserRound className="h-5 w-5" />
                         </Link>
                     </Button>
                 </div>

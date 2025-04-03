@@ -10,7 +10,7 @@ import {
 
 export default function Home() {
     return (
-        <main className="min-h-screen">
+        <div>
             <section className="relative w-full h-[550px] bg-neutral-200">
                 <div
                     className="absolute inset-0 bg-cover bg-center"
@@ -77,6 +77,6 @@ export default function Home() {
                     </Carousel>
                 </div>
             </section>
-        </main>
+        </div>
     );
 }

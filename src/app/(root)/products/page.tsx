@@ -17,12 +17,9 @@ export default function Page() {
 
     const filterCategories = [
         { id: "sort", name: "Sort By" },
-        { id: "age", name: "Age category" },
         { id: "product", name: "Product type" },
         { id: "brands", name: "Brands" },
-        { id: "size", name: "Size (UK)" },
         { id: "price", name: "Price" },
-        { id: "colour", name: "Colour" },
         { id: "premium", name: "Premium" },
     ];
 

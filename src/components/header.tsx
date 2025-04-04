@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -63,22 +64,39 @@ export default function Header() {
                             >
                                 Browse Shop
                             </Link>
+                            <div className="flex items-center space-x-2 px-2 lg:hidden">
+                                <Input
+                                    type="text"
+                                    className="px-3 py-2 w-80"
+                                    placeholder="Search..."
+                                />
+                                <Button className="px-3 py-2" size={"sm"}>
+                                    <Search />
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>
 
-                <Link href="/" className="font-bold text-xl">
+                <Link href="/" className="font-bold text-xl lg:ml-52">
                     KANZA
                 </Link>
 
-                <div className="flex items-center gap-4">
-                    <Button
-                        variant="ghost"
-                        className="inline-flex items-center"
-                        aria-label="Search"
-                    >
-                        <Search className="h-5 w-5" />
-                    </Button>
+                <div className="flex items-center gap-1">
+                    <div className="lg:flex items-center space-x-2 px-2 hidden">
+                        <Input
+                            type="text"
+                            className="px-3 py-2 w-40"
+                            placeholder="Search..."
+                        />
+                        <Button
+                            variant="ghost"
+                            className="inline-flex items-center"
+                            aria-label="Search"
+                        >
+                            <Search className="h-5 w-5" />
+                        </Button>
+                    </div>
                     <Button
                         variant="ghost"
                         className="inline-flex items-center"

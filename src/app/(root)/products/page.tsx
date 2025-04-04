@@ -3,16 +3,28 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
+import { Button } from "@/components/ui/button";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+} from "@/components/ui/pagination";
 
 export default function Page() {
     const [expandedFilters, setExpandedFilters] = useState<string[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 8;
+    const totalProducts = 50;
+
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
 
     const toggleFilter = (filter: string) => {
-        if (expandedFilters.includes(filter)) {
-            setExpandedFilters(expandedFilters.filter((f) => f !== filter));
-        } else {
-            setExpandedFilters([...expandedFilters, filter]);
-        }
+        setExpandedFilters((prev) =>
+            prev.includes(filter)
+                ? prev.filter((f) => f !== filter)
+                : [...prev, filter]
+        );
     };
 
     const filterCategories = [
@@ -22,6 +34,12 @@ export default function Page() {
         { id: "price", name: "Price" },
         { id: "premium", name: "Premium" },
     ];
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     return (
         <div className="bg-gray-100 min-h-screen">
@@ -37,7 +55,7 @@ export default function Page() {
                                 Filter & Sort
                             </h2>
                             <span className="text-sm text-gray-500">
-                                9059 Results
+                                {totalProducts} Results
                             </span>
                         </div>
 
@@ -58,16 +76,104 @@ export default function Page() {
 
                     <div className="flex-1">
                         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                            {[...Array(10)].map((_, index) => (
+                            {[...Array(productsPerPage)].map((_, index) => (
                                 <ProductCard
-                                    key={index}
+                                    key={
+                                        index +
+                                        (currentPage - 1) * productsPerPage
+                                    }
                                     imageLink="https://placehold.co/300x300/000000/FFFFFF/png"
                                     brand="Nike"
                                     name="Air Max 95"
                                     price={169.99}
-                                    productLink={`/products/${index}`}
+                                    productLink={`/products/${
+                                        index +
+                                        (currentPage - 1) * productsPerPage
+                                    }`}
                                 />
                             ))}
+                        </div>
+
+                        <div className="mt-6 flex justify-center">
+                            <Pagination>
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        {currentPage > 1 ? (
+                                            <PaginationLink
+                                                onClick={() =>
+                                                    handlePageChange(
+                                                        currentPage - 1
+                                                    )
+                                                }
+                                            >
+                                                Previous
+                                            </PaginationLink>
+                                        ) : (
+                                            <span className="px-4 py-2 text-gray-400 cursor-not-allowed">
+                                                Previous
+                                            </span>
+                                        )}
+                                    </PaginationItem>
+                                    {currentPage > 2 && (
+                                        <PaginationItem>
+                                            <span className="px-4">...</span>
+                                        </PaginationItem>
+                                    )}
+                                    {currentPage > 1 && (
+                                        <PaginationItem>
+                                            <PaginationLink
+                                                onClick={() =>
+                                                    handlePageChange(
+                                                        currentPage - 1
+                                                    )
+                                                }
+                                            >
+                                                {currentPage - 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    )}
+                                    <PaginationItem>
+                                        <PaginationLink isActive>
+                                            {currentPage}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                    {currentPage < totalPages && (
+                                        <PaginationItem>
+                                            <PaginationLink
+                                                onClick={() =>
+                                                    handlePageChange(
+                                                        currentPage + 1
+                                                    )
+                                                }
+                                            >
+                                                {currentPage + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    )}
+                                    {currentPage < totalPages - 1 && (
+                                        <PaginationItem>
+                                            <span className="px-4">...</span>
+                                        </PaginationItem>
+                                    )}
+                                    <PaginationItem>
+                                        {currentPage < totalPages ? (
+                                            <PaginationLink
+                                                onClick={() =>
+                                                    handlePageChange(
+                                                        currentPage + 1
+                                                    )
+                                                }
+                                            >
+                                                Next
+                                            </PaginationLink>
+                                        ) : (
+                                            <span className="px-4 py-2 text-gray-400 cursor-not-allowed">
+                                                Next
+                                            </span>
+                                        )}
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
                         </div>
                     </div>
                 </div>

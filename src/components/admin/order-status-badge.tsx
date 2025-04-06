@@ -1,0 +1,42 @@
+interface OrderStatusBadgeProps {
+    status: string;
+}
+
+export function OrderStatusBadge({ status }: OrderStatusBadgeProps) {
+    let bgColor = "";
+    let textColor = "";
+
+    switch (status) {
+        case "pending":
+            bgColor = "bg-yellow-100";
+            textColor = "text-yellow-800";
+            break;
+        case "processing":
+            bgColor = "bg-blue-100";
+            textColor = "text-blue-800";
+            break;
+        case "shipped":
+            bgColor = "bg-purple-100";
+            textColor = "text-purple-800";
+            break;
+        case "delivered":
+            bgColor = "bg-green-100";
+            textColor = "text-green-800";
+            break;
+        case "cancelled":
+            bgColor = "bg-red-100";
+            textColor = "text-red-800";
+            break;
+        default:
+            bgColor = "bg-gray-100";
+            textColor = "text-gray-800";
+    }
+
+    return (
+        <span
+            className={`px-2 py-1 rounded-full text-xs ${bgColor} ${textColor} capitalize`}
+        >
+            {status}
+        </span>
+    );
+}

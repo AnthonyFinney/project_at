@@ -6,6 +6,7 @@ import {
     ShoppingBag,
     ChevronDownIcon,
     UserRound,
+    CircleUser,
 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
@@ -14,7 +15,8 @@ import { Input } from "./ui/input";
 import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpenMenu, setIsOpenMenu] = useState(false);
+    const [isOpenUser, setIsOpenUser] = useState(false);
 
     const { data: session } = useSession();
 
@@ -28,24 +30,25 @@ export default function Header() {
                 <div
                     className="relative"
                     onMouseEnter={() =>
-                        window.innerWidth >= 1024 && setIsOpen(true)
+                        window.innerWidth >= 1024 && setIsOpenMenu(true)
                     }
                     onMouseLeave={() =>
-                        window.innerWidth >= 1024 && setIsOpen(false)
+                        window.innerWidth >= 1024 && setIsOpenMenu(false)
                     }
                 >
                     <Button
                         variant="ghost"
                         className="inline-flex items-center"
                         onClick={() =>
-                            window.innerWidth < 1024 && setIsOpen(!isOpen)
+                            window.innerWidth < 1024 &&
+                            setIsOpenMenu(!isOpenMenu)
                         }
                     >
                         <Menu className="h-6 w-6" />
                         <span>Menu</span>
                         <ChevronDownIcon className="ml-2 h-4 w-4" />
                     </Button>
-                    {isOpen && (
+                    {isOpenMenu && (
                         <div className="absolute left-0 top-full z-20 w-56 space-y-1 bg-white py-2 shadow-md">
                             <Link
                                 href="/"
@@ -115,26 +118,63 @@ export default function Header() {
                     </Button>
 
                     {session ? (
-                        <Button
-                            variant="ghost"
-                            className="inline-flex items-center"
-                            aria-label="Account"
-                            onClick={handleSignOut}
+                        <div
+                            className="relative"
+                            onMouseEnter={() =>
+                                window.innerWidth >= 1024 && setIsOpenUser(true)
+                            }
+                            onMouseLeave={() =>
+                                window.innerWidth >= 1024 &&
+                                setIsOpenUser(false)
+                            }
                         >
-                            <div className="flex items-center space-x-1">
-                                <UserRound className="h-5 w-5" />
+                            <Button
+                                variant="ghost"
+                                className="inline-flex items-center"
+                                onClick={() =>
+                                    window.innerWidth < 1024 &&
+                                    setIsOpenUser(!isOpenMenu)
+                                }
+                            >
+                                <CircleUser className="h-5 w-5" />
                                 <span className="text-sm hidden sm:inline">
-                                    {session.user?.name || "Account"}
+                                    <span className="text-sm hidden sm:inline">
+                                        {session.user?.name || "Account"}
+                                    </span>
                                 </span>
-                            </div>
-                        </Button>
+                            </Button>
+                            {isOpenUser && (
+                                <div className="absolute right-0 top-full z-20 w-56 space-y-1 bg-white py-2 shadow-md">
+                                    <Button
+                                        variant="ghost"
+                                        className="flex justify-start font-normal px-4 py-2 text-sm hover:bg-gray-100 w-full"
+                                        aria-label="Admin"
+                                    >
+                                        <Link
+                                            href="/admin"
+                                            className="w-full flex justify-start"
+                                        >
+                                            Admin
+                                        </Link>
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        className="flex justify-start font-normal px-4 py-2 text-sm hover:bg-gray-100 w-full"
+                                        aria-label="Account"
+                                        onClick={handleSignOut}
+                                    >
+                                        Sign Out
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <Button
                             variant="ghost"
                             className="inline-flex items-center"
-                            aria-label="Account"
+                            aria-label="LogIn"
                         >
-                            <Link href="/account">
+                            <Link href="/account/logIn">
                                 <div className="flex items-center space-x-1">
                                     <UserRound className="h-5 w-5" />
                                     <span className="text-sm hidden sm:inline">

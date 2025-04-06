@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 export default function ProductAction({ product }: { product: ProductType }) {
     const [cart, setCart] = useState<ProductType[]>([]);
@@ -40,7 +41,9 @@ export default function ProductAction({ product }: { product: ProductType }) {
                 size="lg"
                 onClick={addToCart}
             >
-                ADD TO CART
+                <Link href="/cart" className="w-full">
+                    ADD TO CART
+                </Link>
             </Button>
         </div>
     );

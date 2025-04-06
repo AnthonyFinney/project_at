@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { SignInWithFacebook, SignInWithGoogle } from "@/app/actions/auth";
 import { redirect } from "next/navigation";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function Page() {
     const { status } = useSession();
@@ -106,9 +107,12 @@ export default function Page() {
                     </form>
                     <p className="mt-4 text-center text-sm">
                         Don't have an account?{" "}
-                        <a href="#" className="text-primary hover:underline">
+                        <Link
+                            href="/account/register"
+                            className="text-primary hover:underline"
+                        >
                             Register
-                        </a>
+                        </Link>
                     </p>
                 </CardContent>
             </Card>

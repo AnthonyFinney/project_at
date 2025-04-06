@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import Favicon from "../../../public/favicon.ico";
+import { AuthProvider } from "@/lib/Providers";
 
 export const metadata: Metadata = {
     title: "Project AT",
@@ -14,7 +15,9 @@ export default function AccountLayout({
     return (
         <html lang="en">
             <body className="antialiased lg:w-full lg:px-32">
-                <main className="min-h-screen">{children}</main>
+                <AuthProvider>
+                    <main className="min-h-screen">{children}</main>
+                </AuthProvider>
             </body>
         </html>
     );

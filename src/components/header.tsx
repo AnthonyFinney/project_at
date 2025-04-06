@@ -11,9 +11,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
+
+    const { data: session } = useSession();
+
+    const handleSignOut = () => {
+        signOut();
+    };
 
     return (
         <header className="border-b">
@@ -106,15 +113,37 @@ export default function Header() {
                             <ShoppingBag className="h-5 w-5" />
                         </Link>
                     </Button>
-                    <Button
-                        variant="ghost"
-                        className="inline-flex items-center"
-                        aria-label="Cart"
-                    >
-                        <Link href="/account">
-                            <UserRound className="h-5 w-5" />
-                        </Link>
-                    </Button>
+
+                    {session ? (
+                        <Button
+                            variant="ghost"
+                            className="inline-flex items-center"
+                            aria-label="Account"
+                            onClick={handleSignOut}
+                        >
+                            <div className="flex items-center space-x-1">
+                                <UserRound className="h-5 w-5" />
+                                <span className="text-sm hidden sm:inline">
+                                    {session.user?.name || "Account"}
+                                </span>
+                            </div>
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="ghost"
+                            className="inline-flex items-center"
+                            aria-label="Account"
+                        >
+                            <Link href="/account">
+                                <div className="flex items-center space-x-1">
+                                    <UserRound className="h-5 w-5" />
+                                    <span className="text-sm hidden sm:inline">
+                                        Sign In
+                                    </span>
+                                </div>
+                            </Link>
+                        </Button>
+                    )}
                 </div>
             </div>
         </header>

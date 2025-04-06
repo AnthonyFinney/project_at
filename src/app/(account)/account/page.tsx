@@ -1,11 +1,34 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { SignInWithFacebook, SignInWithGoogle } from "@/app/actions/auth";
+import { redirect } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
+    const { status } = useSession();
+
+    if (status === "loading") {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-50">
+                <div
+                    className="h-16 w-16 animate-spin rounded-full border-8 border-solid border-black border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                    role="status"
+                >
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+        );
+    }
+
+    if (status === "authenticated") {
+        redirect("/");
+    }
+
     return (
         <section className="flex min-h-screen items-center justify-center">
             <Card className="w-full max-w-md p-6 shadow-lg">

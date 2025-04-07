@@ -19,7 +19,7 @@ export default function AdminDashboard() {
             />
 
             {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Recent Orders and Top Selling Products */}
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
                 <Card className="col-span-1">
                     <CardHeader>
                         <CardTitle>Recent Orders</CardTitle>

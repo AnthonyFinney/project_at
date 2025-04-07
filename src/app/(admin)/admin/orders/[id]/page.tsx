@@ -133,8 +133,8 @@ export default function OrderDetailsPage() {
                                             className="object-contain p-1"
                                         />
                                     </div>
-                                    <div className="flex-1">
-                                        <div className="font-medium">
+                                    <div className="flex-1 min-w-0">
+                                        <div className="font-medium truncate">
                                             {item.name}
                                         </div>
                                         <div className="text-sm text-neutral-500">
@@ -244,7 +244,9 @@ export default function OrderDetailsPage() {
                                 <div>
                                     <h3 className="font-medium">Contact</h3>
                                     <p>{order.customer.name}</p>
-                                    <p>{order.customer.email}</p>
+                                    <p className="break-words">
+                                        {order.customer.email}
+                                    </p>
                                     <p>{order.customer.phone}</p>
                                 </div>
 

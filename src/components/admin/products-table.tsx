@@ -86,15 +86,21 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
 
     return (
         <>
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Product</TableHead>
-                            <TableHead>SKU</TableHead>
+                            <TableHead className="hidden sm:table-cell">
+                                SKU
+                            </TableHead>
                             <TableHead>Price</TableHead>
-                            <TableHead>Stock</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead className="hidden md:table-cell">
+                                Stock
+                            </TableHead>
+                            <TableHead className="hidden sm:table-cell">
+                                Status
+                            </TableHead>
                             <TableHead className="text-right">
                                 Actions
                             </TableHead>
@@ -133,15 +139,37 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                                                 <div className="text-xs text-muted-foreground">
                                                     {product.brand}
                                                 </div>
+                                                <div className="text-xs text-muted-foreground sm:hidden">
+                                                    {product.sku}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground md:hidden">
+                                                    Stock: {product.stock}
+                                                </div>
+                                                <div className="sm:hidden mt-1">
+                                                    <span
+                                                        className={`px-2 py-1 rounded-full text-xs ${
+                                                            product.status ===
+                                                            "In Stock"
+                                                                ? "bg-green-100 text-green-800"
+                                                                : "bg-red-100 text-red-800"
+                                                        }`}
+                                                    >
+                                                        {product.status}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </TableCell>
-                                    <TableCell>{product.sku}</TableCell>
+                                    <TableCell className="hidden sm:table-cell">
+                                        {product.sku}
+                                    </TableCell>
                                     <TableCell>
                                         £{product.price.toFixed(2)}
                                     </TableCell>
-                                    <TableCell>{product.stock}</TableCell>
-                                    <TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                        {product.stock}
+                                    </TableCell>
+                                    <TableCell className="hidden sm:table-cell">
                                         <span
                                             className={`px-2 py-1 rounded-full text-xs ${
                                                 product.status === "In Stock"

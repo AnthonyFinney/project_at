@@ -25,22 +25,40 @@ export function RecentOrdersTable() {
     };
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Order</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableHead className="hidden sm:table-cell">
+                            Customer
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                            Status
+                        </TableHead>
                         <TableHead className="text-right">Total</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {recentOrders.map((order) => (
                         <TableRow key={order.id}>
-                            <TableCell>#{order.orderNumber}</TableCell>
-                            <TableCell>{order.customer.name}</TableCell>
                             <TableCell>
+                                <div>
+                                    #{order.orderNumber}
+                                    <div className="text-xs text-muted-foreground sm:hidden">
+                                        {order.customer.name}
+                                    </div>
+                                    <div className="md:hidden mt-1">
+                                        <OrderStatusBadge
+                                            status={order.status}
+                                        />
+                                    </div>
+                                </div>
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                                {order.customer.name}
+                            </TableCell>
+                            <TableCell className="hidden md:table-cell">
                                 <OrderStatusBadge status={order.status} />
                             </TableCell>
                             <TableCell className="text-right">

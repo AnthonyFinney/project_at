@@ -88,15 +88,21 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
     };
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Order</TableHead>
-                        <TableHead>Date</TableHead>
+                        <TableHead className="hidden sm:table-cell">
+                            Date
+                        </TableHead>
                         <TableHead>Customer</TableHead>
-                        <TableHead>Total</TableHead>
-                        <TableHead>Status</TableHead>
+                        <TableHead className="hidden sm:table-cell">
+                            Total
+                        </TableHead>
+                        <TableHead className="hidden md:table-cell">
+                            Status
+                        </TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -113,8 +119,25 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                     ) : (
                         orders.map((order) => (
                             <TableRow key={order.id}>
-                                <TableCell>#{order.orderNumber}</TableCell>
                                 <TableCell>
+                                    <div>
+                                        #{order.orderNumber}
+                                        <div className="text-xs text-muted-foreground sm:hidden">
+                                            {new Date(
+                                                order.date
+                                            ).toLocaleDateString()}
+                                        </div>
+                                        <div className="sm:hidden mt-1">
+                                            <OrderStatusBadge
+                                                status={order.status}
+                                            />
+                                        </div>
+                                        <div className="text-xs font-medium sm:hidden mt-1">
+                                            £{order.total.toFixed(2)}
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="hidden sm:table-cell">
                                     {new Date(order.date).toLocaleDateString()}
                                 </TableCell>
                                 <TableCell>
@@ -127,8 +150,10 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                                         </div>
                                     </div>
                                 </TableCell>
-                                <TableCell>£{order.total.toFixed(2)}</TableCell>
-                                <TableCell>
+                                <TableCell className="hidden sm:table-cell">
+                                    £{order.total.toFixed(2)}
+                                </TableCell>
+                                <TableCell className="hidden md:table-cell">
                                     <OrderStatusBadge status={order.status} />
                                 </TableCell>
                                 <TableCell className="text-right">

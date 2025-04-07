@@ -22,12 +22,14 @@ export function TopSellingProducts() {
         .slice(0, 5);
 
     return (
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Product</TableHead>
-                        <TableHead>Price</TableHead>
+                        <TableHead className="hidden sm:table-cell">
+                            Price
+                        </TableHead>
                         <TableHead className="text-right">Sales</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -54,10 +56,15 @@ export function TopSellingProducts() {
                                         <div className="text-xs text-muted-foreground">
                                             {product.brand}
                                         </div>
+                                        <div className="text-xs font-medium sm:hidden">
+                                            £{product.price.toFixed(2)}
+                                        </div>
                                     </div>
                                 </div>
                             </TableCell>
-                            <TableCell>£{product.price.toFixed(2)}</TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                                £{product.price.toFixed(2)}
+                            </TableCell>
                             <TableCell className="text-right">
                                 {product.sales || 0}
                             </TableCell>

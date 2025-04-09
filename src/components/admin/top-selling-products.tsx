@@ -42,7 +42,7 @@ export function TopSellingProducts() {
                                         <Image
                                             src={
                                                 product.image ||
-                                                "/placeholder.svg?height=40&width=40"
+                                                "https://placehold.co/40x40/png"
                                             }
                                             alt={product.name}
                                             fill

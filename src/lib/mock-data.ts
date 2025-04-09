@@ -1,4 +1,11 @@
-// Mock data for products
+export const mockUsers = [
+    {
+        id: "1",
+        username: "test",
+        password: "123",
+    },
+];
+
 export const mockProducts = [
     {
         id: "prod_1",
@@ -11,7 +18,7 @@ export const mockProducts = [
         category: "sneakers",
         status: "In Stock",
         stock: 25,
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://placehold.co/200x200/png",
         sales: 42,
     },
     {
@@ -25,7 +32,7 @@ export const mockProducts = [
         category: "sneakers",
         status: "In Stock",
         stock: 12,
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://placehold.co/200x200/png",
         sales: 38,
     },
     {
@@ -39,7 +46,7 @@ export const mockProducts = [
         category: "sneakers",
         status: "In Stock",
         stock: 50,
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://placehold.co/200x200/png",
         sales: 65,
     },
     {
@@ -53,7 +60,7 @@ export const mockProducts = [
         category: "sneakers",
         status: "In Stock",
         stock: 30,
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://placehold.co/200x200/png",
         sales: 29,
     },
     {
@@ -67,12 +74,11 @@ export const mockProducts = [
         category: "sneakers",
         status: "Out of Stock",
         stock: 0,
-        image: "/placeholder.svg?height=200&width=200",
+        image: "https://placehold.co/200x200/png",
         sales: 52,
     },
 ];
 
-// Mock data for orders
 export const mockOrders = [
     {
         id: "ord_1",
@@ -90,7 +96,7 @@ export const mockOrders = [
                 price: 215,
                 size: "UK 9",
                 quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
+                image: "https://placehold.co/80x80/png",
             },
         ],
         subtotal: 215,
@@ -123,7 +129,7 @@ export const mockOrders = [
                 price: 110,
                 size: "UK 6",
                 quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
+                image: "https://placehold.co/80x80/png",
             },
             {
                 name: "Adidas Samba OG",
@@ -131,7 +137,7 @@ export const mockOrders = [
                 price: 90,
                 size: "UK 7",
                 quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
+                image: "https://placehold.co/80x80/png",
             },
         ],
         subtotal: 200,
@@ -164,7 +170,7 @@ export const mockOrders = [
                 price: 320,
                 size: "UK 10",
                 quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
+                image: "https://placehold.co/80x80/png",
             },
         ],
         subtotal: 320,
@@ -197,7 +203,7 @@ export const mockOrders = [
                 price: 120,
                 size: "UK 5.5",
                 quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
+                image: "https://placehold.co/80x80/png",
             },
         ],
         subtotal: 120,
@@ -230,7 +236,7 @@ export const mockOrders = [
                 price: 180,
                 size: "UK 8",
                 quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
+                image: "https://placehold.co/80x80/png",
             },
         ],
         subtotal: 180,

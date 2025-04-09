@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import Favicon from "../../../public/favicon.ico";
-import { AuthProvider } from "@/app/Providers/Providers";
+import { AuthProvider } from "@/Providers/Providers";
 
 export const metadata: Metadata = {
     title: "Account",

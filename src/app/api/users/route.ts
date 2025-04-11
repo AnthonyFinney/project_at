@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
 import { User, UserSchema } from "@/lib/user";
+import { saltAndHashPassword } from "@/lib/utils";
 
 export async function GET() {
     try {
@@ -26,8 +27,21 @@ export async function POST(req: Request) {
         const parsedUser: User = UserSchema.parse(body);
 
         const db = await getDb();
+        const existingUser = await db
+            .collection("users")
+            .findOne({ email: parsedUser.email });
 
-        const result = await db.collection("users").insertOne(parsedUser);
+        if (existingUser) {
+            return NextResponse.json(
+                { success: false, error: "Email already registered" },
+                { status: 409 }
+            );
+        }
+
+        const hashedPassword = saltAndHashPassword(parsedUser.password);
+        const userToInsert = { ...parsedUser, password: hashedPassword };
+
+        const result = await db.collection("users").insertOne(userToInsert);
 
         return NextResponse.json({ success: true, id: result.insertedId });
     } catch (error: unknown) {

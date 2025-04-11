@@ -25,7 +25,9 @@ export function userAvatar(): string {
 
 export function saltAndHashPassword(password: string): string {
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
+    return bcrypt.hashSync(password, salt);
+}
 
-    return hash;
+export async function comparePassword(userPassword: string, hash: string) {
+    return bcrypt.compare(userPassword, hash);
 }

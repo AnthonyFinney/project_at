@@ -20,7 +20,7 @@ export async function getDb(): Promise<Db> {
     if (!dbInstance) {
         client = new MongoClient(url, options);
         await client.connect();
-        dbInstance = client.db("sample_mflix");
+        dbInstance = client.db("project_at");
     }
 
     return dbInstance;

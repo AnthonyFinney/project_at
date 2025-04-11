@@ -2,9 +2,9 @@ import NextAuth from "next-auth";
 import Facebook from "next-auth/providers/facebook";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { mockUsers } from "./mock-data";
-
-const userMock = mockUsers[0];
+import { comparePassword } from "./utils";
+import { getDb } from "./mongodb";
+import { UserSchema } from "./user";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -13,17 +13,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         Credentials({
             name: "Credentials",
             credentials: {
-                username: { label: "Username", type: "text" },
+                email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
             },
-            async authorize(credentials) {
-                const { username, password } = credentials ?? {};
+            async authorize(
+                credentials: Partial<Record<"email" | "password", unknown>>,
+                req: Request
+            ): Promise<{ id: string; email?: string } | null> {
+                const { email, password } = credentials ?? {};
 
-                if (username != userMock.username) return null;
+                if (typeof email !== "string" || typeof password !== "string") {
+                    throw new Error("Email and Password must be string");
+                }
 
-                // TODO do the hash check
+                if (!email || !password) {
+                    throw new Error("Email and Password required");
+                }
 
-                return { id: userMock.id, name: userMock.username };
+                const db = await getDb();
+                const user = await db.collection("users").findOne({ email });
+
+                if (!user) {
+                    throw new Error("User not found");
+                }
+
+                const parsedUser = UserSchema.parse(user);
+                const passwordMatch = await comparePassword(
+                    password,
+                    parsedUser.password
+                );
+
+                if (!passwordMatch) {
+                    throw new Error("Invalid password");
+                }
+
+                if (!parsedUser._id) {
+                    throw new Error("User missing id");
+                }
+
+                return {
+                    id: parsedUser._id.toString(),
+                    email: parsedUser.email,
+                };
             },
         }),
     ],
@@ -38,7 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
-                token.name = user.name;
+                token.email = user.email;
             }
 
             return token;
@@ -46,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id as string;
-                session.user.name = token.name as string;
+                session.user.email = token.email as string;
             }
 
             return session;

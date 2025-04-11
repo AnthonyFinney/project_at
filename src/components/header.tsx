@@ -139,7 +139,7 @@ export default function Header() {
                                 <CircleUser className="h-5 w-5" />
                                 <span className="text-sm hidden sm:inline">
                                     <span className="text-sm hidden sm:inline">
-                                        {session.user?.name || "Account"}
+                                        {session.user?.email || "Account"}
                                     </span>
                                 </span>
                             </Button>

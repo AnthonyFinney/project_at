@@ -9,16 +9,14 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function userAvatar(): string {
+export function userAvatar(seed: string): string {
     const avatar = useMemo(() => {
-        const seed: string = crypto.randomUUID.toString();
-
         return createAvatar(lorelei, {
             seed,
             size: 128,
             radius: 50,
         }).toDataUri();
-    }, []);
+    }, [seed]);
 
     return avatar;
 }

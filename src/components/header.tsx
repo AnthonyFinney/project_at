@@ -13,12 +13,17 @@ import Link from "next/link";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { signOut, useSession } from "next-auth/react";
+import { userAvatar } from "@/lib/utils";
+import Image from "next/image";
 
 export default function Header() {
     const [isOpenMenu, setIsOpenMenu] = useState(false);
     const [isOpenUser, setIsOpenUser] = useState(false);
 
     const { data: session } = useSession();
+
+    const seed = session?.user?.email || "guest";
+    const avatar = userAvatar(seed);
 
     const handleSignOut = () => {
         signOut();
@@ -41,7 +46,7 @@ export default function Header() {
                         className="inline-flex items-center"
                         onClick={() =>
                             window.innerWidth < 1024 &&
-                            setIsOpenMenu(!isOpenMenu)
+                            setIsOpenMenu((prev) => !prev)
                         }
                     >
                         <Menu className="h-6 w-6" />
@@ -133,15 +138,16 @@ export default function Header() {
                                 className="inline-flex items-center"
                                 onClick={() =>
                                     window.innerWidth < 1024 &&
-                                    setIsOpenUser(!isOpenMenu)
+                                    setIsOpenUser((prev) => !prev)
                                 }
                             >
-                                <CircleUser className="h-5 w-5" />
-                                <span className="text-sm hidden sm:inline">
-                                    <span className="text-sm hidden sm:inline">
-                                        {session.user?.email || "Account"}
-                                    </span>
-                                </span>
+                                <Image
+                                    src={avatar}
+                                    alt="User Avatar"
+                                    className="h-6 w-6 rounded-full object-cover border border-gray-300"
+                                    width={24}
+                                    height={24}
+                                />
                             </Button>
                             {isOpenUser && (
                                 <div className="absolute right-0 top-full z-20 w-56 space-y-1 bg-white py-2 shadow-md">

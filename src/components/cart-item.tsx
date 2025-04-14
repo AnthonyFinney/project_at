@@ -7,7 +7,6 @@ import { X } from "lucide-react";
 export function CartItem({ item, onRemove }: CartItemProps) {
     return (
         <div className="bg-white p-4 flex gap-4 relative">
-            {/* Product image */}
             <div className="w-24 h-24 relative flex-shrink-0">
                 <Image
                     src={item.imageLink || "/placeholder.svg"}
@@ -18,7 +17,6 @@ export function CartItem({ item, onRemove }: CartItemProps) {
                 />
             </div>
 
-            {/* Product details */}
             <div className="flex-1">
                 <div className="text-sm text-neutral-500">{item.brand}</div>
                 <Link
@@ -30,7 +28,6 @@ export function CartItem({ item, onRemove }: CartItemProps) {
                 <div className="font-medium mt-2">£{item.price.toFixed(2)}</div>
             </div>
 
-            {/* Remove button */}
             <button
                 onClick={onRemove}
                 className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-full"

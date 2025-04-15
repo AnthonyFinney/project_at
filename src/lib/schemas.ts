@@ -20,15 +20,20 @@ export const CategorySchema = z.object({
     promotion: PromotionSchema,
 });
 
+export const VariantSchema = z.object({
+    size: z.string(), // e.g., "1", "2", "XL", etc.
+    price: z.number(), // e.g., 100, 200, etc.
+    // Optionally, you can include stock per variant if needed:
+    stock: z.number().optional(),
+});
+
 // 📦 Product Schema
 export const ProductSchema = z.object({
     id: ObjectIdSchema.optional(),
     name: z.string(),
     description: z.string(),
-    price: z.number(),
-    size: z.array(z.string()),
+    variants: z.array(VariantSchema),
     category: CategorySchema,
-    stock: z.number(),
     isFeatured: z.boolean(),
     tags: z.array(z.string()),
     image: z.string().url(),
@@ -141,3 +146,4 @@ export type CartItemType = z.infer<typeof CartItemSchema>;
 export type ProductType = z.infer<typeof ProductSchema>;
 export type CategoryType = z.infer<typeof CategorySchema>;
 export type PromotionType = z.infer<typeof PromotionSchema>;
+export type VariantType = z.infer<typeof VariantSchema>;

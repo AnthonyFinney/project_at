@@ -3,7 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, BarChart3, Package, ShoppingBag, LogOut } from "lucide-react";
+import {
+    Menu,
+    X,
+    BarChart3,
+    Package,
+    ShoppingBag,
+    LogOut,
+    Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -36,6 +44,11 @@ export function MobileNav() {
             title: "Orders",
             href: "/admin/orders",
             icon: ShoppingBag,
+        },
+        {
+            title: "Users",
+            href: "/admin/users",
+            icon: Users,
         },
     ];
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Package, ShoppingBag, LogOut } from "lucide-react";
+import { BarChart3, Package, ShoppingBag, LogOut, Users } from "lucide-react";
 
 export function AdminSidebar() {
     const pathname = usePathname();
@@ -26,6 +26,11 @@ export function AdminSidebar() {
             title: "Orders",
             href: "/admin/orders",
             icon: ShoppingBag,
+        },
+        {
+            title: "Users",
+            href: "/admin/users",
+            icon: Users,
         },
     ];
 

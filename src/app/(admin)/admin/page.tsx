@@ -8,7 +8,7 @@ import {
 import { AdminHeader } from "@/components/admin/admin-header";
 import { DollarSign, Package, ShoppingBag, Users } from "lucide-react";
 import { RecentOrdersTable } from "@/components/admin/recent-orders-table";
-import { TopSellingProducts } from "@/components/admin/top-selling-products";
+import { LowQuantityProducts } from "@/components/admin/low-quantity-products";
 
 export default function AdminDashboard() {
     return (
@@ -97,13 +97,13 @@ export default function AdminDashboard() {
 
                 <Card className="col-span-1">
                     <CardHeader>
-                        <CardTitle>Top Selling Products</CardTitle>
+                        <CardTitle>Low Quantity Products</CardTitle>
                         <CardDescription>
-                            Your best performing products this month
+                            Stores products that have the lowest stock
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <TopSellingProducts />
+                        <LowQuantityProducts />
                     </CardContent>
                 </Card>
             </div>

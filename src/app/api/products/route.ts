@@ -10,8 +10,10 @@ export async function GET(req: Request) {
 
         const transformedProducts: ProductType[] = products.map(
             (product: any) => {
+                const { _id, ...rest } = product;
+
                 return {
-                    ...product,
+                    ...rest,
                     id: product._id.toString(),
                 };
             }

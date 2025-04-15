@@ -10,63 +10,67 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus } from "lucide-react";
-import { ProductType } from "@/lib/schemas";
+import { X, Plus, Trash } from "lucide-react";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import type { ProductType, VariantType } from "@/lib/schemas";
 
-// Define a type for the form state optimized for input.
-interface ProductFormValues {
-    name: string;
-    description: string;
-    price: string; // input returns string
-    size: string[];
-    stock: string; // input returns string
-    isFeatured: boolean;
-    tags: string[];
-    image: string;
-    category: {
-        name: string;
-        description: string;
-        promotion: {
-            type: string[];
-            details: string;
-        };
-    };
-}
+// Define the form state type from your ProductType,
+// omitting fields that will be set on the server.
+export interface ProductFormValues extends ProductType {}
 
-interface ProductFormProps {
+// Define the component props using a Partial so that only some fields may be provided
+export interface ProductFormProps {
     initialData?: Partial<ProductFormValues>;
 }
+
+// Default values using the ProductFormValues interface.
+const defaultValues: ProductFormValues = {
+    name: "",
+    description: "",
+    variants: [],
+    category: {
+        name: "",
+        description: "",
+        promotion: {
+            type: [],
+            details: "",
+        },
+    },
+    isFeatured: false,
+    tags: [],
+    image: "",
+};
 
 export function ProductForm({ initialData }: ProductFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    const defaultValues: ProductFormValues = {
-        name: "",
-        description: "",
-        price: "",
-        size: [],
-        stock: "",
-        isFeatured: false,
-        tags: [],
-        image: "",
-        category: {
-            name: "",
-            description: "",
-            promotion: {
-                type: [],
-                details: "",
-            },
-        },
+    // Merge the defaults with any provided initial data.
+    const [formData, setFormData] = useState<ProductFormValues>({
+        ...defaultValues,
         ...initialData,
-    };
-
-    const [formData, setFormData] = useState<ProductFormValues>(defaultValues);
+    });
     const [newTag, setNewTag] = useState("");
-    const [newSize, setNewSize] = useState("");
     const [newPromotionType, setNewPromotionType] = useState("");
 
-    // Handle simple field changes
+    // For the variant form, we use the VariantType as defined by your schemas.
+    const [variantForm, setVariantForm] = useState<VariantType>({
+        size: "",
+        price: 0,
+        stock: 0,
+    });
+    const [editingVariantIndex, setEditingVariantIndex] = useState<
+        number | null
+    >(null);
+
+    // Handle simple changes for top-level inputs.
     const handleChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -74,7 +78,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Handle nested category field changes
+    // Handle nested category changes.
     const handleCategoryChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -88,7 +92,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
         }));
     };
 
-    // Handle nested promotion field changes
+    // Handle nested promotion changes.
     const handlePromotionChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -105,12 +109,12 @@ export function ProductForm({ initialData }: ProductFormProps) {
         }));
     };
 
-    // Handle boolean toggle
+    // Handle toggle change for isFeatured.
     const handleToggleChange = (checked: boolean) => {
         setFormData((prev) => ({ ...prev, isFeatured: checked }));
     };
 
-    // Handle tags array
+    // Handle tags array.
     const addTag = () => {
         const tag = newTag.trim();
         if (tag && !formData.tags.includes(tag)) {
@@ -126,27 +130,63 @@ export function ProductForm({ initialData }: ProductFormProps) {
         }));
     };
 
-    // Handle sizes array
-    const addSize = () => {
-        const size = newSize.trim();
-        if (size && !formData.size.includes(size)) {
-            setFormData((prev) => ({ ...prev, size: [...prev.size, size] }));
-            setNewSize("");
-        }
-    };
-
-    const removeSize = (sizeToRemove: string) => {
-        setFormData((prev) => ({
+    // Handle variant form changes.
+    const handleVariantChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setVariantForm((prev) => ({
             ...prev,
-            size: prev.size.filter((size) => size !== sizeToRemove),
+            [name]: name === "size" ? value : Number(value),
         }));
     };
 
-    // Handle promotion types array
+    // Core variant submission logic.
+    const submitVariant = () => {
+        if (!variantForm.size) {
+            alert("Size is required");
+            return;
+        }
+        if (editingVariantIndex !== null) {
+            // Update an existing variant.
+            const updatedVariants = [...formData.variants];
+            updatedVariants[editingVariantIndex] = variantForm;
+            setFormData((prev) => ({ ...prev, variants: updatedVariants }));
+        } else {
+            // Add a new variant.
+            setFormData((prev) => ({
+                ...prev,
+                variants: [...prev.variants, variantForm],
+            }));
+        }
+        // Reset variant form.
+        setVariantForm({ size: "", price: 0, stock: 0 });
+        setEditingVariantIndex(null);
+    };
+
+    // Wrapper for form submission from variant form (so we can use it on Enter key and button click).
+    const handleVariantSubmit = (
+        e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLInputElement>
+    ) => {
+        e.preventDefault();
+        submitVariant();
+    };
+
+    const editVariant = (index: number) => {
+        setVariantForm(formData.variants[index]);
+        setEditingVariantIndex(index);
+    };
+
+    const removeVariant = (index: number) => {
+        setFormData((prev) => ({
+            ...prev,
+            variants: prev.variants.filter((_, i) => i !== index),
+        }));
+    };
+
+    // Handle promotion types array.
     const addPromotionType = () => {
         const promoType = newPromotionType.trim();
         if (
-            promoType &&
+            promoType !== "" &&
             !formData.category.promotion.type.includes(promoType)
         ) {
             setFormData((prev) => ({
@@ -178,50 +218,36 @@ export function ProductForm({ initialData }: ProductFormProps) {
         }));
     };
 
+    // Handle form submission.
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            // Transform formData to match ProductType (where price and stock are numbers)
+            // The formattedData already matches ProductType except createdAt/updatedAt,
+            // which are set on the server. 'id' is omitted in the form state.
             const formattedData: ProductType = {
-                name: formData.name,
-                description: formData.description,
-                price: parseFloat(formData.price),
-                size: formData.size,
-                stock: parseInt(formData.stock, 10),
-                isFeatured: formData.isFeatured,
-                tags: formData.tags,
-                image: formData.image,
-                category: {
-                    name: formData.category.name,
-                    description: formData.category.description,
-                    promotion: {
-                        type: formData.category.promotion.type,
-                        details: formData.category.promotion.details,
-                    },
-                },
-                createdAt: "", // Set on the server
-                updatedAt: "", // Set on the server
-                // id is optional and will be set by the DB
+                ...formData,
+                createdAt: "",
+                updatedAt: "",
             };
 
-            const res = await fetch(`${window.location.origin}/api/products`, {
-                method: "POST",
+            const isEdit = Boolean(formData.id);
+            const endPoint = isEdit
+                ? `${window.location.origin}/api/products/${formData.id}`
+                : `${window.location.origin}/api/products`;
+            const method = isEdit ? "PATCH" : "POST";
+
+            const res = await fetch(endPoint, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formattedData),
             });
-
-            // Get the response from the API
             const result = await res.json();
-
             if (!res.ok) {
-                // Optionally handle error from the API
                 console.error("API error:", result.error);
-                // You could display an error message here if needed
                 return;
             }
-
             router.push("/admin/products");
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -235,11 +261,9 @@ export function ProductForm({ initialData }: ProductFormProps) {
             <Tabs defaultValue="basic" className="space-y-6">
                 <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full">
                     <TabsTrigger value="basic">Basic Information</TabsTrigger>
+                    <TabsTrigger value="variants">Variants</TabsTrigger>
                     <TabsTrigger value="category">
                         Category & Promotion
-                    </TabsTrigger>
-                    <TabsTrigger value="inventory">
-                        Inventory & Features
                     </TabsTrigger>
                     <TabsTrigger value="media">Media</TabsTrigger>
                 </TabsList>
@@ -260,17 +284,20 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="price">Price (£)</Label>
-                                    <Input
-                                        id="price"
-                                        name="price"
-                                        type="number"
-                                        min="0"
-                                        step="0.01"
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <div className="flex items-center justify-between">
+                                        <Label htmlFor="featured">
+                                            Featured Product
+                                        </Label>
+                                        <Switch
+                                            id="featured"
+                                            checked={formData.isFeatured}
+                                            onCheckedChange={handleToggleChange}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">
+                                        Featured products appear on the homepage
+                                        and in promotional areas.
+                                    </p>
                                 </div>
                                 <div className="sm:col-span-2 space-y-2">
                                     <Label htmlFor="description">
@@ -342,6 +369,195 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                         Tags help with product search and
                                         categorization.
                                     </p>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+
+                {/* Variants Tab */}
+                <TabsContent value="variants" className="space-y-6">
+                    <Card>
+                        <CardContent className="pt-6">
+                            <div className="space-y-6">
+                                <div>
+                                    <h3 className="text-lg font-medium mb-4">
+                                        Product Variants
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        Add different sizes, prices, and stock
+                                        levels for this product.
+                                    </p>
+
+                                    {/* Variants Table */}
+                                    {formData.variants.length > 0 && (
+                                        <div className="rounded-md border overflow-x-auto mb-6">
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>
+                                                            Size
+                                                        </TableHead>
+                                                        <TableHead>
+                                                            Price (£)
+                                                        </TableHead>
+                                                        <TableHead>
+                                                            Stock
+                                                        </TableHead>
+                                                        <TableHead className="text-right">
+                                                            Actions
+                                                        </TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {formData.variants.map(
+                                                        (variant, index) => (
+                                                            <TableRow
+                                                                key={index}
+                                                            >
+                                                                <TableCell>
+                                                                    {
+                                                                        variant.size
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    £
+                                                                    {variant.price.toFixed(
+                                                                        2
+                                                                    )}
+                                                                </TableCell>
+                                                                <TableCell>
+                                                                    {
+                                                                        variant.stock
+                                                                    }
+                                                                </TableCell>
+                                                                <TableCell className="text-right">
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <Button
+                                                                            type="button"
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            onClick={() =>
+                                                                                editVariant(
+                                                                                    index
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            Edit
+                                                                        </Button>
+                                                                        <Button
+                                                                            type="button"
+                                                                            variant="ghost"
+                                                                            size="sm"
+                                                                            className="text-red-500 hover:text-red-700"
+                                                                            onClick={() =>
+                                                                                removeVariant(
+                                                                                    index
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <Trash className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    )}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    )}
+
+                                    {/* Add/Edit Variant Form */}
+                                    <div
+                                        onKeyDown={(
+                                            e: KeyboardEvent<HTMLDivElement>
+                                        ) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault();
+                                                submitVariant();
+                                            }
+                                        }}
+                                    >
+                                        <div className="grid gap-4 sm:grid-cols-3">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="variant-size">
+                                                    Size
+                                                </Label>
+                                                <Input
+                                                    id="variant-size"
+                                                    name="size"
+                                                    value={variantForm.size}
+                                                    onChange={
+                                                        handleVariantChange
+                                                    }
+                                                    placeholder="e.g., UK 8, XL, etc."
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="variant-price">
+                                                    Price (£)
+                                                </Label>
+                                                <Input
+                                                    id="variant-price"
+                                                    name="price"
+                                                    type="number"
+                                                    min="0"
+                                                    step="0.01"
+                                                    value={variantForm.price}
+                                                    onChange={
+                                                        handleVariantChange
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="variant-stock">
+                                                    Stock
+                                                </Label>
+                                                <Input
+                                                    id="variant-stock"
+                                                    name="stock"
+                                                    type="number"
+                                                    min="0"
+                                                    value={variantForm.stock}
+                                                    onChange={
+                                                        handleVariantChange
+                                                    }
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-4 flex justify-end gap-2">
+                                        {editingVariantIndex !== null && (
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => {
+                                                    setVariantForm({
+                                                        size: "",
+                                                        price: 0,
+                                                        stock: 0,
+                                                    });
+                                                    setEditingVariantIndex(
+                                                        null
+                                                    );
+                                                }}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        )}
+                                        <Button
+                                            type="button"
+                                            onClick={() => submitVariant()}
+                                            className="bg-black hover:bg-black/90"
+                                        >
+                                            {editingVariantIndex !== null
+                                                ? "Update Variant"
+                                                : "Add Variant"}
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
@@ -467,99 +683,6 @@ export function ProductForm({ initialData }: ProductFormProps) {
                     </Card>
                 </TabsContent>
 
-                {/* Inventory & Features Tab */}
-                <TabsContent value="inventory" className="space-y-6">
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="grid gap-6 sm:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label htmlFor="stock">
-                                        Stock Quantity
-                                    </Label>
-                                    <Input
-                                        id="stock"
-                                        name="stock"
-                                        type="number"
-                                        min="0"
-                                        value={formData.stock}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <Label htmlFor="featured">
-                                            Featured Product
-                                        </Label>
-                                        <Switch
-                                            id="featured"
-                                            checked={formData.isFeatured}
-                                            onCheckedChange={handleToggleChange}
-                                        />
-                                    </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        Featured products appear on the homepage
-                                        and in promotional areas.
-                                    </p>
-                                </div>
-                                <div className="sm:col-span-2 space-y-2">
-                                    <Label>Available Sizes</Label>
-                                    <div className="flex flex-wrap gap-2 mb-2">
-                                        {formData.size.map((size, index) => (
-                                            <Badge
-                                                key={index}
-                                                variant="secondary"
-                                                className="gap-1 px-3 py-1"
-                                            >
-                                                {size}
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-4 w-4 p-0 hover:bg-transparent"
-                                                    onClick={() =>
-                                                        removeSize(size)
-                                                    }
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                    <span className="sr-only">
-                                                        Remove {size}
-                                                    </span>
-                                                </Button>
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <Input
-                                            placeholder="Add a size (e.g., UK 8, M, XL)"
-                                            value={newSize}
-                                            onChange={(e) =>
-                                                setNewSize(e.target.value)
-                                            }
-                                            onKeyDown={(
-                                                e: KeyboardEvent<HTMLInputElement>
-                                            ) => {
-                                                if (e.key === "Enter") {
-                                                    e.preventDefault();
-                                                    addSize();
-                                                }
-                                            }}
-                                        />
-                                        <Button
-                                            type="button"
-                                            onClick={addSize}
-                                            size="sm"
-                                        >
-                                            <Plus className="h-4 w-4 mr-1" />{" "}
-                                            Add
-                                        </Button>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-
                 {/* Media Tab */}
                 <TabsContent value="media" className="space-y-6">
                     <Card>
@@ -584,7 +707,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Additional Images</Label>
-                                    <div className="border-2 border-dashed border-neutral-200 rounded-lg p-8 text-center">
+                                    <div className="border-2 border-dashed border-neutral-200 rounded-md p-8 text-center">
                                         <div className="mx-auto flex flex-col items-center">
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
@@ -659,11 +782,11 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 <Button
                     type="submit"
                     className="bg-black hover:bg-black/90"
-                    disabled={loading}
+                    disabled={loading || formData.variants.length === 0}
                 >
                     {loading
                         ? "Saving..."
-                        : initialData
+                        : formData.id
                         ? "Update Product"
                         : "Create Product"}
                 </Button>

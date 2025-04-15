@@ -7,11 +7,20 @@ export async function GET() {
     try {
         const db = await getDb();
         const users = await db.collection("users").find().toArray();
-        const parsedUsers: UserType[] = users.map((user) =>
-            UserSchema.parse(user)
-        );
 
-        return NextResponse.json(parsedUsers);
+        const transformedUsers: UserType[] = users.map((user: any) => {
+            const { _id, ...rest } = user;
+
+            return {
+                ...rest,
+                id: user._id.toString(),
+            };
+        });
+
+        return NextResponse.json({
+            success: true,
+            data: transformedUsers,
+        });
     } catch (error) {
         console.error(`Error ${error}`);
 

@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import {
+    useState,
+    useEffect,
+    ChangeEvent,
+    FormEvent,
+    KeyboardEvent,
+} from "react";
 import {
     Table,
     TableBody,
@@ -16,10 +22,9 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Edit, MoreHorizontal, Trash, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { mockProducts } from "@/lib/mock-data";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -30,41 +35,65 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import type { ProductType, VariantType } from "@/lib/schemas";
+
+// Extend ProductType if needed for additional properties (e.g., sales)
+interface DisplayProductType extends ProductType {
+    sales?: number;
+}
 
 interface ProductsTableProps {
     searchQuery: string;
 }
 
-interface Product {
-    id: string;
-    name: string;
-    brand: string;
-    sku: string;
-    price: number;
-    description: string;
-    category: string;
-    status: "In Stock" | "Out of Stock" | string;
-    stock: number;
-    image: string;
-    sales: number;
-}
-
 export function ProductsTable({ searchQuery }: ProductsTableProps) {
     const router = useRouter();
-    const [products, setProducts] = useState<Product[]>([]);
+    const [products, setProducts] = useState<DisplayProductType[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<
+        DisplayProductType[]
+    >([]);
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
     useEffect(() => {
-        // Filter products based on search query
-        const filteredProducts = mockProducts.filter(
-            (product) =>
-                product.name
-                    .toLowerCase()
-                    .includes(searchQuery.toLowerCase()) ||
-                product.sku.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setProducts(filteredProducts);
-    }, [searchQuery]);
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch(
+                    `${window.location.origin}/api/products`
+                );
+                const json = await res.json();
+
+                if (json.success && json.data) {
+                    setProducts(json.data as DisplayProductType[]);
+                    setFilteredProducts(json.data as DisplayProductType[]); // ✅ initialize filtered
+                } else {
+                    console.error("API error:", json.error);
+                }
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        if (!searchQuery.trim()) {
+            setFilteredProducts(products);
+            return;
+        }
+
+        const filtered = products.filter((product) => {
+            const q = searchQuery.toLowerCase();
+            return (
+                product.name.toLowerCase().includes(q) ||
+                product.category?.name.toLowerCase().includes(q) ||
+                product.tags?.some((tag) => tag.toLowerCase().includes(q))
+            );
+        });
+
+        setFilteredProducts(filtered);
+    }, [searchQuery, products]);
 
     const handleEdit = (productId: string) => {
         router.push(`/admin/products/${productId}/edit`);
@@ -74,14 +103,54 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
         setDeleteProductId(productId);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (!deleteProductId) return;
 
-        // In a real app, this would be an API call
-        setProducts(
-            products.filter((product) => product.id !== deleteProductId)
+        try {
+            const res = await fetch(
+                `${window.location.origin}/api/products/${deleteProductId}`,
+                {
+                    method: "DELETE",
+                }
+            );
+
+            const result = await res.json();
+
+            if (!res.ok || !result.success) {
+                console.error(
+                    "Delete failed:",
+                    result.error || "Unknown error"
+                );
+                return;
+            }
+
+            setProducts((prev) =>
+                prev.filter((product) => product.id !== deleteProductId)
+            );
+            setDeleteProductId(null);
+        } catch (error) {
+            console.error("Error calling delete API:", error);
+        }
+    };
+
+    // Helper function: Calculate the price range from an array of variants.
+    const getPriceRange = (variants: VariantType[]): string => {
+        if (!variants || variants.length === 0) return "N/A";
+        const prices = variants.map((v) => v.price);
+        const minPrice = Math.min(...prices);
+        const maxPrice = Math.max(...prices);
+        return minPrice === maxPrice
+            ? `£${minPrice.toFixed(2)}`
+            : `£${minPrice.toFixed(2)} - £${maxPrice.toFixed(2)}`;
+    };
+
+    // Helper function: Calculate total stock from an array of variants.
+    const getTotalStock = (variants: VariantType[]): number => {
+        if (!variants || variants.length === 0) return 0;
+        return variants.reduce(
+            (total, variant) => total + (variant.stock || 0),
+            0
         );
-        setDeleteProductId(null);
     };
 
     return (
@@ -92,14 +161,14 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                         <TableRow>
                             <TableHead>Product</TableHead>
                             <TableHead className="hidden sm:table-cell">
-                                SKU
+                                Category
                             </TableHead>
-                            <TableHead>Price</TableHead>
+                            <TableHead>Price Range</TableHead>
                             <TableHead className="hidden md:table-cell">
-                                Stock
+                                Total Stock
                             </TableHead>
                             <TableHead className="hidden sm:table-cell">
-                                Status
+                                Variants
                             </TableHead>
                             <TableHead className="text-right">
                                 Actions
@@ -117,7 +186,7 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            products.map((product) => (
+                            filteredProducts.map((product) => (
                                 <TableRow key={product.id}>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
@@ -125,60 +194,66 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                                                 <Image
                                                     src={
                                                         product.image ||
-                                                        "https://placehold.co/40x40/png"
+                                                        "/placeholder.svg?height=40&width=40"
                                                     }
                                                     alt={product.name}
                                                     fill
                                                     className="object-contain p-1"
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 200px"
                                                 />
                                             </div>
                                             <div>
-                                                <div className="font-medium">
+                                                <div className="font-medium flex items-center gap-1">
                                                     {product.name}
-                                                </div>
-                                                <div className="text-xs text-muted-foreground">
-                                                    {product.brand}
+                                                    {product.isFeatured && (
+                                                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                                    )}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground sm:hidden">
-                                                    {product.sku}
+                                                    {product.category.name}
                                                 </div>
                                                 <div className="text-xs text-muted-foreground md:hidden">
-                                                    Stock: {product.stock}
-                                                </div>
-                                                <div className="sm:hidden mt-1">
-                                                    <span
-                                                        className={`px-2 py-1 rounded-full text-xs ${
-                                                            product.status ===
-                                                            "In Stock"
-                                                                ? "bg-green-100 text-green-800"
-                                                                : "bg-red-100 text-red-800"
-                                                        }`}
-                                                    >
-                                                        {product.status}
-                                                    </span>
+                                                    Stock:{" "}
+                                                    {getTotalStock(
+                                                        product.variants
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell className="hidden sm:table-cell">
-                                        {product.sku}
+                                        {product.category.name}
                                     </TableCell>
                                     <TableCell>
-                                        £{product.price.toFixed(2)}
+                                        {getPriceRange(product.variants)}
                                     </TableCell>
                                     <TableCell className="hidden md:table-cell">
-                                        {product.stock}
-                                    </TableCell>
-                                    <TableCell className="hidden sm:table-cell">
                                         <span
                                             className={`px-2 py-1 rounded-full text-xs ${
-                                                product.status === "In Stock"
+                                                getTotalStock(
+                                                    product.variants
+                                                ) > 20
                                                     ? "bg-green-100 text-green-800"
                                                     : "bg-red-100 text-red-800"
                                             }`}
                                         >
-                                            {product.status}
+                                            {getTotalStock(product.variants) > 0
+                                                ? `${getTotalStock(
+                                                      product.variants
+                                                  )} in stock`
+                                                : "Out of stock"}
                                         </span>
+                                    </TableCell>
+                                    <TableCell className="hidden sm:table-cell">
+                                        <Badge
+                                            variant="outline"
+                                            className="text-xs"
+                                        >
+                                            {product.variants.length}{" "}
+                                            {product.variants.length === 1
+                                                ? "variant"
+                                                : "variants"}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
@@ -196,7 +271,9 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        handleEdit(product.id)
+                                                        handleEdit(
+                                                            product.id as string
+                                                        )
                                                     }
                                                 >
                                                     <Edit className="mr-2 h-4 w-4" />
@@ -204,7 +281,9 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        handleDelete(product.id)
+                                                        handleDelete(
+                                                            product.id as string
+                                                        )
                                                     }
                                                     className="text-red-600"
                                                 >

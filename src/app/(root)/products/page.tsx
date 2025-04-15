@@ -12,6 +12,43 @@ import {
 } from "@/components/ui/pagination";
 
 export default function Page() {
+    const mockCategory: CategoryType = {
+        id: "b1g1",
+        name: "Buy 1 Get 1 Free",
+        description: "Exclusive B1G1 deals on select attars and perfume oils.",
+        promotion: {
+            type: ["B1G1"],
+            details:
+                "Buy one 12ml bottle and get one free of the same product.",
+        },
+    };
+
+    const mockProduct: ProductType = {
+        id: "21135",
+        name: "Arkan Blend",
+        description:
+            "A luxurious, oriental attar oil with deep notes of amber, oud, and musk. 100% alcohol-free and handcrafted for a rich scent experience.",
+        price: 950, // in BDT
+        size: ["6ml", "12ml"],
+        category: mockCategory,
+        stock: 30,
+        isFeatured: true,
+        tags: ["Alcohol-Free", "Unisex", "Woody", "Long-lasting", "Arabic"],
+        image: "https://placehold.co/600x400/000000/FFFFFF/png",
+        createdAt: "2025-04-14T10:00:00.000Z",
+        updatedAt: "2025-04-14T10:00:00.000Z",
+    };
+
+    const productCardProps: ProductCardProps = {
+        name: mockProduct.name,
+        description: mockProduct.description,
+        price: mockProduct.price,
+        tags: mockProduct.tags,
+        image: mockProduct.image,
+        size: mockProduct.size,
+        productLink: `/products/${mockProduct.id}`,
+    };
+
     const [expandedFilters, setExpandedFilters] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 8;
@@ -78,18 +115,8 @@ export default function Page() {
                         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                             {[...Array(productsPerPage)].map((_, index) => (
                                 <ProductCard
-                                    key={
-                                        index +
-                                        (currentPage - 1) * productsPerPage
-                                    }
-                                    imageLink="https://placehold.co/300x300/000000/FFFFFF/png"
-                                    brand="Nike"
-                                    name="Air Max 95"
-                                    price={169.99}
-                                    productLink={`/products/${
-                                        index +
-                                        (currentPage - 1) * productsPerPage
-                                    }`}
+                                    {...productCardProps}
+                                    key={index}
                                 />
                             ))}
                         </div>

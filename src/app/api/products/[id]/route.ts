@@ -4,12 +4,12 @@ import { ObjectId } from "mongodb";
 import { ProductType } from "@/lib/schemas";
 
 // GET /api/products/[id] - Fetch a single product by id.
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function GET(req: Request) {
     try {
-        const { id } = await Promise.resolve(params);
+        const url = new URL(req.url);
+        const pathParts = url.pathname.split("/");
+        const id = pathParts[pathParts.length - 1];
+
         const db = await getDb();
         const product = await db
             .collection("products")
@@ -66,12 +66,12 @@ export async function GET(
 }
 
 // PATCH /api/products/[id] - Update a product by id.
-export async function PATCH(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request) {
     try {
-        const { id } = await Promise.resolve(params);
+        const url = new URL(req.url);
+        const pathParts = url.pathname.split("/");
+        const id = pathParts[pathParts.length - 1];
+
         const body = await req.json();
         const db = await getDb();
 
@@ -106,12 +106,12 @@ export async function PATCH(
 }
 
 // DELETE /api/products/[id] - Delete a product by id.
-export async function DELETE(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function DELETE(req: Request) {
     try {
-        const { id } = await Promise.resolve(params);
+        const url = new URL(req.url);
+        const pathParts = url.pathname.split("/");
+        const id = pathParts[pathParts.length - 1];
+
         const db = await getDb();
         const result = await db
             .collection("products")

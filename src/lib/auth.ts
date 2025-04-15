@@ -4,7 +4,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { comparePassword } from "./utils";
 import { getDb } from "./mongodb";
-import { UserSchema } from "./user";
+import { UserSchema } from "./schemas";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
@@ -19,7 +19,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             async authorize(
                 credentials: Partial<Record<"email" | "password", unknown>>,
                 req: Request
-            ): Promise<{ id: string; email?: string } | null> {
+            ): Promise<SessionUserType | null> {
                 const { email, password } = credentials ?? {};
 
                 if (typeof email !== "string" || typeof password !== "string") {
@@ -37,23 +37,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     throw new Error("User not found");
                 }
 
-                const parsedUser = UserSchema.parse(user);
+                const transformedUser = {
+                    ...user,
+                    id: user._id.toString(),
+                };
+
+                const parsedUser = UserSchema.parse(transformedUser);
                 const passwordMatch = await comparePassword(
                     password,
-                    parsedUser.password
+                    parsedUser.passwordHash as string
                 );
 
                 if (!passwordMatch) {
                     throw new Error("Invalid password");
                 }
 
-                if (!parsedUser._id) {
+                if (!parsedUser.id) {
                     throw new Error("User missing id");
                 }
 
                 return {
-                    id: parsedUser._id.toString(),
+                    id: parsedUser.id,
                     email: parsedUser.email,
+                    name: parsedUser.name,
+                    role: parsedUser.role,
                 };
             },
         }),
@@ -70,6 +77,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (user) {
                 token.id = user.id;
                 token.email = user.email;
+                token.name = user.name;
+                token.role = user?.role ?? "user";
             }
 
             return token;
@@ -78,6 +87,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             if (token && session.user) {
                 session.user.id = token.id as string;
                 session.user.email = token.email as string;
+                session.user.name = token.name as string;
+                session.user.role = token.role as "user" | "admin";
             }
 
             return session;

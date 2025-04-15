@@ -9,7 +9,7 @@ export function CartItem({ item, onRemove }: CartItemProps) {
         <div className="bg-white p-4 flex gap-4 relative">
             <div className="w-24 h-24 relative flex-shrink-0">
                 <Image
-                    src={item.imageLink || "/placeholder.svg"}
+                    src={item.image || "/placeholder.svg"}
                     alt={item.name}
                     fill
                     className="object-contain"
@@ -18,7 +18,6 @@ export function CartItem({ item, onRemove }: CartItemProps) {
             </div>
 
             <div className="flex-1">
-                <div className="text-sm text-neutral-500">{item.brand}</div>
                 <Link
                     href={`/products/${item.id}`}
                     className="font-medium hover:underline"

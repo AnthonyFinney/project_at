@@ -2,11 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 
 export function ProductCard({
-    imageLink,
-    brand,
     name,
-    productLink,
+    description,
     price,
+    tags,
+    image,
+    size,
+    productLink,
 }: ProductCardProps) {
     return (
         <Link href={productLink} className="group">
@@ -14,11 +16,11 @@ export function ProductCard({
                 <div className="relative aspect-square overflow-hidden">
                     <Image
                         src={
-                            imageLink ||
+                            image ||
                             "https://placehold.co/600x400/000000/FFFFFF/png" ||
                             "/placeholder.svg"
                         }
-                        alt={`${brand} ${name}`}
+                        alt={`${name}`}
                         fill
                         className="object-cover transition-transform group-hover:scale-105"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
@@ -26,7 +28,6 @@ export function ProductCard({
                 </div>
             </div>
             <div>
-                <p className="text-sm font-medium text-black">{brand}</p>
                 <p className="text-sm text-neutral-600">{name}</p>
                 <p className="text-sm font-medium mt-1">
                     £{Number.isInteger(price) ? price : price.toFixed(2)}

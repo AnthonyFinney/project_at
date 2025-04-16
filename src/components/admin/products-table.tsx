@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import type { ProductType, VariantType } from "@/lib/schemas";
+import useSWR from "swr";
+import Spinner from "../spinner";
 
 // Extend ProductType if needed for additional properties (e.g., sales)
 interface DisplayProductType extends ProductType {
@@ -47,53 +49,43 @@ interface ProductsTableProps {
     searchQuery: string;
 }
 
+// Define a fetcher function for SWR
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export function ProductsTable({ searchQuery }: ProductsTableProps) {
     const router = useRouter();
-    const [products, setProducts] = useState<DisplayProductType[]>([]);
-    const [filteredProducts, setFilteredProducts] = useState<
-        DisplayProductType[]
-    >([]);
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch(
-                    `${window.location.origin}/api/products`
-                );
-                const json = await res.json();
+    // Use SWR to fetch products data
+    const { data, error, mutate } = useSWR(`/api/products`, fetcher, {
+        revalidateOnFocus: true, // Optional: revalidate data when the window regains focus
+    });
 
-                if (json.success && json.data) {
-                    setProducts(json.data as DisplayProductType[]);
-                    setFilteredProducts(json.data as DisplayProductType[]); // ✅ initialize filtered
-                } else {
-                    console.error("API error:", json.error);
-                }
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            }
-        };
+    // If there's an error, show an error message
+    if (error) {
+        return <div>Error loading products</div>;
+    }
 
-        fetchProducts();
-    }, []);
+    // If data hasn't loaded yet, show a loading state
+    if (!data) {
+        return <Spinner />;
+    }
 
-    useEffect(() => {
-        if (!searchQuery.trim()) {
-            setFilteredProducts(products);
-            return;
-        }
+    // Assume the API returns { success: boolean, data: DisplayProductType[] }
+    const products =
+        data.success && data.data ? (data.data as DisplayProductType[]) : [];
 
-        const filtered = products.filter((product) => {
-            const q = searchQuery.toLowerCase();
-            return (
-                product.name.toLowerCase().includes(q) ||
-                product.category?.name.toLowerCase().includes(q) ||
-                product.tags?.some((tag) => tag.toLowerCase().includes(q))
-            );
-        });
-
-        setFilteredProducts(filtered);
-    }, [searchQuery, products]);
+    // Compute filteredProducts based on the searchQuery
+    const filteredProducts = searchQuery.trim()
+        ? products.filter((product) => {
+              const q = searchQuery.toLowerCase();
+              return (
+                  product.name.toLowerCase().includes(q) ||
+                  product.category?.name.toLowerCase().includes(q) ||
+                  product.tags?.some((tag) => tag.toLowerCase().includes(q))
+              );
+          })
+        : products;
 
     const handleEdit = (productId: string) => {
         router.push(`/admin/products/${productId}/edit`);
@@ -124,9 +116,8 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                 return;
             }
 
-            setProducts((prev) =>
-                prev.filter((product) => product.id !== deleteProductId)
-            );
+            // Revalidate the data after deletion
+            mutate();
             setDeleteProductId(null);
         } catch (error) {
             console.error("Error calling delete API:", error);

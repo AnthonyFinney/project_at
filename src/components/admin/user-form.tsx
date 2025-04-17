@@ -17,38 +17,33 @@ import {
 } from "@/components/ui/select";
 import { Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import type { UserType, AddressType } from "@/lib/schemas";
 
-interface Address {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    district?: string;
-    isDefault?: boolean;
+export interface UserFormProps {
+    initialData?: Partial<UserType>;
 }
 
-interface UserFormProps {
-    initialData?: any;
-}
+const defaultValues: UserType = {
+    name: "",
+    email: "",
+    phone: "",
+    provider: "credentials",
+    providerId: "",
+    isVerified: false,
+    role: "user",
+    passwordHash: "",
+    addresses: [],
+};
 
 export function UserForm({ initialData }: UserFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
-    const defaultValues = {
-        name: "",
-        email: "",
-        phone: "",
-        provider: "credentials",
-        providerId: "",
-        isVerified: false,
-        role: "user",
-        addresses: [],
+    const [formData, setFormData] = useState<UserType>({
+        ...defaultValues,
         ...initialData,
-    };
-
-    const [formData, setFormData] = useState(defaultValues);
-    const [newAddress, setNewAddress] = useState<Address>({
+    });
+    const [newAddress, setNewAddress] = useState<AddressType>({
         street: "",
         city: "",
         postalCode: "",
@@ -122,6 +117,8 @@ export function UserForm({ initialData }: UserFormProps) {
         }
 
         if (editingAddressIndex !== null) {
+            if (!formData.addresses) return;
+
             // Update existing address
             const updatedAddresses = [...formData.addresses];
 
@@ -136,6 +133,8 @@ export function UserForm({ initialData }: UserFormProps) {
                 addresses: updatedAddresses,
             }));
         } else {
+            if (!formData.addresses) return;
+
             // Add new address
             const updatedAddresses = [...formData.addresses];
 
@@ -165,21 +164,23 @@ export function UserForm({ initialData }: UserFormProps) {
 
     // Edit address
     const editAddress = (index: number) => {
+        if (!formData.addresses) return;
+
         setNewAddress(formData.addresses[index]);
         setEditingAddressIndex(index);
     };
 
     // Remove address
     const removeAddress = (index: number) => {
-        setFormData((prev: { addresses: any[] }) => ({
+        setFormData((prev) => ({
             ...prev,
-            addresses: prev.addresses.filter((_, i) => i !== index),
+            addresses: prev.addresses?.filter((_, i) => i !== index),
         }));
     };
 
     // Set address as default
     const setAddressAsDefault = (index: number) => {
-        const updatedAddresses = formData.addresses.map(
+        const updatedAddresses = formData.addresses?.map(
             (addr: any, i: number) => ({
                 ...addr,
                 isDefault: i === index,
@@ -197,11 +198,26 @@ export function UserForm({ initialData }: UserFormProps) {
         setLoading(true);
 
         try {
-            // In a real app, this would be an API call
-            console.log("Form submitted:", formData);
+            const formattedData: UserType = {
+                ...formData,
+            };
 
-            // Simulate API delay
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const isEdit = Boolean(formData.id);
+            const endPoint = isEdit
+                ? `${window.location.origin}/api/users/${formData.id}`
+                : `${window.location.origin}/api/users`;
+            const method = isEdit ? "PATCH" : "POST";
+
+            const res = await fetch(endPoint, {
+                method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formattedData),
+            });
+            const result = await res.json();
+            if (!res.ok) {
+                console.error("API ERROR:", result.error);
+                return;
+            }
 
             router.push("/admin/users");
         } catch (error) {
@@ -256,6 +272,22 @@ export function UserForm({ initialData }: UserFormProps) {
                                         onChange={handleChange}
                                     />
                                 </div>
+
+                                {formData.id ? (
+                                    <></>
+                                ) : (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="passwordHash">
+                                            Password
+                                        </Label>
+                                        <Input
+                                            id="passwordHash"
+                                            name="passwordHash"
+                                            value={formData.passwordHash}
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                )}
 
                                 <div className="space-y-2">
                                     <Label htmlFor="role">User Role</Label>
@@ -348,13 +380,13 @@ export function UserForm({ initialData }: UserFormProps) {
                         <CardContent className="pt-6">
                             <div className="space-y-6">
                                 {/* Existing Addresses */}
-                                {formData.addresses.length > 0 && (
+                                {formData.addresses?.length! > 0 && (
                                     <div className="space-y-4">
                                         <h3 className="text-lg font-medium">
                                             Saved Addresses
                                         </h3>
                                         <div className="grid gap-4 sm:grid-cols-2">
-                                            {formData.addresses.map(
+                                            {formData.addresses?.map(
                                                 (address: any, index: any) => (
                                                     <div
                                                         key={index}
@@ -574,7 +606,7 @@ export function UserForm({ initialData }: UserFormProps) {
                 >
                     {loading
                         ? "Saving..."
-                        : initialData?.id
+                        : formData.id
                         ? "Update User"
                         : "Create User"}
                 </Button>

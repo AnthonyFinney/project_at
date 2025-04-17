@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     Table,
     TableBody,
@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Edit, MoreHorizontal, Trash, Shield, User, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { mockUsers } from "@/lib/mock-data";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -30,67 +29,85 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import useSWR from "swr";
+import Spinner from "../spinner";
+import { UserType } from "@/lib/schemas";
+import { fetcher } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface UsersTableProps {
     searchQuery: string;
 }
 
-interface Address {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    isDefault: boolean;
-    district?: string; // 👈 Make optional
-}
-
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    provider: string;
-    providerId?: string;
-    isVerified: boolean;
-    role: string;
-    addresses: Address[];
-    createdAt: string;
-    updatedAt: string;
-}
-
 export function UsersTable({ searchQuery }: UsersTableProps) {
     const router = useRouter();
-    const [users, setUsers] = useState<User[]>([]);
     const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
 
-    useEffect(() => {
-        // Filter users based on search query
-        const filteredUsers = mockUsers.filter(
-            (user) =>
-                user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (user.phone &&
-                    user.phone
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()))
+    const { data, error, mutate, isLoading } = useSWR<{
+        success: boolean;
+        data: UserType[];
+    }>("/api/users", fetcher, {
+        revalidateOnFocus: true,
+    });
+
+    if (error) {
+        return (
+            <div className="p-4 text-center text-red-500">
+                {error.message || "An error occurred."}
+            </div>
         );
-        setUsers(filteredUsers);
-    }, [searchQuery]);
+    }
+
+    if (isLoading) {
+        return <Spinner />;
+    }
+
+    const users = data?.success ? data.data : [];
+
+    const filteredUsers = searchQuery.trim()
+        ? users.filter((user) => {
+              const q = searchQuery.toLowerCase();
+              return (
+                  user.name.toLowerCase().includes(q) ||
+                  user.email.toLowerCase().includes(q) ||
+                  user.phone?.toLowerCase().includes(q)
+              );
+          })
+        : users;
 
     const handleEdit = (userId: string) => {
-        router.push(`/admin/users/${userId}`);
+        router.push(`/admin/users/${userId}/edit`);
     };
 
     const handleDelete = (userId: string) => {
         setDeleteUserId(userId);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (!deleteUserId) return;
 
-        // In a real app, this would be an API call
-        setUsers(users.filter((user) => user.id !== deleteUserId));
-        setDeleteUserId(null);
+        try {
+            const res = await fetch(`/api/users/${deleteUserId}`, {
+                method: "DELETE",
+            });
+
+            const result = await res.json();
+
+            if (!res.ok || !result.success) {
+                console.error(
+                    "Delete failed:",
+                    result.error || "Unknown error"
+                );
+                return;
+            }
+
+            mutate();
+            setDeleteUserId(null);
+
+            toast("User deleted!");
+        } catch (error) {
+            console.error("Error calling delete API:", error);
+        }
     };
 
     const formatDate = (dateString: string) => {
@@ -133,7 +150,7 @@ export function UsersTable({ searchQuery }: UsersTableProps) {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            users.map((user) => (
+                            filteredUsers.map((user) => (
                                 <TableRow key={user.id}>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
@@ -212,7 +229,7 @@ export function UsersTable({ searchQuery }: UsersTableProps) {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="hidden lg:table-cell text-muted-foreground">
-                                        {formatDate(user.createdAt)}
+                                        {formatDate(user.createdAt as string)}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
@@ -230,7 +247,9 @@ export function UsersTable({ searchQuery }: UsersTableProps) {
                                             <DropdownMenuContent align="end">
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        handleEdit(user.id)
+                                                        handleEdit(
+                                                            user.id as string
+                                                        )
                                                     }
                                                 >
                                                     <Edit className="mr-2 h-4 w-4" />
@@ -238,7 +257,9 @@ export function UsersTable({ searchQuery }: UsersTableProps) {
                                                 </DropdownMenuItem>
                                                 <DropdownMenuItem
                                                     onClick={() =>
-                                                        handleDelete(user.id)
+                                                        handleDelete(
+                                                            user.id as string
+                                                        )
                                                     }
                                                     className="text-red-600"
                                                 >

@@ -12,32 +12,35 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AlertTriangle } from "lucide-react";
-import { useEffect, useState } from "react";
 import { ProductType } from "@/lib/schemas";
+import useSWR from "swr";
+import Spinner from "../spinner";
+import { fetcher } from "@/lib/utils";
 
 export function LowQuantityProducts() {
     const router = useRouter();
-    const [products, setProducts] = useState<ProductType[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch("/api/products");
-                const json = await res.json();
+    // Use SWR to fetch products data
+    const { data, error } = useSWR(`/api/products`, fetcher, {
+        revalidateOnFocus: true,
+    });
 
-                if (!json.success) throw new Error(json.error || "Fetch error");
-                setProducts(json.data);
-            } catch (err: any) {
-                setError(err.message || "Unknown error");
-            } finally {
-                setLoading(false);
-            }
-        };
+    if (error) {
+        return (
+            <div className="p-4 text-center text-red-500">
+                {error.message || "An error occurred."}
+            </div>
+        );
+    }
 
-        fetchProducts();
-    }, []);
+    // Instead of using a separate loading state, check if the data is still undefined.
+    if (!data) {
+        return <Spinner />;
+    }
+
+    // Safe access to data using optional chaining
+    const products =
+        data.success && data.data ? (data.data as ProductType[]) : [];
 
     const getTotalStock = (product: ProductType): number => {
         if (!product.variants || product.variants.length === 0) {
@@ -56,7 +59,6 @@ export function LowQuantityProducts() {
         const prices = product.variants.map((variant) => variant.price);
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-
         return minPrice === maxPrice
             ? `£${minPrice.toFixed(2)}`
             : `£${minPrice.toFixed(2)} - £${maxPrice.toFixed(2)}`;
@@ -78,108 +80,90 @@ export function LowQuantityProducts() {
 
     return (
         <div className="rounded-md border overflow-x-auto">
-            {loading ? (
-                <div className="p-4 text-center text-muted-foreground">
-                    Loading...
-                </div>
-            ) : error ? (
-                <div className="p-4 text-center text-red-500">{error}</div>
-            ) : (
-                <>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Product</TableHead>
-                                <TableHead className="hidden sm:table-cell">
-                                    Price
-                                </TableHead>
-                                <TableHead className="text-right">
-                                    Stock
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {lowStockProducts.length === 0 ? (
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={3}
-                                        className="text-center py-6 text-muted-foreground"
-                                    >
-                                        No low stock products found
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead className="hidden sm:table-cell">
+                            Price
+                        </TableHead>
+                        <TableHead className="text-right">Stock</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {lowStockProducts.length === 0 ? (
+                        <TableRow>
+                            <TableCell
+                                colSpan={3}
+                                className="text-center py-6 text-muted-foreground"
+                            >
+                                No low stock products found
+                            </TableCell>
+                        </TableRow>
+                    ) : (
+                        lowStockProducts.map((product) => {
+                            const totalStock = getTotalStock(product);
+                            return (
+                                <TableRow
+                                    key={product.id?.toString() || product.name}
+                                >
+                                    <TableCell>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-neutral-100 relative flex-shrink-0">
+                                                <Image
+                                                    src={
+                                                        product.image ||
+                                                        "/placeholder.svg?height=40&width=40"
+                                                    }
+                                                    alt={product.name}
+                                                    fill
+                                                    className="object-contain p-1"
+                                                />
+                                            </div>
+                                            <div>
+                                                <div className="font-medium flex items-center gap-1">
+                                                    {product.name}
+                                                    {totalStock < 5 && (
+                                                        <AlertTriangle className="h-3 w-3 text-red-500" />
+                                                    )}
+                                                </div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {product.category?.name ||
+                                                        "Uncategorized"}
+                                                </div>
+                                                <div className="text-xs font-medium sm:hidden">
+                                                    {getPriceRange(product)}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="hidden sm:table-cell">
+                                        {getPriceRange(product)}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <span
+                                            className={`px-2 py-1 rounded-full text-xs ${getStockStatusClass(
+                                                totalStock
+                                            )}`}
+                                        >
+                                            {totalStock} left
+                                        </span>
                                     </TableCell>
                                 </TableRow>
-                            ) : (
-                                lowStockProducts.map((product) => {
-                                    const totalStock = getTotalStock(product);
-                                    return (
-                                        <TableRow
-                                            key={
-                                                product.id?.toString() ||
-                                                product.name
-                                            }
-                                        >
-                                            <TableCell>
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-neutral-100 relative flex-shrink-0">
-                                                        <Image
-                                                            src={
-                                                                product.image ||
-                                                                "/placeholder.svg?height=40&width=40"
-                                                            }
-                                                            alt={product.name}
-                                                            fill
-                                                            className="object-contain p-1"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <div className="font-medium flex items-center gap-1">
-                                                            {product.name}
-                                                            {totalStock < 5 && (
-                                                                <AlertTriangle className="h-3 w-3 text-red-500" />
-                                                            )}
-                                                        </div>
-                                                        <div className="text-xs text-muted-foreground">
-                                                            {product.category
-                                                                ?.name ||
-                                                                "Uncategorized"}
-                                                        </div>
-                                                        <div className="text-xs font-medium sm:hidden">
-                                                            {getPriceRange(
-                                                                product
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="hidden sm:table-cell">
-                                                {getPriceRange(product)}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <span
-                                                    className={`px-2 py-1 rounded-full text-xs ${getStockStatusClass(
-                                                        totalStock
-                                                    )}`}
-                                                >
-                                                    {totalStock} left
-                                                </span>
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })
-                            )}
-                        </TableBody>
-                    </Table>
-                    <div className="p-4 text-center">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push("/admin/products")}
-                        >
-                            View All Products
-                        </Button>
-                    </div>
-                </>
-            )}
+                            );
+                        })
+                    )}
+                </TableBody>
+            </Table>
+            <div className="p-4 text-center">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => router.push("/admin/products")}
+                >
+                    View All Products
+                </Button>
+            </div>
         </div>
     );
 }

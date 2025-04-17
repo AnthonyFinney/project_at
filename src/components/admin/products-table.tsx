@@ -1,12 +1,6 @@
 "use client";
 
-import {
-    useState,
-    useEffect,
-    ChangeEvent,
-    FormEvent,
-    KeyboardEvent,
-} from "react";
+import { useState } from "react";
 import {
     Table,
     TableBody,
@@ -39,43 +33,38 @@ import { Badge } from "@/components/ui/badge";
 import type { ProductType, VariantType } from "@/lib/schemas";
 import useSWR from "swr";
 import Spinner from "../spinner";
-
-// Extend ProductType if needed for additional properties (e.g., sales)
-interface DisplayProductType extends ProductType {
-    sales?: number;
-}
+import { fetcher } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface ProductsTableProps {
     searchQuery: string;
 }
 
-// Define a fetcher function for SWR
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
 export function ProductsTable({ searchQuery }: ProductsTableProps) {
     const router = useRouter();
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
 
-    // Use SWR to fetch products data
-    const { data, error, mutate } = useSWR(`/api/products`, fetcher, {
-        revalidateOnFocus: true, // Optional: revalidate data when the window regains focus
+    const { data, error, mutate, isLoading } = useSWR<{
+        success: boolean;
+        data: ProductType[];
+    }>(`/api/products`, fetcher, {
+        revalidateOnFocus: true,
     });
 
-    // If there's an error, show an error message
     if (error) {
-        return <div>Error loading products</div>;
+        return (
+            <div className="p-4 text-center text-red-500">
+                {error.message || "An error occurred."}
+            </div>
+        );
     }
 
-    // If data hasn't loaded yet, show a loading state
-    if (!data) {
+    if (isLoading) {
         return <Spinner />;
     }
 
-    // Assume the API returns { success: boolean, data: DisplayProductType[] }
-    const products =
-        data.success && data.data ? (data.data as DisplayProductType[]) : [];
+    const products = data?.success ? data.data : [];
 
-    // Compute filteredProducts based on the searchQuery
     const filteredProducts = searchQuery.trim()
         ? products.filter((product) => {
               const q = searchQuery.toLowerCase();
@@ -99,12 +88,9 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
         if (!deleteProductId) return;
 
         try {
-            const res = await fetch(
-                `${window.location.origin}/api/products/${deleteProductId}`,
-                {
-                    method: "DELETE",
-                }
-            );
+            const res = await fetch(`/api/products/${deleteProductId}`, {
+                method: "DELETE",
+            });
 
             const result = await res.json();
 
@@ -116,15 +102,15 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                 return;
             }
 
-            // Revalidate the data after deletion
             mutate();
             setDeleteProductId(null);
+
+            toast("Product deleted!");
         } catch (error) {
             console.error("Error calling delete API:", error);
         }
     };
 
-    // Helper function: Calculate the price range from an array of variants.
     const getPriceRange = (variants: VariantType[]): string => {
         if (!variants || variants.length === 0) return "N/A";
         const prices = variants.map((v) => v.price);
@@ -135,7 +121,6 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
             : `£${minPrice.toFixed(2)} - £${maxPrice.toFixed(2)}`;
     };
 
-    // Helper function: Calculate total stock from an array of variants.
     const getTotalStock = (variants: VariantType[]): number => {
         if (!variants || variants.length === 0) return 0;
         return variants.reduce(

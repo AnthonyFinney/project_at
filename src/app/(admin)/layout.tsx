@@ -4,6 +4,7 @@ import Favicon from "../../../public/favicon.ico";
 import { AuthProvider } from "@/Providers/Providers";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { MobileNav } from "@/components/admin/mobile-nav";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
     title: "Admin Dashboard",
@@ -26,6 +27,7 @@ export default function AccountLayout({
                                 <div className="ml-auto"></div>
                             </header>
                             <div className="p-4 md:p-8">{children}</div>
+                            <Toaster />
                         </div>
                     </div>
                 </AuthProvider>

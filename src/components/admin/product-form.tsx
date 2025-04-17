@@ -21,17 +21,13 @@ import {
 } from "@/components/ui/table";
 import type { ProductType, VariantType } from "@/lib/schemas";
 
-// Define the form state type from your ProductType,
-// omitting fields that will be set on the server.
-export interface ProductFormValues extends ProductType {}
-
 // Define the component props using a Partial so that only some fields may be provided
 export interface ProductFormProps {
-    initialData?: Partial<ProductFormValues>;
+    initialData?: Partial<ProductType>;
 }
 
 // Default values using the ProductFormValues interface.
-const defaultValues: ProductFormValues = {
+const defaultValues: ProductType = {
     name: "",
     description: "",
     variants: [],
@@ -53,7 +49,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
     const [loading, setLoading] = useState(false);
 
     // Merge the defaults with any provided initial data.
-    const [formData, setFormData] = useState<ProductFormValues>({
+    const [formData, setFormData] = useState<ProductType>({
         ...defaultValues,
         ...initialData,
     });
@@ -145,6 +141,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
             alert("Size is required");
             return;
         }
+
         if (editingVariantIndex !== null) {
             // Update an existing variant.
             const updatedVariants = [...formData.variants];
@@ -160,14 +157,6 @@ export function ProductForm({ initialData }: ProductFormProps) {
         // Reset variant form.
         setVariantForm({ size: "", price: 0, stock: 0 });
         setEditingVariantIndex(null);
-    };
-
-    // Wrapper for form submission from variant form (so we can use it on Enter key and button click).
-    const handleVariantSubmit = (
-        e: FormEvent<HTMLFormElement> | KeyboardEvent<HTMLInputElement>
-    ) => {
-        e.preventDefault();
-        submitVariant();
     };
 
     const editVariant = (index: number) => {
@@ -228,8 +217,6 @@ export function ProductForm({ initialData }: ProductFormProps) {
             // which are set on the server. 'id' is omitted in the form state.
             const formattedData: ProductType = {
                 ...formData,
-                createdAt: "",
-                updatedAt: "",
             };
 
             const isEdit = Boolean(formData.id);

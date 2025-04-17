@@ -5,7 +5,7 @@ import { UserForm } from "@/components/admin/user-form";
 
 export default function NewUserPage() {
     // Initial empty user
-    const emptyUser = {
+    const emptyUser: Partial<UserType> = {
         name: "",
         email: "",
         phone: "",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createProduct } from "@/lib/createProduct";
 import { getDb } from "@/lib/mongodb";
 import { ProductType } from "@/lib/schemas";
+import { catchError } from "@/lib/utils";
 
 export async function GET(req: Request) {
     try {
@@ -24,17 +25,7 @@ export async function GET(req: Request) {
             data: transformedProducts,
         });
     } catch (error: unknown) {
-        console.error(`Error ${error}`);
-
-        return NextResponse.json(
-            {
-                success: false,
-                error: error instanceof Error ? error.message : "Unknown error",
-                details:
-                    typeof error === "string" ? error : JSON.stringify(error),
-            },
-            { status: 500 }
-        );
+        catchError(error, "Error fetching products:");
     }
 }
 
@@ -45,16 +36,6 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, data: { id: insertedId } });
     } catch (error: unknown) {
-        console.error(`Error ${error}`);
-
-        return NextResponse.json(
-            {
-                success: false,
-                error: error instanceof Error ? error.message : "Unknown error",
-                details:
-                    typeof error === "string" ? error : JSON.stringify(error),
-            },
-            { status: 500 }
-        );
+        catchError(error, "Error making product:");
     }
 }

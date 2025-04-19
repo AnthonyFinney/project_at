@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/mongodb";
-import { UserType, UserSchema } from "@/lib/schemas";
+import { UserType } from "@/lib/schemas";
 import { registerUser } from "@/lib/registerUser";
+import { catchError } from "@/lib/utils";
 
 export async function GET() {
     try {
@@ -21,14 +22,8 @@ export async function GET() {
             success: true,
             data: transformedUsers,
         });
-    } catch (error) {
-        console.error(`Error ${error}`);
-
-        return NextResponse.json({
-            success: false,
-            error: error instanceof Error ? error.message : "Unknown error",
-            details: typeof error === "string" ? error : JSON.stringify(error),
-        });
+    } catch (error: unknown) {
+        catchError(error, "Error fetching users:");
     }
 }
 
@@ -39,16 +34,6 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true, data: { id: insertedId } });
     } catch (error: unknown) {
-        console.error(`Error ${error}`);
-
-        return NextResponse.json(
-            {
-                success: false,
-                error: error instanceof Error ? error.message : "Unknown error",
-                details:
-                    typeof error === "string" ? error : JSON.stringify(error),
-            },
-            { status: 500 }
-        );
+        catchError(error, "Error making user:");
     }
 }

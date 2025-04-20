@@ -3,6 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { X } from "lucide-react";
+import { CartItemType } from "@/lib/schemas";
+
+interface CartItemProps {
+    item: CartItemType;
+    onRemove: () => void;
+}
 
 export function CartItem({ item, onRemove }: CartItemProps) {
     return (
@@ -19,7 +25,7 @@ export function CartItem({ item, onRemove }: CartItemProps) {
 
             <div className="flex-1">
                 <Link
-                    href={`/products/${item.id}`}
+                    href={`/products/${item.productId}`}
                     className="font-medium hover:underline"
                 >
                     {item.name}

@@ -3,9 +3,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import { CartItemType } from "@/lib/schemas";
 
-export default function ProductAction({ product }: { product: ProductType }) {
-    const [cart, setCart] = useState<ProductType[]>([]);
+export default function ProductAction({
+    cartItem,
+}: {
+    cartItem: CartItemType;
+}) {
+    const [cart, setCart] = useState<CartItemType[]>([]);
 
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");
@@ -28,21 +33,17 @@ export default function ProductAction({ product }: { product: ProductType }) {
 
     const addToCart = () => {
         setCart((prevCart) => {
-            const newProduct = { ...product, id: Math.random().toString() };
-            const updatedCart = [...prevCart, newProduct];
+            const newItem = { ...cartItem };
+            const updatedCart = [...prevCart, newItem];
             return updatedCart;
         });
     };
 
     return (
-        <div className="space-y-3">
-            <Button
-                className="w-full py-6 taxt-base"
-                size="lg"
-                onClick={addToCart}
-            >
+        <div className="flex gap-4 mt-4 justify-start">
+            <Button className="px-6 max-w-xs" size="lg" onClick={addToCart}>
                 <Link href="/cart" className="w-full">
-                    ADD TO CART
+                    Add to Cart
                 </Link>
             </Button>
         </div>

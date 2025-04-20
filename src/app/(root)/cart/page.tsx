@@ -5,9 +5,10 @@ import Link from "next/link";
 import { ChevronLeft, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/components/cart-item";
+import { CartItemType } from "@/lib/schemas";
 
 export default function Page() {
-    const [cart, setCart] = useState<ProductType[]>([]);
+    const [cart, setCart] = useState<CartItemType[]>([]);
 
     useEffect(() => {
         const storedCart = localStorage.getItem("cart");
@@ -23,7 +24,9 @@ export default function Page() {
 
     const removeFromCart = (id: string) => {
         setCart((prevCart) => {
-            const updatedCart = prevCart.filter((item) => item.id !== id);
+            const updatedCart = prevCart.filter(
+                (item) => item.productId !== id
+            );
             localStorage.setItem("cart", JSON.stringify(updatedCart));
             return updatedCart;
         });
@@ -55,9 +58,9 @@ export default function Page() {
                     <div className="lg:col-span-2 space-y-4">
                         {cart.map((item) => (
                             <CartItem
-                                key={item.id}
+                                key={item.productId}
                                 item={item}
-                                onRemove={() => removeFromCart(item.id)}
+                                onRemove={() => removeFromCart(item.productId)}
                             />
                         ))}
                     </div>

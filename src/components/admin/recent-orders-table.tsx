@@ -15,14 +15,13 @@ import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 
 export function RecentOrdersTable() {
     const router = useRouter();
-    // Get only the 5 most recent orders
     const recentOrders = [...mockOrders]
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .sort(
+            (a, b) =>
+                new Date(b.createdAt ?? 0).getTime() -
+                new Date(a.createdAt ?? 0).getTime()
+        )
         .slice(0, 5);
-
-    const handleViewOrder = (orderId: string) => {
-        router.push(`/admin/orders/${orderId}`);
-    };
 
     return (
         <div className="rounded-md border overflow-x-auto">
@@ -44,7 +43,7 @@ export function RecentOrdersTable() {
                         <TableRow key={order.id}>
                             <TableCell>
                                 <div>
-                                    #{order.orderNumber}
+                                    #{order.id}
                                     <div className="text-xs text-muted-foreground sm:hidden">
                                         {order.customer.name}
                                     </div>
@@ -62,7 +61,7 @@ export function RecentOrdersTable() {
                                 <OrderStatusBadge status={order.status} />
                             </TableCell>
                             <TableCell className="text-right">
-                                £{order.total.toFixed(2)}
+                                £{order.totalAmount.toFixed(2)}
                             </TableCell>
                         </TableRow>
                     ))}

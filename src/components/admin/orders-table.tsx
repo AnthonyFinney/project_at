@@ -13,47 +13,17 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { mockOrders } from "@/lib/mock-data";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
+import { PaymentStatusBadge } from "@/components/admin/payment-status-badge";
+import type { OrderType } from "@/lib/schemas";
 
 interface OrdersTableProps {
     searchQuery: string;
     statusFilter: string;
 }
 
-interface Order {
-    id: string;
-    orderNumber: string;
-    date: string;
-    customer: {
-        name: string;
-        email: string;
-        phone: string;
-    };
-    items: {
-        name: string;
-        sku: string;
-        price: number;
-        size: string;
-        quantity: number;
-        image: string;
-    }[];
-    subtotal: number;
-    discount: number;
-    shipping: number;
-    total: number;
-    status: string;
-    shippingAddress: {
-        line1: string;
-        line2: string;
-        city: string;
-        postalCode: string;
-        country: string;
-    };
-    paymentMethod: string;
-}
-
 export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
     const router = useRouter();
-    const [orders, setOrders] = useState<Order[]>([]);
+    const [orders, setOrders] = useState<OrderType[]>([]);
 
     useEffect(() => {
         // Filter orders based on search query and status
@@ -62,7 +32,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
         if (searchQuery) {
             filteredOrders = filteredOrders.filter(
                 (order) =>
-                    order.orderNumber
+                    (order.id || "")
                         .toLowerCase()
                         .includes(searchQuery.toLowerCase()) ||
                     order.customer.name
@@ -87,12 +57,16 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
         router.push(`/admin/orders/${orderId}`);
     };
 
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString();
+    };
+
     return (
         <div className="rounded-md border overflow-x-auto">
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Order</TableHead>
+                        <TableHead>Order ID</TableHead>
                         <TableHead className="hidden sm:table-cell">
                             Date
                         </TableHead>
@@ -103,6 +77,9 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                         <TableHead className="hidden md:table-cell">
                             Status
                         </TableHead>
+                        <TableHead className="hidden lg:table-cell">
+                            Payment
+                        </TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -110,7 +87,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                     {orders.length === 0 ? (
                         <TableRow>
                             <TableCell
-                                colSpan={6}
+                                colSpan={7}
                                 className="text-center py-8 text-muted-foreground"
                             >
                                 No orders found
@@ -121,11 +98,11 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                             <TableRow key={order.id}>
                                 <TableCell>
                                     <div>
-                                        #{order.orderNumber}
+                                        {order.id}
                                         <div className="text-xs text-muted-foreground sm:hidden">
-                                            {new Date(
-                                                order.date
-                                            ).toLocaleDateString()}
+                                            {formatDate(
+                                                order.createdAt as string
+                                            )}
                                         </div>
                                         <div className="sm:hidden mt-1">
                                             <OrderStatusBadge
@@ -133,12 +110,12 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                                             />
                                         </div>
                                         <div className="text-xs font-medium sm:hidden mt-1">
-                                            £{order.total.toFixed(2)}
+                                            £{order.totalAmount.toFixed(2)}
                                         </div>
                                     </div>
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                    {new Date(order.date).toLocaleDateString()}
+                                    {formatDate(order.createdAt as string)}
                                 </TableCell>
                                 <TableCell>
                                     <div>
@@ -151,17 +128,22 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                                     </div>
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                    £{order.total.toFixed(2)}
+                                    £{order.totalAmount.toFixed(2)}
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell">
                                     <OrderStatusBadge status={order.status} />
+                                </TableCell>
+                                <TableCell className="hidden lg:table-cell">
+                                    <PaymentStatusBadge
+                                        status={order.paymentStatus}
+                                    />
                                 </TableCell>
                                 <TableCell className="text-right">
                                     <Button
                                         variant="outline"
                                         size="sm"
                                         onClick={() =>
-                                            handleViewOrder(order.id)
+                                            handleViewOrder(order.id as string)
                                         }
                                     >
                                         View

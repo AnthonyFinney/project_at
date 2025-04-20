@@ -7,6 +7,7 @@ import { mockOrders } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
+import { PaymentStatusBadge } from "@/components/admin/payment-status-badge";
 import { Separator } from "@/components/ui/separator";
 import {
     Select,
@@ -17,53 +18,24 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Printer } from "lucide-react";
 import Image from "next/image";
-
-interface Order {
-    id: string;
-    orderNumber: string;
-    date: string;
-    customer: {
-        name: string;
-        email: string;
-        phone: string;
-    };
-    items: {
-        name: string;
-        sku: string;
-        price: number;
-        size: string;
-        quantity: number;
-        image: string;
-    }[];
-    subtotal: number;
-    shipping: number;
-    discount: number;
-    total: number;
-    status: string;
-    shippingAddress: {
-        line1: string;
-        line2: string;
-        city: string;
-        postalCode: string;
-        country: string;
-    };
-    paymentMethod: string;
-}
+import { OrderType } from "@/lib/schemas";
 
 export default function OrderDetailsPage() {
     const params = useParams();
     const router = useRouter();
     const orderId = params.id as string;
-    const [order, setOrder] = useState<Order>();
+    const [order, setOrder] = useState<OrderType | null>(null);
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState("");
+    const [paymentStatus, setPaymentStatus] = useState("");
 
     useEffect(() => {
         // In a real app, this would be an API call
         const foundOrder = mockOrders.find((o) => o.id === orderId);
-        setOrder(foundOrder);
+        setOrder(foundOrder || null);
         if (foundOrder) {
             setStatus(foundOrder.status);
+            setPaymentStatus(foundOrder.paymentStatus);
         }
         setLoading(false);
     }, [orderId]);
@@ -82,14 +54,24 @@ export default function OrderDetailsPage() {
         console.log(`Order ${orderId} status updated to ${newStatus}`);
     };
 
+    const handlePaymentStatusChange = (newStatus: SetStateAction<string>) => {
+        setPaymentStatus(newStatus);
+        // In a real app, this would update the payment status via API
+        console.log(`Order ${orderId} payment status updated to ${newStatus}`);
+    };
+
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleString();
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <AdminHeader
-                    title={`Order #${order.orderNumber}`}
-                    description={`Placed on ${new Date(
-                        order.date
-                    ).toLocaleDateString()}`}
+                    title={`Order ${order.id}`}
+                    description={`Placed on ${formatDate(
+                        order.createdAt as string
+                    )}`}
                 />
 
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -141,7 +123,7 @@ export default function OrderDetailsPage() {
                                             Size: {item.size}
                                         </div>
                                         <div className="text-sm text-neutral-500">
-                                            SKU: {item.sku}
+                                            Product ID: {item.productId}
                                         </div>
                                     </div>
                                     <div className="text-right">
@@ -160,28 +142,20 @@ export default function OrderDetailsPage() {
                                     <span className="text-neutral-500">
                                         Subtotal
                                     </span>
-                                    <span>£{order.subtotal.toFixed(2)}</span>
+                                    <span>
+                                        £{(order.totalAmount - 10).toFixed(2)}
+                                    </span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-neutral-500">
                                         Shipping
                                     </span>
-                                    <span>£{order.shipping.toFixed(2)}</span>
+                                    <span>£10.00</span>
                                 </div>
-                                {order.discount > 0 && (
-                                    <div className="flex justify-between">
-                                        <span className="text-neutral-500">
-                                            Discount
-                                        </span>
-                                        <span>
-                                            -£{order.discount.toFixed(2)}
-                                        </span>
-                                    </div>
-                                )}
                                 <Separator />
                                 <div className="flex justify-between font-medium">
                                     <span>Total</span>
-                                    <span>£{order.total.toFixed(2)}</span>
+                                    <span>£{order.totalAmount.toFixed(2)}</span>
                                 </div>
                             </div>
                         </div>
@@ -228,8 +202,64 @@ export default function OrderDetailsPage() {
                                             <SelectItem value="cancelled">
                                                 Cancelled
                                             </SelectItem>
+                                            <SelectItem value="failed">
+                                                Failed
+                                            </SelectItem>
+                                            <SelectItem value="returned">
+                                                Returned
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Payment Information</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span>Payment Status:</span>
+                                    <PaymentStatusBadge
+                                        status={paymentStatus}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium">
+                                        Update Payment Status:
+                                    </label>
+                                    <Select
+                                        value={paymentStatus}
+                                        onValueChange={
+                                            handlePaymentStatusChange
+                                        }
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select payment status" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="unpaid">
+                                                Unpaid
+                                            </SelectItem>
+                                            <SelectItem value="paid">
+                                                Paid
+                                            </SelectItem>
+                                            <SelectItem value="refunded">
+                                                Refunded
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div>
+                                    <h3 className="font-medium mb-2">
+                                        Payment Method
+                                    </h3>
+                                    <p>{order.paymentMethod}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -254,9 +284,9 @@ export default function OrderDetailsPage() {
                                     <h3 className="font-medium">
                                         Shipping Address
                                     </h3>
-                                    <p>{order.shippingAddress.line1}</p>
-                                    {order.shippingAddress.line2 && (
-                                        <p>{order.shippingAddress.line2}</p>
+                                    <p>{order.shippingAddress.street}</p>
+                                    {order.shippingAddress.district && (
+                                        <p>{order.shippingAddress.district}</p>
                                     )}
                                     <p>
                                         {order.shippingAddress.city},{" "}
@@ -265,12 +295,12 @@ export default function OrderDetailsPage() {
                                     <p>{order.shippingAddress.country}</p>
                                 </div>
 
-                                <div>
-                                    <h3 className="font-medium">
-                                        Payment Method
-                                    </h3>
-                                    <p>{order.paymentMethod}</p>
-                                </div>
+                                {order.notes && (
+                                    <div>
+                                        <h3 className="font-medium">Notes</h3>
+                                        <p>{order.notes}</p>
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

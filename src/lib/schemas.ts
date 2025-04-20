@@ -21,9 +21,8 @@ export const CategorySchema = z.object({
 });
 
 export const VariantSchema = z.object({
-    size: z.string(), // e.g., "1", "2", "XL", etc.
-    price: z.number(), // e.g., 100, 200, etc.
-    // Optionally, you can include stock per variant if needed:
+    size: z.string(),
+    price: z.number(),
     stock: z.number().optional(),
 });
 
@@ -39,13 +38,25 @@ export const ProductSchema = z.object({
     image: z.string().url(),
     createdAt: z.string().optional(),
     updatedAt: z.string().optional(),
+    concentration: z.string().optional(),
+    notes: z
+        .object({
+            top: z.array(z.string()).optional(),
+            middle: z.array(z.string()).optional(),
+            base: z.array(z.string()).optional(),
+        })
+        .optional(),
+    scentFamily: z.string().optional(),
 });
 
 // 🛒 Cart Item Schema
 export const CartItemSchema = z.object({
     productId: ObjectIdSchema,
+    name: z.string(),
+    image: z.string(),
     size: z.string(),
     quantity: z.number().min(1),
+    price: z.number(),
 });
 
 // 📬 Address Schema

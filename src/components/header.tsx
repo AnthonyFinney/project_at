@@ -61,18 +61,6 @@ export default function Header() {
                                 Home
                             </Link>
                             <Link
-                                href="#"
-                                className="block px-4 py-2 text-sm hover:bg-gray-100"
-                            >
-                                Perfume Oil
-                            </Link>
-                            <Link
-                                href="#"
-                                className="block px-4 py-2 text-sm hover:bg-gray-100"
-                            >
-                                Brand
-                            </Link>
-                            <Link
                                 href="/products"
                                 className="block px-4 py-2 text-sm hover:bg-gray-100"
                             >

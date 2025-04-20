@@ -1,5 +1,7 @@
-// Mock data for products with updated schema including variants
-export const mockProducts = [
+import type { UserType, OrderType, AddressType, ProductType } from "./schemas";
+
+// Mock data for products
+export const mockProducts: ProductType[] = [
     {
         id: "prod_1",
         name: "Air Jordan 4 Retro Fear",
@@ -14,6 +16,7 @@ export const mockProducts = [
             { size: "UK 11", price: 225, stock: 3 },
         ],
         category: {
+            id: "cat_1",
             name: "Sneakers",
             description: "Premium athletic and casual footwear",
             promotion: {
@@ -26,7 +29,6 @@ export const mockProducts = [
         image: "/placeholder.svg?height=200&width=200",
         createdAt: "2023-04-15T10:30:00Z",
         updatedAt: "2023-04-15T10:30:00Z",
-        sales: 42,
     },
     {
         id: "prod_2",
@@ -43,6 +45,7 @@ export const mockProducts = [
             { size: "UK 12", price: 350, stock: 0 },
         ],
         category: {
+            id: "cat_1",
             name: "Sneakers",
             description: "Designer collaboration footwear",
             promotion: {
@@ -55,7 +58,6 @@ export const mockProducts = [
         image: "/placeholder.svg?height=200&width=200",
         createdAt: "2023-04-16T14:20:00Z",
         updatedAt: "2023-04-16T14:20:00Z",
-        sales: 38,
     },
     {
         id: "prod_3",
@@ -74,6 +76,7 @@ export const mockProducts = [
             { size: "UK 11", price: 120, stock: 0 },
         ],
         category: {
+            id: "cat_1",
             name: "Sneakers",
             description: "Casual lifestyle footwear",
             promotion: {
@@ -86,7 +89,6 @@ export const mockProducts = [
         image: "/placeholder.svg?height=200&width=200",
         createdAt: "2023-04-17T09:15:00Z",
         updatedAt: "2023-04-17T09:15:00Z",
-        sales: 65,
     },
     {
         id: "prod_4",
@@ -102,6 +104,7 @@ export const mockProducts = [
             { size: "UK 11", price: 130, stock: 0 },
         ],
         category: {
+            id: "cat_1",
             name: "Sneakers",
             description: "Retro-inspired athletic footwear",
             promotion: {
@@ -114,7 +117,6 @@ export const mockProducts = [
         image: "/placeholder.svg?height=200&width=200",
         createdAt: "2023-04-18T16:45:00Z",
         updatedAt: "2023-04-18T16:45:00Z",
-        sales: 29,
     },
     {
         id: "prod_5",
@@ -130,6 +132,7 @@ export const mockProducts = [
             { size: "UK 12", price: 200, stock: 0 },
         ],
         category: {
+            id: "cat_1",
             name: "Sneakers",
             description: "Iconic basketball heritage footwear",
             promotion: {
@@ -142,193 +145,16 @@ export const mockProducts = [
         image: "/placeholder.svg?height=200&width=200",
         createdAt: "2023-04-19T11:30:00Z",
         updatedAt: "2023-04-19T11:30:00Z",
-        sales: 52,
-    },
-];
-
-// Mock data for orders
-export const mockOrders = [
-    {
-        id: "ord_1",
-        orderNumber: "ORD-12345",
-        date: "2023-04-15T10:30:00Z",
-        customer: {
-            name: "John Smith",
-            email: "john.smith@example.com",
-            phone: "+44 7123 456789",
-        },
-        items: [
-            {
-                name: "Air Jordan 4 Retro Fear",
-                sku: "F9B136-002",
-                price: 215,
-                size: "UK 9",
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        subtotal: 215,
-        shipping: 10,
-        discount: 0,
-        total: 225,
-        status: "delivered",
-        shippingAddress: {
-            line1: "123 Main Street",
-            line2: "Apt 4B",
-            city: "London",
-            postalCode: "E1 6AN",
-            country: "United Kingdom",
-        },
-        paymentMethod: "Credit Card (Visa ending in 4242)",
-    },
-    {
-        id: "ord_2",
-        orderNumber: "ORD-12346",
-        date: "2023-04-16T14:20:00Z",
-        customer: {
-            name: "Emma Johnson",
-            email: "emma.johnson@example.com",
-            phone: "+44 7234 567890",
-        },
-        items: [
-            {
-                name: "Nike Dunk Low Panda",
-                sku: "DD1391-100",
-                price: 110,
-                size: "UK 6",
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-            {
-                name: "Adidas Samba OG",
-                sku: "B75806",
-                price: 90,
-                size: "UK 7",
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        subtotal: 200,
-        shipping: 10,
-        discount: 20,
-        total: 190,
-        status: "shipped",
-        shippingAddress: {
-            line1: "456 High Street",
-            line2: "",
-            city: "Manchester",
-            postalCode: "M1 1AD",
-            country: "United Kingdom",
-        },
-        paymentMethod: "PayPal",
-    },
-    {
-        id: "ord_3",
-        orderNumber: "ORD-12347",
-        date: "2023-04-17T09:15:00Z",
-        customer: {
-            name: "David Williams",
-            email: "david.williams@example.com",
-            phone: "+44 7345 678901",
-        },
-        items: [
-            {
-                name: "Yeezy Boost 350 V2 Beluga",
-                sku: "BB1826",
-                price: 320,
-                size: "UK 10",
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        subtotal: 320,
-        shipping: 10,
-        discount: 0,
-        total: 330,
-        status: "processing",
-        shippingAddress: {
-            line1: "789 Park Lane",
-            line2: "Floor 3",
-            city: "Birmingham",
-            postalCode: "B1 1AA",
-            country: "United Kingdom",
-        },
-        paymentMethod: "Credit Card (Mastercard ending in 5678)",
-    },
-    {
-        id: "ord_4",
-        orderNumber: "ORD-12348",
-        date: "2023-04-18T16:45:00Z",
-        customer: {
-            name: "Sophia Brown",
-            email: "sophia.brown@example.com",
-            phone: "+44 7456 789012",
-        },
-        items: [
-            {
-                name: "New Balance 550 White Green",
-                sku: "BB550WT1",
-                price: 120,
-                size: "UK 5.5",
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        subtotal: 120,
-        shipping: 10,
-        discount: 0,
-        total: 130,
-        status: "pending",
-        shippingAddress: {
-            line1: "101 Queen Street",
-            line2: "",
-            city: "Glasgow",
-            postalCode: "G1 3DH",
-            country: "United Kingdom",
-        },
-        paymentMethod: "Apple Pay",
-    },
-    {
-        id: "ord_5",
-        orderNumber: "ORD-12349",
-        date: "2023-04-19T11:30:00Z",
-        customer: {
-            name: "Oliver Taylor",
-            email: "oliver.taylor@example.com",
-            phone: "+44 7567 890123",
-        },
-        items: [
-            {
-                name: "Air Jordan 1 High OG Chicago",
-                sku: "DZ5485-612",
-                price: 180,
-                size: "UK 8",
-                quantity: 1,
-                image: "/placeholder.svg?height=80&width=80",
-            },
-        ],
-        subtotal: 180,
-        shipping: 10,
-        discount: 0,
-        total: 190,
-        status: "cancelled",
-        shippingAddress: {
-            line1: "202 King's Road",
-            line2: "Apt 7C",
-            city: "Edinburgh",
-            postalCode: "EH1 1AA",
-            country: "United Kingdom",
-        },
-        paymentMethod: "Credit Card (Amex ending in 1234)",
     },
 ];
 
 // Mock data for users
-export const mockUsers = [
+export const mockUsers: UserType[] = [
     {
         id: "user_1",
         name: "John Smith",
         email: "john.smith@example.com",
+        passwordHash: "hashed_password_1",
         phone: "+44 7123 456789",
         provider: "credentials",
         isVerified: true,
@@ -341,6 +167,16 @@ export const mockUsers = [
                 country: "United Kingdom",
                 district: "East London",
                 isDefault: true,
+            },
+        ],
+        cart: [
+            {
+                productId: "prod_1",
+                size: "UK 9",
+                quantity: 1,
+                price: 1,
+                image: "/placeholder.svg?height=200&width=200",
+                name: "Air Jordan 4 Retro Fear",
             },
         ],
         createdAt: "2023-01-15T10:30:00Z",
@@ -364,6 +200,7 @@ export const mockUsers = [
                 isDefault: true,
             },
         ],
+        cart: [],
         createdAt: "2023-02-10T09:15:00Z",
         updatedAt: "2023-04-05T11:20:00Z",
     },
@@ -371,6 +208,7 @@ export const mockUsers = [
         id: "user_3",
         name: "David Williams",
         email: "david.williams@example.com",
+        passwordHash: "hashed_password_3",
         phone: "+44 7345 678901",
         provider: "credentials",
         isVerified: true,
@@ -393,6 +231,16 @@ export const mockUsers = [
                 isDefault: false,
             },
         ],
+        cart: [
+            {
+                productId: "prod_2",
+                size: "UK 10",
+                quantity: 1,
+                price: 1,
+                image: "/placeholder.svg?height=200&width=200",
+                name: "Air Jordan 4 Retro Fear",
+            },
+        ],
         createdAt: "2023-02-22T15:40:00Z",
         updatedAt: "2023-03-30T09:25:00Z",
     },
@@ -400,11 +248,13 @@ export const mockUsers = [
         id: "user_4",
         name: "Sophia Brown",
         email: "sophia.brown@example.com",
+        passwordHash: "hashed_password_4",
         phone: "+44 7456 789012",
         provider: "credentials",
         isVerified: false,
         role: "user",
         addresses: [],
+        cart: [],
         createdAt: "2023-03-05T12:10:00Z",
         updatedAt: "2023-03-05T12:10:00Z",
     },
@@ -427,7 +277,248 @@ export const mockUsers = [
                 isDefault: true,
             },
         ],
+        cart: [],
         createdAt: "2023-03-18T16:50:00Z",
         updatedAt: "2023-04-10T13:15:00Z",
+    },
+];
+
+export const mockCarouselProducts = [
+    {
+        name: "Midnight Oud Attar",
+        price: 49.99,
+        tags: ["Oud", "Oriental", "Unisex"],
+        image: "https://placehold.co/600x600/png",
+        size: "10ml",
+        concentration: "Pure Attar Oil",
+        productLink: "/products/midnight-oud",
+    },
+    {
+        name: "Rose Taifi Essence",
+        price: 39.99,
+        tags: ["Floral", "Rose", "Feminine"],
+        image: "https://placehold.co/600x600/png",
+        size: "25ml",
+        concentration: "Eau de Parfum",
+        productLink: "/products/rose-taifi",
+    },
+    {
+        name: "Amber Musk",
+        price: 59.99,
+        tags: ["Amber", "Musk", "Long-lasting"],
+        image: "https://placehold.co/600x600/png",
+        size: "50ml",
+        concentration: "Concentrated Perfume Oil",
+        productLink: "/products/amber-musk",
+    },
+    {
+        name: "Sandalwood Elixir",
+        price: 69.99,
+        tags: ["Woody", "Sandalwood", "Unisex"],
+        image: "https://placehold.co/600x600/png",
+        size: "30ml",
+        concentration: "Pure Attar",
+        productLink: "/products/sandalwood-elixir",
+    },
+    {
+        name: "Jasmine Dreams",
+        price: 45.99,
+        tags: ["Floral", "Jasmine", "Feminine"],
+        image: "https://placehold.co/600x600/png",
+        size: "15ml",
+        concentration: "Attar Oil",
+        productLink: "/products/jasmine-dreams",
+    },
+    {
+        name: "Vetiver Noir",
+        price: 79.99,
+        tags: ["Woody", "Earthy", "Masculine"],
+        image: "https://placehold.co/600x600/png",
+        size: "50ml",
+        concentration: "Eau de Parfum",
+        productLink: "/products/vetiver-noir",
+    },
+    {
+        name: "Saffron Royale",
+        price: 89.99,
+        tags: ["Spicy", "Saffron", "Luxury"],
+        image: "https://placehold.co/600x600/png",
+        size: "30ml",
+        concentration: "Parfum",
+        productLink: "/products/saffron-royale",
+    },
+    {
+        name: "Citrus Breeze",
+        price: 34.99,
+        tags: ["Fresh", "Citrus", "Summer"],
+        image: "https://placehold.co/600x600/png",
+        size: "50ml",
+        concentration: "Eau de Cologne",
+        productLink: "/products/citrus-breeze",
+    },
+];
+
+// Helper function to get a default address for a user
+const getDefaultAddress = (userId: string): AddressType => {
+    const user = mockUsers.find((u) => u.id === userId);
+    if (!user || !user.addresses || user.addresses.length === 0) {
+        return {
+            street: "Unknown Address",
+            city: "Unknown City",
+            postalCode: "Unknown",
+            country: "Unknown Country",
+        };
+    }
+
+    const defaultAddress =
+        user.addresses.find((a) => a.isDefault) || user.addresses[0];
+    return defaultAddress;
+};
+
+// Mock data for orders
+export const mockOrders: OrderType[] = [
+    {
+        id: "ord_1",
+        userId: "user_1",
+        customer: {
+            name: "John Smith",
+            email: "john.smith@example.com",
+            phone: "+44 7123 456789",
+        },
+        items: [
+            {
+                productId: "prod_1",
+                name: "Air Jordan 4 Retro Fear",
+                price: 215,
+                size: "UK 9",
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        totalAmount: 225,
+        status: "delivered",
+        paymentStatus: "paid",
+        paymentMethod: "sslcommerz",
+        shippingAddress: getDefaultAddress("user_1"),
+        createdAt: "2023-04-15T10:30:00Z",
+        updatedAt: "2023-04-17T14:30:00Z",
+    },
+    {
+        id: "ord_2",
+        userId: "user_3",
+        customer: {
+            name: "David Williams",
+            email: "david.williams@example.com",
+            phone: "+44 7345 678901",
+        },
+        items: [
+            {
+                productId: "prod_3",
+                name: "Nike Dunk Low Panda",
+                price: 110,
+                size: "UK 6",
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+            {
+                productId: "prod_4",
+                name: "New Balance 550 White Green",
+                price: 90,
+                size: "UK 7",
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        totalAmount: 210,
+        status: "shipped",
+        paymentStatus: "paid",
+        paymentMethod: "sslcommerz",
+        shippingAddress: getDefaultAddress("user_3"),
+        createdAt: "2023-04-16T14:20:00Z",
+        updatedAt: "2023-04-18T09:15:00Z",
+    },
+    {
+        id: "ord_3",
+        userId: "user_5",
+        customer: {
+            name: "Oliver Taylor",
+            email: "oliver.taylor@example.com",
+            phone: "+44 7567 890123",
+        },
+        items: [
+            {
+                productId: "prod_2",
+                name: "Yeezy Boost 350 V2 Beluga",
+                price: 320,
+                size: "UK 10",
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        totalAmount: 330,
+        status: "processing",
+        paymentStatus: "paid",
+        paymentMethod: "sslcommerz",
+        shippingAddress: getDefaultAddress("user_5"),
+        createdAt: "2023-04-17T09:15:00Z",
+        updatedAt: "2023-04-17T15:30:00Z",
+    },
+    {
+        id: "ord_4",
+        userId: "user_4",
+        customer: {
+            name: "Sophia Brown",
+            email: "sophia.brown@example.com",
+            phone: "+44 7456 789012",
+        },
+        items: [
+            {
+                productId: "prod_4",
+                name: "New Balance 550 White Green",
+                price: 120,
+                size: "UK 5.5",
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        totalAmount: 130,
+        status: "pending",
+        paymentStatus: "unpaid",
+        paymentMethod: "sslcommerz",
+        shippingAddress: {
+            street: "101 Queen Street",
+            city: "Glasgow",
+            postalCode: "G1 3DH",
+            country: "United Kingdom",
+        },
+        createdAt: "2023-04-18T16:45:00Z",
+        updatedAt: "2023-04-18T16:45:00Z",
+    },
+    {
+        id: "ord_5",
+        userId: "user_2",
+        customer: {
+            name: "Emma Johnson",
+            email: "emma.johnson@example.com",
+            phone: "+44 7234 567890",
+        },
+        items: [
+            {
+                productId: "prod_5",
+                name: "Air Jordan 1 High OG Chicago",
+                price: 180,
+                size: "UK 8",
+                quantity: 1,
+                image: "/placeholder.svg?height=80&width=80",
+            },
+        ],
+        totalAmount: 190,
+        status: "cancelled",
+        paymentStatus: "refunded",
+        paymentMethod: "sslcommerz",
+        shippingAddress: getDefaultAddress("user_2"),
+        notes: "Customer requested cancellation due to delayed shipping",
+        createdAt: "2023-04-19T11:30:00Z",
+        updatedAt: "2023-04-21T09:45:00Z",
     },
 ];

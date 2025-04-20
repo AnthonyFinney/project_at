@@ -2,6 +2,7 @@
 
 import { AdminHeader } from "@/components/admin/admin-header";
 import { UserForm } from "@/components/admin/user-form";
+import { UserType } from "@/lib/schemas";
 
 export default function NewUserPage() {
     // Initial empty user

@@ -1,152 +1,123 @@
-import type { UserType, OrderType, AddressType, ProductType } from "./schemas";
+import type {
+    UserType,
+    OrderType,
+    AddressType,
+    ProductType,
+    CategoryType,
+    PromotionType,
+    VariantType,
+} from "./schemas";
+import { faker } from "@faker-js/faker";
 
-// Mock data for products
-export const mockProducts: ProductType[] = [
+type CategoryTemplate = Omit<CategoryType, "promotion"> & {
+    promotionTypes: PromotionType["type"];
+    promotionDetails: string[];
+};
+
+const CATEGORY_TEMPLATES: CategoryTemplate[] = [
     {
-        id: "prod_1",
-        name: "Air Jordan 4 Retro Fear",
+        id: faker.database.mongodbObjectId(),
+        name: "Attar",
         description:
-            "The Air Jordan 4 Retro Fear features a black, white, and cool grey colorway inspired by the 'Fear Pack' from 2013.",
-        variants: [
-            { size: "UK 7", price: 215, stock: 5 },
-            { size: "UK 8", price: 215, stock: 3 },
-            { size: "UK 9", price: 215, stock: 8 },
-            { size: "UK 9.5", price: 220, stock: 2 },
-            { size: "UK 10", price: 215, stock: 4 },
-            { size: "UK 11", price: 225, stock: 3 },
+            "Pure, concentrated natural perfume oils distilled from botanicals.",
+        promotionTypes: ["New Arrival", "Best Seller", "Premium"],
+        promotionDetails: [
+            "10% off your first Attar purchase",
+            "Free shipping on all Attar orders",
+            "Complimentary mini rollerball with purchase",
         ],
-        category: {
-            id: "cat_1",
-            name: "Sneakers",
-            description: "Premium athletic and casual footwear",
-            promotion: {
-                type: ["New Release", "Limited Edition"],
-                details: "Just released! Limited quantities available.",
-            },
-        },
-        isFeatured: true,
-        tags: ["Air Jordan", "Basketball", "Retro", "Limited Edition"],
-        image: "/placeholder.svg?height=200&width=200",
-        createdAt: "2023-04-15T10:30:00Z",
-        updatedAt: "2023-04-15T10:30:00Z",
     },
     {
-        id: "prod_2",
-        name: "Yeezy Boost 350 V2 Beluga",
+        id: faker.database.mongodbObjectId(),
+        name: "Scent",
         description:
-            "The Yeezy Boost 350 V2 Beluga features a grey Primeknit upper with a bright orange stripe.",
-        variants: [
-            { size: "UK 6", price: 320, stock: 2 },
-            { size: "UK 7", price: 320, stock: 3 },
-            { size: "UK 8", price: 320, stock: 1 },
-            { size: "UK 9", price: 330, stock: 4 },
-            { size: "UK 10", price: 330, stock: 2 },
-            { size: "UK 11", price: 340, stock: 0 },
-            { size: "UK 12", price: 350, stock: 0 },
+            "Lighter perfume blends for daily wear and refreshing aromas.",
+        promotionTypes: ["Limited Edition", "Holiday Special", "Cozy Blend"],
+        promotionDetails: [
+            "Gift mini rollerball with purchase",
+            "Buy 2, get 1 free",
+            "10% off during seasonal sale",
         ],
-        category: {
-            id: "cat_1",
-            name: "Sneakers",
-            description: "Designer collaboration footwear",
-            promotion: {
-                type: ["Popular", "Resale Value"],
-                details: "High resale value, collector's item.",
-            },
-        },
-        isFeatured: true,
-        tags: ["Yeezy", "Adidas", "Kanye West", "Boost"],
-        image: "/placeholder.svg?height=200&width=200",
-        createdAt: "2023-04-16T14:20:00Z",
-        updatedAt: "2023-04-16T14:20:00Z",
-    },
-    {
-        id: "prod_3",
-        name: "Nike Dunk Low Panda",
-        description:
-            "The Nike Dunk Low Panda features a black and white colorway that's simple yet versatile.",
-        variants: [
-            { size: "UK 3", price: 110, stock: 5 },
-            { size: "UK 4", price: 110, stock: 7 },
-            { size: "UK 5", price: 110, stock: 6 },
-            { size: "UK 6", price: 110, stock: 8 },
-            { size: "UK 7", price: 110, stock: 10 },
-            { size: "UK 8", price: 110, stock: 9 },
-            { size: "UK 9", price: 110, stock: 5 },
-            { size: "UK 10", price: 120, stock: 0 },
-            { size: "UK 11", price: 120, stock: 0 },
-        ],
-        category: {
-            id: "cat_1",
-            name: "Sneakers",
-            description: "Casual lifestyle footwear",
-            promotion: {
-                type: ["Bestseller", "Trending"],
-                details: "Our most popular colorway, restocked weekly.",
-            },
-        },
-        isFeatured: true,
-        tags: ["Nike", "Dunk", "Casual", "Everyday"],
-        image: "/placeholder.svg?height=200&width=200",
-        createdAt: "2023-04-17T09:15:00Z",
-        updatedAt: "2023-04-17T09:15:00Z",
-    },
-    {
-        id: "prod_4",
-        name: "New Balance 550 White Green",
-        description:
-            "The New Balance 550 White Green is a retro basketball sneaker with a clean white upper and green accents.",
-        variants: [
-            { size: "UK 6", price: 120, stock: 4 },
-            { size: "UK 7", price: 120, stock: 6 },
-            { size: "UK 8", price: 120, stock: 8 },
-            { size: "UK 9", price: 120, stock: 7 },
-            { size: "UK 10", price: 120, stock: 5 },
-            { size: "UK 11", price: 130, stock: 0 },
-        ],
-        category: {
-            id: "cat_1",
-            name: "Sneakers",
-            description: "Retro-inspired athletic footwear",
-            promotion: {
-                type: ["Trending", "Summer Collection"],
-                details: "Perfect for summer, versatile colorway.",
-            },
-        },
-        isFeatured: false,
-        tags: ["New Balance", "Retro", "Basketball", "Casual"],
-        image: "/placeholder.svg?height=200&width=200",
-        createdAt: "2023-04-18T16:45:00Z",
-        updatedAt: "2023-04-18T16:45:00Z",
-    },
-    {
-        id: "prod_5",
-        name: "Air Jordan 1 High OG Chicago",
-        description:
-            "The Air Jordan 1 High OG Chicago is a reissue of the iconic red, white, and black colorway.",
-        variants: [
-            { size: "UK 7", price: 180, stock: 0 },
-            { size: "UK 8", price: 180, stock: 0 },
-            { size: "UK 9", price: 190, stock: 0 },
-            { size: "UK 10", price: 190, stock: 0 },
-            { size: "UK 11", price: 200, stock: 0 },
-            { size: "UK 12", price: 200, stock: 0 },
-        ],
-        category: {
-            id: "cat_1",
-            name: "Sneakers",
-            description: "Iconic basketball heritage footwear",
-            promotion: {
-                type: ["Classic", "Heritage", "Collector's Item"],
-                details: "The iconic colorway that started it all.",
-            },
-        },
-        isFeatured: true,
-        tags: ["Air Jordan", "Basketball", "Iconic", "Chicago"],
-        image: "/placeholder.svg?height=200&width=200",
-        createdAt: "2023-04-19T11:30:00Z",
-        updatedAt: "2023-04-19T11:30:00Z",
     },
 ];
+
+const VARIANT_SIZES = ["3ml", "6ml", "10ml", "12ml", "30ml", "50ml"] as const;
+
+export function createRandomProduct(): ProductType {
+    // Randomly pick one of your category templates
+    const tpl = faker.helpers.arrayElement(CATEGORY_TEMPLATES);
+
+    // Generate 2–3 variants of type VariantType
+    const variantCount = faker.number.int({ min: 2, max: 3 });
+    const variants: VariantType[] = faker.helpers
+        .shuffle([...VARIANT_SIZES])
+        .slice(0, variantCount)
+        .map((size) => ({
+            size,
+            price: faker.number.int({ min: 500, max: 5000 }),
+            stock: faker.number.int({ min: 0, max: 200 }),
+        }));
+
+    // Build the CategoryType object, including a random PromotionType
+    const category: CategoryType = {
+        id: tpl.id,
+        name: tpl.name,
+        description: tpl.description,
+        promotion: {
+            type: [faker.helpers.arrayElement(tpl.promotionTypes)],
+            details: faker.helpers.arrayElement(tpl.promotionDetails),
+        },
+    };
+
+    // Timestamps
+    const createdAt = faker.date.past({ years: 1 }).toISOString();
+    const updatedAt = faker.date
+        .between({ from: new Date(createdAt), to: new Date() })
+        .toISOString();
+
+    // Finally assemble a ProductType
+    return {
+        id: faker.database.mongodbObjectId(),
+        name: `${faker.helpers.arrayElement([
+            "Rose Noir",
+            "Jasmine Blossom",
+            "Lavender Dream",
+            "Amber Wood",
+            "Saffron Oud",
+            "Mint Serenity",
+        ])} ${faker.helpers.arrayElement(["Attar", "Essence", "Blend"])}`,
+        description: faker.lorem.sentences(2),
+        variants,
+        category,
+        isFeatured: faker.datatype.boolean(),
+        tags: faker.helpers.uniqueArray(() => faker.lorem.word(), 3),
+        image: faker.image.urlPicsumPhotos({ width: 600, height: 600 }),
+        createdAt,
+        updatedAt,
+        concentration: faker.helpers.arrayElement([
+            "Attar",
+            "Eau de Parfum",
+            "Eau de Toilette",
+        ]),
+        notes: {
+            top: faker.helpers.uniqueArray(() => faker.lorem.word(), 2),
+            middle: faker.helpers.uniqueArray(() => faker.lorem.word(), 2),
+            base: faker.helpers.uniqueArray(() => faker.lorem.word(), 1),
+        },
+        scentFamily: faker.helpers.arrayElement([
+            "Floral",
+            "Woody",
+            "Citrus",
+            "Oriental",
+            "Gourmand",
+        ]),
+    };
+}
+
+// Mock data for products
+export const mockProducts: ProductType[] = Array.from({ length: 50 }, () =>
+    createRandomProduct()
+);
 
 // Mock data for users
 export const mockUsers: UserType[] = [
@@ -283,12 +254,23 @@ export const mockUsers: UserType[] = [
     },
 ];
 
-export const mockCarouselProducts = [
+export interface CarouselProductType {
+    id: string;
+    name: string;
+    price: number;
+    tags: string[];
+    image: string;
+    size: string;
+    concentration: string;
+    productLink: string;
+}
+
+// 2. Base metadata for each slide (without IDs or images)
+const BASE_CAROUSEL: Omit<CarouselProductType, "id" | "image">[] = [
     {
         name: "Midnight Oud Attar",
         price: 49.99,
         tags: ["Oud", "Oriental", "Unisex"],
-        image: "https://placehold.co/600x600/png",
         size: "10ml",
         concentration: "Pure Attar Oil",
         productLink: "/products/midnight-oud",
@@ -297,7 +279,6 @@ export const mockCarouselProducts = [
         name: "Rose Taifi Essence",
         price: 39.99,
         tags: ["Floral", "Rose", "Feminine"],
-        image: "https://placehold.co/600x600/png",
         size: "25ml",
         concentration: "Eau de Parfum",
         productLink: "/products/rose-taifi",
@@ -306,7 +287,6 @@ export const mockCarouselProducts = [
         name: "Amber Musk",
         price: 59.99,
         tags: ["Amber", "Musk", "Long-lasting"],
-        image: "https://placehold.co/600x600/png",
         size: "50ml",
         concentration: "Concentrated Perfume Oil",
         productLink: "/products/amber-musk",
@@ -315,7 +295,6 @@ export const mockCarouselProducts = [
         name: "Sandalwood Elixir",
         price: 69.99,
         tags: ["Woody", "Sandalwood", "Unisex"],
-        image: "https://placehold.co/600x600/png",
         size: "30ml",
         concentration: "Pure Attar",
         productLink: "/products/sandalwood-elixir",
@@ -324,7 +303,6 @@ export const mockCarouselProducts = [
         name: "Jasmine Dreams",
         price: 45.99,
         tags: ["Floral", "Jasmine", "Feminine"],
-        image: "https://placehold.co/600x600/png",
         size: "15ml",
         concentration: "Attar Oil",
         productLink: "/products/jasmine-dreams",
@@ -333,7 +311,6 @@ export const mockCarouselProducts = [
         name: "Vetiver Noir",
         price: 79.99,
         tags: ["Woody", "Earthy", "Masculine"],
-        image: "https://placehold.co/600x600/png",
         size: "50ml",
         concentration: "Eau de Parfum",
         productLink: "/products/vetiver-noir",
@@ -342,7 +319,6 @@ export const mockCarouselProducts = [
         name: "Saffron Royale",
         price: 89.99,
         tags: ["Spicy", "Saffron", "Luxury"],
-        image: "https://placehold.co/600x600/png",
         size: "30ml",
         concentration: "Parfum",
         productLink: "/products/saffron-royale",
@@ -351,12 +327,26 @@ export const mockCarouselProducts = [
         name: "Citrus Breeze",
         price: 34.99,
         tags: ["Fresh", "Citrus", "Summer"],
-        image: "https://placehold.co/600x600/png",
         size: "50ml",
         concentration: "Eau de Cologne",
         productLink: "/products/citrus-breeze",
     },
 ];
+
+// 3. Generator to merge base data with a random ID + image
+export function createRandomCarouselProduct(
+    base: Omit<CarouselProductType, "id" | "image">
+): CarouselProductType {
+    return {
+        id: faker.database.mongodbObjectId(),
+        ...base,
+        image: faker.image.urlPicsumPhotos({ width: 600, height: 600 }),
+    };
+}
+
+export const mockCarouselProducts: CarouselProductType[] = BASE_CAROUSEL.map(
+    createRandomCarouselProduct
+);
 
 // Helper function to get a default address for a user
 const getDefaultAddress = (userId: string): AddressType => {

@@ -1,7 +1,9 @@
-import type React from "react";
+"use client";
+import React from "react";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion, Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +36,25 @@ interface BannerProps {
     textColor?: string;
 }
 
+// Framer Motion Variants
+const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.15,
+        },
+    },
+};
+
+const fadeInUp: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: "easeOut" },
+    },
+};
+
 export default function Banner({
     backgroundImage = "https://images.unsplash.com/photo-1474112704314-8162b7749a90?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
     brandText = "THE KANZA ROYAL PERFUMERY",
@@ -54,8 +75,12 @@ export default function Banner({
     textColor = "text-white",
 }: BannerProps) {
     return (
-        <section
+        <motion.section
             className={cn("relative w-full overflow-hidden", height, className)}
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: false, amount: 0.25 }}
         >
             {/* Main Background Image */}
             <div className="absolute inset-0">
@@ -67,45 +92,56 @@ export default function Banner({
                     className="object-cover object-center"
                     sizes="100vw"
                 />
-                <div className={cn("absolute inset-0", overlayGradient)}></div>
+                <div className={cn("absolute inset-0", overlayGradient)} />
             </div>
 
             {/* Decorative Elements */}
             {showDecorations && (
                 <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
-                    <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full border border-white/30 animate-[spin_40s_linear_infinite]"></div>
-                    <div className="absolute bottom-[30%] right-[20%] w-40 h-40 rounded-full border border-white/20 animate-[spin_30s_linear_infinite_reverse]"></div>
+                    <div className="absolute top-[20%] right-[10%] w-64 h-64 rounded-full border border-white/30 animate-[spin_40s_linear_infinite]" />
+                    <div className="absolute bottom-[30%] right-[20%] w-40 h-40 rounded-full border border-white/20 animate-[spin_30s_linear_infinite_reverse]" />
                 </div>
             )}
 
             {/* Content Container */}
             <div className="container mx-auto px-4 h-full flex flex-col justify-center relative z-10">
-                <div className={cn("max-w-xl", textColor)}>
+                <motion.div
+                    className={cn("max-w-xl", textColor)}
+                    variants={fadeInUp}
+                >
                     {brandText && (
-                        <div className="overflow-hidden mb-2">
-                            <p className="text-sm font-light tracking-widest mb-2 animate-fade-in-up">
-                                {brandText}
-                            </p>
-                        </div>
+                        <motion.p
+                            variants={fadeInUp}
+                            className="text-sm font-light tracking-widest mb-2"
+                        >
+                            {brandText}
+                        </motion.p>
                     )}
 
-                    <div className="overflow-hidden mb-4">
-                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-light animate-fade-in-up animation-delay-100">
+                    <motion.div variants={fadeInUp} className="mb-4">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl font-light">
                             {heading}
                         </h1>
-                    </div>
+                    </motion.div>
 
-                    <div className="w-16 h-0.5 bg-current opacity-70 mb-6 animate-fade-in-up animation-delay-200"></div>
+                    <motion.div
+                        variants={fadeInUp}
+                        className="w-16 h-0.5 bg-current opacity-70 mb-6"
+                    />
 
                     {description && (
-                        <div className="overflow-hidden mb-8">
-                            <p className="mb-6 text-sm sm:text-base font-light leading-relaxed max-w-md animate-fade-in-up animation-delay-300">
-                                {description}
-                            </p>
-                        </div>
+                        <motion.p
+                            variants={fadeInUp}
+                            className="mb-6 text-sm sm:text-base font-light leading-relaxed max-w-md"
+                        >
+                            {description}
+                        </motion.p>
                     )}
 
-                    <div className="animate-fade-in-up animation-delay-400 flex flex-col sm:flex-row gap-4">
+                    <motion.div
+                        variants={fadeInUp}
+                        className="flex flex-col sm:flex-row gap-4"
+                    >
                         {primaryButtonText && (
                             <Link
                                 href={primaryButtonLink}
@@ -140,12 +176,12 @@ export default function Banner({
                                 </Button>
                             </Link>
                         )}
-                    </div>
-                </div>
+                    </motion.div>
+                </motion.div>
             </div>
 
             {/* Bottom Accent */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent"></div>
-        </section>
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+        </motion.section>
     );
 }

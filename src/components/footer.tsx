@@ -1,3 +1,5 @@
+"use client";
+import React from "react";
 import Link from "next/link";
 import {
     Facebook,
@@ -9,17 +11,46 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { motion, Variants } from "framer-motion";
+
+// Framer Motion Variants
+const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+        transition: {
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const fadeInUp: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.5, ease: "easeOut" },
+    },
+};
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="border-t border-neutral-800 bg-black text-white">
+        <motion.footer
+            className="border-t border-neutral-800 bg-black text-white"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible" // 🔑 play when scrolled into view
+            viewport={{ once: false, amount: 0.25 }} // 25 % visible, only the first time
+        >
             {/* Main Footer Content */}
-            <div className="container px-4 py-12 mx-auto">
+            <motion.div
+                className="container px-4 py-12 mx-auto"
+                variants={fadeInUp}
+            >
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {/* Brand Column */}
-                    <div className="space-y-4">
+                    <motion.div className="space-y-4" variants={fadeInUp}>
                         <h3 className="text-lg font-medium tracking-wider">
                             THE KANZA ROYAL PERFUMERY
                         </h3>
@@ -53,108 +84,78 @@ export default function Footer() {
                                 <Twitter className="h-5 w-5 text-neutral-400 hover:text-white transition-colors" />
                             </Link>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Quick Links */}
-                    <div className="space-y-4">
+                    <motion.div className="space-y-4" variants={fadeInUp}>
                         <h3 className="text-sm font-medium tracking-widest uppercase">
                             Shop
                         </h3>
                         <ul className="space-y-2 text-sm text-neutral-400">
-                            <li>
-                                <Link
-                                    href="/collections/attar"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Attar Collection
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/collections/perfume"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Perfume Oils
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/collections/gift-sets"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Gift Sets
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/collections/new-arrivals"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    New Arrivals
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/collections/bestsellers"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Bestsellers
-                                </Link>
-                            </li>
+                            {[
+                                {
+                                    href: "/collections/attar",
+                                    label: "Attar Collection",
+                                },
+                                {
+                                    href: "/collections/perfume",
+                                    label: "Perfume Oils",
+                                },
+                                {
+                                    href: "/collections/gift-sets",
+                                    label: "Gift Sets",
+                                },
+                                {
+                                    href: "/collections/new-arrivals",
+                                    label: "New Arrivals",
+                                },
+                                {
+                                    href: "/collections/bestsellers",
+                                    label: "Bestsellers",
+                                },
+                            ].map((link) => (
+                                <li key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        className="hover:text-white transition-colors"
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
-                    </div>
+                    </motion.div>
 
                     {/* Information */}
-                    <div className="space-y-4">
+                    <motion.div className="space-y-4" variants={fadeInUp}>
                         <h3 className="text-sm font-medium tracking-widest uppercase">
                             Information
                         </h3>
                         <ul className="space-y-2 text-sm text-neutral-400">
-                            <li>
-                                <Link
-                                    href="/about"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    About Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/contact"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Contact Us
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/shipping"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Shipping & Returns
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/privacy"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Privacy Policy
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/terms"
-                                    className="hover:text-white transition-colors"
-                                >
-                                    Terms & Conditions
-                                </Link>
-                            </li>
+                            {[
+                                { href: "/about", label: "About Us" },
+                                { href: "/contact", label: "Contact Us" },
+                                {
+                                    href: "/shipping",
+                                    label: "Shipping & Returns",
+                                },
+                                { href: "/privacy", label: "Privacy Policy" },
+                                { href: "/terms", label: "Terms & Conditions" },
+                            ].map((link) => (
+                                <li key={link.href}>
+                                    <Link
+                                        href={link.href}
+                                        className="hover:text-white transition-colors"
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
-                    </div>
+                    </motion.div>
 
                     {/* Newsletter */}
-                    <div className="space-y-4">
+                    <motion.div className="space-y-4" variants={fadeInUp}>
                         <h3 className="text-sm font-medium tracking-widest uppercase">
                             Newsletter
                         </h3>
@@ -172,59 +173,58 @@ export default function Footer() {
                                 Subscribe
                             </Button>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Contact Information */}
-                <div className="mt-12 pt-8 border-t border-neutral-800">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <div className="flex items-center space-x-3 text-sm text-neutral-400">
-                            <MapPin className="h-4 w-4 text-neutral-500" />
-                            <span>
-                                123 Luxury Lane, Fragrance District, FL 12345
-                            </span>
-                        </div>
-                        <div className="flex items-center space-x-3 text-sm text-neutral-400">
-                            <Phone className="h-4 w-4 text-neutral-500" />
-                            <span>+1 (555) 123-4567</span>
-                        </div>
-                        <div className="flex items-center space-x-3 text-sm text-neutral-400">
-                            <Mail className="h-4 w-4 text-neutral-500" />
-                            <span>info@kanzaroyalperfumery.com</span>
-                        </div>
+                <motion.div
+                    className="mt-12 pt-8 border-t border-neutral-800 grid grid-cols-1 gap-4 md:grid-cols-3"
+                    variants={fadeInUp}
+                >
+                    <div className="flex items-center space-x-3 text-sm text-neutral-400">
+                        <MapPin className="h-4 w-4 text-neutral-500" />
+                        <span>
+                            123 Luxury Lane, Fragrance District, FL 12345
+                        </span>
                     </div>
-                </div>
-            </div>
+                    <div className="flex items-center space-x-3 text-sm text-neutral-400">
+                        <Phone className="h-4 w-4 text-neutral-500" />
+                        <span>+1 (555) 123-4567</span>
+                    </div>
+                    <div className="flex items-center space-x-3 text-sm text-neutral-400">
+                        <Mail className="h-4 w-4 text-neutral-500" />
+                        <span>info@kanzaroyalperfumery.com</span>
+                    </div>
+                </motion.div>
+            </motion.div>
 
             {/* Copyright Bar */}
-            <div className="py-6 border-t border-neutral-900 bg-black">
+            <motion.div
+                className="py-6 border-t border-neutral-900 bg-black"
+                variants={fadeInUp}
+            >
                 <div className="container px-4 mx-auto flex flex-col md:flex-row justify-between items-center">
                     <p className="text-xs text-neutral-500 mb-4 md:mb-0">
                         © {currentYear} The Kanza Royal Perfumery. All rights
                         reserved.
                     </p>
                     <div className="flex space-x-6">
-                        <Link
-                            href="/sitemap"
-                            className="text-xs text-neutral-500 hover:text-white transition-colors"
-                        >
-                            Sitemap
-                        </Link>
-                        <Link
-                            href="/accessibility"
-                            className="text-xs text-neutral-500 hover:text-white transition-colors"
-                        >
-                            Accessibility
-                        </Link>
-                        <Link
-                            href="/cookies"
-                            className="text-xs text-neutral-500 hover:text-white transition-colors"
-                        >
-                            Cookie Policy
-                        </Link>
+                        {[
+                            { href: "/sitemap", label: "Sitemap" },
+                            { href: "/accessibility", label: "Accessibility" },
+                            { href: "/cookies", label: "Cookie Policy" },
+                        ].map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-xs text-neutral-500 hover:text-white transition-colors"
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
                     </div>
                 </div>
-            </div>
-        </footer>
+            </motion.div>
+        </motion.footer>
     );
 }

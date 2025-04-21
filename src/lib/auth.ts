@@ -4,7 +4,7 @@ import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { comparePassword } from "./utils";
 import { getDb } from "./mongodb";
-import { UserSchema } from "./schemas";
+import { UserSchema, SessionUserType } from "./schemas";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [

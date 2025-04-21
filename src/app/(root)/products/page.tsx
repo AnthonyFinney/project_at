@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { ChevronDown, ChevronUp, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,36 +15,15 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ProductCard } from "@/components/product-card";
+import { ProductType } from "@/lib/schemas";
+import { mockProducts } from "@/lib/mock-data";
+import dynamic from "next/dynamic";
 
-// Type definitions
-interface CategoryType {
-    id: string;
-    name: string;
-    description: string;
-    promotion: {
-        type: string[];
-        details: string;
-    };
-}
+const ProductCard = dynamic(() => import("@/components/product-card"), {
+    ssr: false,
+});
 
-interface ProductType {
-    id: string;
-    name: string;
-    description: string;
-    price: number;
-    size: string[];
-    category: CategoryType;
-    stock: number;
-    isFeatured: boolean;
-    tags: string[];
-    image: string;
-    concentration?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-// Filter type definitions
+// Filter state shape
 interface FilterState {
     productType: string[];
     scentFamily: string[];
@@ -54,309 +33,20 @@ interface FilterState {
 }
 
 export default function ProductsPage() {
-    // Sample product data
-    const allProducts: ProductType[] = [
-        {
-            id: "21135",
-            name: "Arkan Blend",
-            description:
-                "A luxurious, oriental attar oil with deep notes of amber, oud, and musk. 100% alcohol-free and handcrafted for a rich scent experience.",
-            price: 49.99,
-            size: ["6ml", "12ml"],
-            category: {
-                id: "b1g1",
-                name: "Buy 1 Get 1 Free",
-                description:
-                    "Exclusive B1G1 deals on select attars and perfume oils.",
-                promotion: {
-                    type: ["B1G1"],
-                    details:
-                        "Buy one 12ml bottle and get one free of the same product.",
-                },
-            },
-            stock: 30,
-            isFeatured: true,
-            tags: ["Alcohol-Free", "Unisex", "Woody"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Pure Attar Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21136",
-            name: "Royal Oud",
-            description:
-                "An exquisite blend featuring premium oud wood, amber, and subtle spices for a sophisticated fragrance experience.",
-            price: 79.99,
-            size: ["10ml", "25ml"],
-            category: {
-                id: "premium",
-                name: "Premium Collection",
-                description: "Our finest selection of premium fragrances.",
-                promotion: {
-                    type: ["Limited Edition"],
-                    details:
-                        "Exclusive premium fragrances with rare ingredients.",
-                },
-            },
-            stock: 15,
-            isFeatured: true,
-            tags: ["Premium", "Oud", "Oriental"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Concentrated Perfume Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21137",
-            name: "Rose Taifi",
-            description:
-                "A delicate floral fragrance featuring the rare Taifi rose, with hints of vanilla and musk for a feminine touch.",
-            price: 39.99,
-            size: ["6ml", "12ml", "25ml"],
-            category: {
-                id: "floral",
-                name: "Floral Collection",
-                description: "Elegant floral fragrances for a timeless appeal.",
-                promotion: {
-                    type: ["Bestseller"],
-                    details: "Our most popular floral fragrances.",
-                },
-            },
-            stock: 25,
-            isFeatured: false,
-            tags: ["Floral", "Rose", "Feminine"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Eau de Parfum",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21138",
-            name: "Amber Musk",
-            description:
-                "A warm, sensual blend of amber, musk, and vanilla that creates a cozy and inviting aura.",
-            price: 54.99,
-            size: ["10ml", "25ml"],
-            category: {
-                id: "oriental",
-                name: "Oriental Collection",
-                description: "Rich and warm oriental fragrances.",
-                promotion: {
-                    type: ["New Arrival"],
-                    details: "Newly added to our oriental collection.",
-                },
-            },
-            stock: 20,
-            isFeatured: true,
-            tags: ["Oriental", "Amber", "Unisex"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Pure Attar Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21139",
-            name: "Citrus Breeze",
-            description:
-                "A refreshing blend of citrus notes including bergamot, lemon, and mandarin for an uplifting experience.",
-            price: 34.99,
-            size: ["10ml", "25ml", "50ml"],
-            category: {
-                id: "fresh",
-                name: "Fresh Collection",
-                description:
-                    "Light and refreshing fragrances for everyday wear.",
-                promotion: {
-                    type: ["Summer Special"],
-                    details: "Perfect for warm summer days.",
-                },
-            },
-            stock: 35,
-            isFeatured: false,
-            tags: ["Fresh", "Citrus", "Unisex"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Eau de Toilette",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21140",
-            name: "Saffron Royale",
-            description:
-                "A luxurious blend of saffron, rose, and oud creating a rich and opulent fragrance experience.",
-            price: 89.99,
-            size: ["6ml", "12ml"],
-            category: {
-                id: "premium",
-                name: "Premium Collection",
-                description: "Our finest selection of premium fragrances.",
-                promotion: {
-                    type: ["Limited Edition"],
-                    details:
-                        "Exclusive premium fragrances with rare ingredients.",
-                },
-            },
-            stock: 10,
-            isFeatured: true,
-            tags: ["Premium", "Spicy", "Unisex"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Pure Attar Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21141",
-            name: "Jasmine Dreams",
-            description:
-                "A delicate and romantic fragrance centered around jasmine with hints of vanilla and amber.",
-            price: 44.99,
-            size: ["10ml", "25ml"],
-            category: {
-                id: "floral",
-                name: "Floral Collection",
-                description: "Elegant floral fragrances for a timeless appeal.",
-                promotion: {
-                    type: ["Bestseller"],
-                    details: "Our most popular floral fragrances.",
-                },
-            },
-            stock: 18,
-            isFeatured: false,
-            tags: ["Floral", "Jasmine", "Feminine"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Eau de Parfum",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21142",
-            name: "Sandalwood Elixir",
-            description:
-                "A warm and creamy sandalwood fragrance with hints of vanilla and musk for a comforting experience.",
-            price: 59.99,
-            size: ["6ml", "12ml", "25ml"],
-            category: {
-                id: "woody",
-                name: "Woody Collection",
-                description: "Rich and warm woody fragrances.",
-                promotion: {
-                    type: ["New Arrival"],
-                    details: "Newly added to our woody collection.",
-                },
-            },
-            stock: 22,
-            isFeatured: true,
-            tags: ["Woody", "Sandalwood", "Unisex"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Concentrated Perfume Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21143",
-            name: "Vetiver Noir",
-            description:
-                "A sophisticated blend of vetiver, cedar, and black pepper for a bold and distinctive character.",
-            price: 64.99,
-            size: ["10ml", "25ml"],
-            category: {
-                id: "woody",
-                name: "Woody Collection",
-                description: "Rich and warm woody fragrances.",
-                promotion: {
-                    type: ["New Arrival"],
-                    details: "Newly added to our woody collection.",
-                },
-            },
-            stock: 15,
-            isFeatured: false,
-            tags: ["Woody", "Earthy", "Masculine"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Concentrated Perfume Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21144",
-            name: "Vanilla Orchid",
-            description:
-                "A sweet and creamy vanilla fragrance with floral notes of orchid and jasmine.",
-            price: 49.99,
-            size: ["6ml", "12ml", "25ml"],
-            category: {
-                id: "oriental",
-                name: "Oriental Collection",
-                description: "Rich and warm oriental fragrances.",
-                promotion: {
-                    type: ["Bestseller"],
-                    details: "Our most popular oriental fragrances.",
-                },
-            },
-            stock: 28,
-            isFeatured: true,
-            tags: ["Oriental", "Vanilla", "Feminine"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Eau de Parfum",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21145",
-            name: "Cardamom Spice",
-            description:
-                "A warm and spicy fragrance centered around cardamom with notes of cinnamon and clove.",
-            price: 54.99,
-            size: ["10ml", "25ml"],
-            category: {
-                id: "spicy",
-                name: "Spicy Collection",
-                description: "Bold and distinctive spicy fragrances.",
-                promotion: {
-                    type: ["Winter Special"],
-                    details: "Perfect for cold winter days.",
-                },
-            },
-            stock: 20,
-            isFeatured: false,
-            tags: ["Spicy", "Warm", "Unisex"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Pure Attar Oil",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-        {
-            id: "21146",
-            name: "Bergamot Bliss",
-            description:
-                "A bright and uplifting citrus fragrance with bergamot, lemon, and a hint of lavender.",
-            price: 39.99,
-            size: ["10ml", "25ml", "50ml"],
-            category: {
-                id: "fresh",
-                name: "Fresh Collection",
-                description:
-                    "Light and refreshing fragrances for everyday wear.",
-                promotion: {
-                    type: ["Summer Special"],
-                    details: "Perfect for warm summer days.",
-                },
-            },
-            stock: 32,
-            isFeatured: true,
-            tags: ["Fresh", "Citrus", "Unisex"],
-            image: "https://placehold.co/600x600/png",
-            concentration: "Eau de Toilette",
-            createdAt: "2025-04-14T10:00:00.000Z",
-            updatedAt: "2025-04-14T10:00:00.000Z",
-        },
-    ];
+    const allProducts: ProductType[] = mockProducts;
 
-    // Get min and max price from products
-    const minPrice = Math.floor(Math.min(...allProducts.map((p) => p.price)));
-    const maxPrice = Math.ceil(Math.max(...allProducts.map((p) => p.price)));
+    // Helper: each product’s displayed price = lowest variant price
+    const getProductPrice = (p: ProductType) =>
+        Math.min(...p.variants.map((v) => v.price));
 
-    // State
+    // Compute global min/max from all variant prices
+    const allPrices = allProducts.flatMap((p) =>
+        p.variants.map((v) => v.price)
+    );
+    const minPrice = Math.floor(Math.min(...allPrices));
+    const maxPrice = Math.ceil(Math.max(...allPrices));
+
+    // UI state
     const [expandedFilters, setExpandedFilters] = useState<string[]>(["sort"]);
     const [currentPage, setCurrentPage] = useState(1);
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -365,22 +55,22 @@ export default function ProductsPage() {
         scentFamily: [],
         concentration: [],
         priceRange: [minPrice, maxPrice],
-        sort: "featured",
+        sort: "newest",
     });
 
-    // Reset page when filters change
+    // Reset page on filter change
     useEffect(() => {
         setCurrentPage(1);
     }, [filters]);
 
-    // Filter categories
+    // Define filter categories & options
     const filterCategories = [
         {
             id: "sort",
             name: "Sort By",
             options: [
-                { id: "featured", label: "Featured" },
                 { id: "newest", label: "Newest Arrivals" },
+                { id: "featured", label: "Featured" },
                 { id: "price-low", label: "Price: Low to High" },
                 { id: "price-high", label: "Price: High to Low" },
                 { id: "bestselling", label: "Best Selling" },
@@ -408,11 +98,7 @@ export default function ProductsPage() {
                 { id: "citrus", label: "Citrus" },
             ],
         },
-        {
-            id: "price",
-            name: "Price Range",
-            component: "slider",
-        },
+        { id: "price", name: "Price Range", component: "slider" },
         {
             id: "concentration",
             name: "Concentration",
@@ -428,122 +114,123 @@ export default function ProductsPage() {
         },
     ];
 
-    // Constants
     const productsPerPage = 8;
 
-    // Filter handlers
-    const toggleFilter = (filter: string) => {
+    // Toggle expanding a filter panel
+    const toggleFilter = (id: string) =>
         setExpandedFilters((prev) =>
-            prev.includes(filter)
-                ? prev.filter((f) => f !== filter)
-                : [...prev, filter]
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
         );
-    };
 
-    const handleFilterChange = (filterType: keyof FilterState, value: any) => {
-        setFilters((prev) => ({
-            ...prev,
-            [filterType]: value,
-        }));
-    };
-
-    const toggleArrayFilter = (
-        filterType: keyof FilterState,
-        value: string
+    // Generic filter‐value setter
+    const handleFilterChange = <K extends keyof FilterState>(
+        key: K,
+        value: FilterState[K]
     ) => {
-        if (!Array.isArray(filters[filterType])) return;
+        setFilters((prev) => ({ ...prev, [key]: value }));
+    };
 
+    // Toggle an ID in an array‐typed filter
+    const toggleArrayFilter = (
+        key: "productType" | "scentFamily" | "concentration",
+        id: string
+    ) => {
+        // If 'All Products' clicked in productType, clear that filter
+        if (key === "productType" && id === "all") {
+            setFilters((prev) => ({ ...prev, productType: [] }));
+            return;
+        }
         setFilters((prev) => {
-            const currentValues = prev[filterType] as string[];
-            return {
-                ...prev,
-                [filterType]: currentValues.includes(value)
-                    ? currentValues.filter((v) => v !== value)
-                    : [...currentValues, value],
-            };
+            const list = prev[key];
+            const next = list.includes(id)
+                ? list.filter((x) => x !== id)
+                : [...list, id];
+            return { ...prev, [key]: next };
         });
     };
 
-    const clearAllFilters = () => {
+    // Clear every filter
+    const clearAllFilters = () =>
         setFilters({
             productType: [],
             scentFamily: [],
             concentration: [],
             priceRange: [minPrice, maxPrice],
-            sort: "featured",
+            sort: "newest",
         });
-    };
 
-    // Apply filters and sorting to products
+    // Apply filters + sorting
     const filteredProducts = useMemo(() => {
-        // Start with all products
         let result = [...allProducts];
 
-        // Apply product type filter
-        if (filters.productType.length > 0) {
-            // This is a simplified example - in a real app, you'd have a product type field
-            // Here we're using tags as a proxy for product type
-            result = result.filter((product) => {
-                return filters.productType.some((type) => {
-                    if (type === "attar-oil")
-                        return product.concentration?.includes("Attar");
-                    if (type === "perfume-oil")
-                        return product.concentration?.includes("Perfume Oil");
-                    if (type === "spray")
-                        return product.concentration?.includes("Eau de");
+        // --- productType (via concentration proxy) ---
+        if (filters.productType.length) {
+            result = result.filter((p) =>
+                filters.productType.some((id) => {
+                    if (id === "attar-oil")
+                        return p.concentration?.includes("attar");
+                    if (id === "perfume-oil")
+                        return p.concentration?.includes("perfume");
+                    if (id === "spray")
+                        return p.concentration?.includes("Eau de");
                     return false;
-                });
-            });
-        }
-
-        // Apply scent family filter
-        if (filters.scentFamily.length > 0) {
-            result = result.filter((product) =>
-                filters.scentFamily.some((scent) =>
-                    product.tags.includes(scent)
-                )
+                })
             );
         }
 
-        // Apply concentration filter
-        if (filters.concentration.length > 0) {
-            result = result.filter((product) =>
-                filters.concentration.some(
-                    (conc) => product.concentration === conc
-                )
+        // --- scentFamily (via tags) ---
+        if (filters.scentFamily.length) {
+            result = result.filter((p) =>
+                filters.scentFamily.some((id) => p.tags.includes(id))
             );
         }
 
-        // Apply price range filter
-        result = result.filter(
-            (product) =>
-                product.price >= filters.priceRange[0] &&
-                product.price <= filters.priceRange[1]
-        );
+        // --- concentration ---
+        if (filters.concentration.length) {
+            result = result.filter((p) =>
+                filters.concentration.includes(p.concentration || "")
+            );
+        }
 
-        // Apply sorting
+        // --- priceRange ---
+        result = result.filter((p) => {
+            const price = getProductPrice(p);
+            return (
+                price >= filters.priceRange[0] && price <= filters.priceRange[1]
+            );
+        });
+
+        // --- sorting ---
         switch (filters.sort) {
             case "price-low":
-                result.sort((a, b) => a.price - b.price);
+                result.sort((a, b) => getProductPrice(a) - getProductPrice(b));
                 break;
             case "price-high":
-                result.sort((a, b) => b.price - a.price);
+                result.sort((a, b) => getProductPrice(b) - getProductPrice(a));
                 break;
             case "newest":
                 result.sort(
                     (a, b) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime()
+                        new Date(b.createdAt || "").getTime() -
+                        new Date(a.createdAt || "").getTime()
                 );
                 break;
             case "bestselling":
-                // In a real app, you'd have a sales or popularity field
-                // Here we're using stock as a proxy for popularity (lower stock = more popular)
-                result.sort((a, b) => a.stock - b.stock);
+                // approximate: total stock ascending = more popular first
+                result.sort((a, b) => {
+                    const sumA = a.variants.reduce(
+                        (s, v) => s + (v.stock ?? 0),
+                        0
+                    );
+                    const sumB = b.variants.reduce(
+                        (s, v) => s + (v.stock ?? 0),
+                        0
+                    );
+                    return sumA - sumB;
+                });
                 break;
-            case "featured":
+            // "featured" and default
             default:
-                // Featured items first, then sort by name
                 result.sort((a, b) => {
                     if (a.isFeatured && !b.isFeatured) return -1;
                     if (!a.isFeatured && b.isFeatured) return 1;
@@ -554,32 +241,29 @@ export default function ProductsPage() {
         return result;
     }, [allProducts, filters]);
 
-    // Get active filters for display
+    // Build up human‐readable badges
     const activeFilterLabels = useMemo(() => {
         const labels: string[] = [];
 
-        // Add product type labels
-        filters.productType.forEach((type) => {
-            const option = filterCategories
-                .find((cat) => cat.id === "productType")
-                ?.options?.find((opt) => opt.id === type);
-            if (option) labels.push(option.label);
-        });
+        // helper to find label by id
+        const findLabel = (catId: string, id: string) =>
+            filterCategories
+                .find((c) => c.id === catId)
+                ?.options?.find((o) => o.id === id)?.label;
 
-        // Add scent family labels
-        filters.scentFamily.forEach((scent) => {
-            labels.push(scent);
+        filters.productType.forEach((id) => {
+            const l = findLabel("productType", id);
+            if (l) labels.push(l);
         });
-
-        // Add concentration labels
-        filters.concentration.forEach((conc) => {
-            const option = filterCategories
-                .find((cat) => cat.id === "concentration")
-                ?.options?.find((opt) => opt.id === conc);
-            if (option) labels.push(option.label);
+        filters.scentFamily.forEach((id) => {
+            const l = findLabel("scentFamily", id);
+            if (l) labels.push(l);
         });
-
-        // Add price range if it's not the default
+        filters.concentration.forEach((id) => {
+            const l = findLabel("concentration", id);
+            if (l) labels.push(l);
+        });
+        // price
         if (
             filters.priceRange[0] > minPrice ||
             filters.priceRange[1] < maxPrice
@@ -590,9 +274,9 @@ export default function ProductsPage() {
         }
 
         return labels;
-    }, [filters, filterCategories, minPrice, maxPrice]);
+    }, [filters, minPrice, maxPrice]);
 
-    // Pagination
+    // Pagination logic
     const totalProducts = filteredProducts.length;
     const totalPages = Math.ceil(totalProducts / productsPerPage);
     const currentProducts = filteredProducts.slice(
@@ -600,58 +284,43 @@ export default function ProductsPage() {
         currentPage * productsPerPage
     );
 
-    // Page change handler
     const handlePageChange = (page: number) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    // Handle filter removal
-    const removeFilter = (filter: string) => {
-        // Find which filter category this belongs to
-        const productTypeOption = filterCategories
-            .find((cat) => cat.id === "productType")
-            ?.options?.find((opt) => opt.label === filter);
-
-        if (productTypeOption) {
-            toggleArrayFilter("productType", productTypeOption.id);
-            return;
+    // Remove a specific badge
+    const removeFilter = (label: string) => {
+        // Try each category by label → id
+        for (const cat of [
+            "productType",
+            "scentFamily",
+            "concentration",
+        ] as const) {
+            const opt = filterCategories
+                .find((c) => c.id === cat)
+                ?.options?.find((o) => o.label === label);
+            if (opt) {
+                toggleArrayFilter(cat, opt.id);
+                return;
+            }
         }
-
-        // Check if it's a scent family
-        if (filters.scentFamily.includes(filter)) {
-            toggleArrayFilter("scentFamily", filter);
-            return;
-        }
-
-        // Check if it's a concentration
-        const concentrationOption = filterCategories
-            .find((cat) => cat.id === "concentration")
-            ?.options?.find((opt) => opt.label === filter);
-
-        if (concentrationOption) {
-            toggleArrayFilter("concentration", concentrationOption.id);
-            return;
-        }
-
-        // Check if it's a price range
-        if (filter.startsWith("$")) {
+        // price badge
+        if (label.startsWith("$")) {
             handleFilterChange("priceRange", [minPrice, maxPrice]);
-            return;
         }
     };
 
     return (
         <div className="bg-neutral-50 min-h-screen">
-            {/* Page Header */}
+            {/* Header */}
             <div className="bg-black text-white py-12 mb-8">
-                <div className="max-w-7xl mx-auto px-4">
-                    <h1 className="text-3xl md:text-4xl font-light text-center">
+                <div className="max-w-7xl mx-auto px-4 text-center">
+                    <h1 className="text-3xl md:text-4xl font-light">
                         ALL FRAGRANCES
                     </h1>
-                    <p className="text-neutral-400 text-center mt-2 max-w-2xl mx-auto">
+                    <p className="text-neutral-400 mt-2 max-w-2xl mx-auto">
                         Discover our complete collection of handcrafted
                         fragrances, from traditional attars to modern perfume
                         oils.
@@ -660,33 +329,32 @@ export default function ProductsPage() {
             </div>
 
             <div className="max-w-7xl mx-auto px-4 pb-16">
-                {/* Mobile Filter Button */}
+                {/* Mobile filter toggle */}
                 <div className="md:hidden flex justify-between items-center mb-4">
                     <Button
                         variant="outline"
                         className="flex items-center gap-2"
                         onClick={() => setMobileFiltersOpen(true)}
                     >
-                        <Filter className="h-4 w-4" />
-                        Filter & Sort
+                        <Filter className="h-4 w-4" /> Filter & Sort
                     </Button>
                     <span className="text-sm text-neutral-500">
                         {totalProducts} Results
                     </span>
                 </div>
 
-                {/* Active Filters */}
+                {/* Active badges */}
                 {activeFilterLabels.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-6">
-                        {activeFilterLabels.map((filter) => (
+                        {activeFilterLabels.map((lbl) => (
                             <Badge
-                                key={filter}
+                                key={lbl}
                                 variant="secondary"
                                 className="px-3 py-1"
                             >
-                                {filter}
+                                {lbl}
                                 <button
-                                    onClick={() => removeFilter(filter)}
+                                    onClick={() => removeFilter(lbl)}
                                     className="ml-2"
                                 >
                                     <X className="h-3 w-3" />
@@ -704,8 +372,8 @@ export default function ProductsPage() {
                 )}
 
                 <div className="flex flex-col md:flex-row gap-8">
-                    {/* Sidebar Filters - Desktop */}
-                    <div className="hidden md:block w-64 flex-shrink-0">
+                    {/* Desktop sidebar */}
+                    <aside className="hidden md:block w-64 flex-shrink-0">
                         <div className="bg-white p-6 rounded-md shadow-sm border border-neutral-200 sticky top-4">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="font-medium text-lg">
@@ -715,73 +383,58 @@ export default function ProductsPage() {
                                     {totalProducts} Results
                                 </span>
                             </div>
-
-                            {filterCategories.map((category) => (
+                            {filterCategories.map((cat) => (
                                 <div
-                                    key={category.id}
+                                    key={cat.id}
                                     className="border-t border-neutral-200 py-4"
                                 >
                                     <button
                                         className="w-full flex justify-between items-center"
-                                        onClick={() =>
-                                            toggleFilter(category.id)
-                                        }
+                                        onClick={() => toggleFilter(cat.id)}
                                     >
                                         <span className="font-medium text-sm">
-                                            {category.name}
+                                            {cat.name}
                                         </span>
-                                        {expandedFilters.includes(
-                                            category.id
-                                        ) ? (
+                                        {expandedFilters.includes(cat.id) ? (
                                             <ChevronUp className="h-4 w-4 text-neutral-500" />
                                         ) : (
                                             <ChevronDown className="h-4 w-4 text-neutral-500" />
                                         )}
                                     </button>
 
-                                    {expandedFilters.includes(category.id) && (
+                                    {expandedFilters.includes(cat.id) && (
                                         <div className="mt-3 pl-1">
-                                            {category.id === "sort" ? (
+                                            {cat.id === "sort" ? (
                                                 <RadioGroup
                                                     value={filters.sort}
-                                                    onValueChange={(value) =>
+                                                    onValueChange={(v) =>
                                                         handleFilterChange(
                                                             "sort",
-                                                            value
+                                                            v
                                                         )
                                                     }
                                                     className="space-y-2"
                                                 >
-                                                    {category.options?.map(
-                                                        (option) => (
-                                                            <div
-                                                                key={option.id}
-                                                                className="flex items-center space-x-2"
+                                                    {cat.options!.map((opt) => (
+                                                        <div
+                                                            key={opt.id}
+                                                            className="flex items-center space-x-2"
+                                                        >
+                                                            <RadioGroupItem
+                                                                value={opt.id}
+                                                                id={opt.id}
+                                                            />
+                                                            <Label
+                                                                htmlFor={opt.id}
+                                                                className="text-sm"
                                                             >
-                                                                <RadioGroupItem
-                                                                    value={
-                                                                        option.id
-                                                                    }
-                                                                    id={
-                                                                        option.id
-                                                                    }
-                                                                />
-                                                                <Label
-                                                                    htmlFor={
-                                                                        option.id
-                                                                    }
-                                                                    className="text-sm"
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </Label>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                                {opt.label}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
                                                 </RadioGroup>
-                                            ) : category.id === "price" ? (
-                                                <div className="px-1 pt-6 pb-2">
+                                            ) : cat.id === "price" ? (
+                                                <>
                                                     <Slider
                                                         min={minPrice}
                                                         max={maxPrice}
@@ -789,12 +442,13 @@ export default function ProductsPage() {
                                                         value={
                                                             filters.priceRange
                                                         }
-                                                        onValueChange={(
-                                                            value
-                                                        ) =>
+                                                        onValueChange={(v) =>
                                                             handleFilterChange(
                                                                 "priceRange",
-                                                                value
+                                                                v as [
+                                                                    number,
+                                                                    number
+                                                                ]
                                                             )
                                                         }
                                                         className="mb-6"
@@ -815,80 +469,46 @@ export default function ProductsPage() {
                                                             }
                                                         </span>
                                                     </div>
-                                                </div>
+                                                </>
                                             ) : (
                                                 <div className="space-y-2">
-                                                    {category.options?.map(
-                                                        (option) => (
-                                                            <div
-                                                                key={option.id}
-                                                                className="flex items-center space-x-2"
+                                                    {cat.options!.map((opt) => (
+                                                        <div
+                                                            key={opt.id}
+                                                            className="flex items-center space-x-2"
+                                                        >
+                                                            <Checkbox
+                                                                id={opt.id}
+                                                                checked={
+                                                                    cat.id ===
+                                                                    "productType"
+                                                                        ? filters.productType.includes(
+                                                                              opt.id
+                                                                          )
+                                                                        : cat.id ===
+                                                                          "scentFamily"
+                                                                        ? filters.scentFamily.includes(
+                                                                              opt.id
+                                                                          )
+                                                                        : filters.concentration.includes(
+                                                                              opt.id
+                                                                          )
+                                                                }
+                                                                onCheckedChange={() =>
+                                                                    toggleArrayFilter(
+                                                                        cat.id as any,
+                                                                        opt.id
+                                                                    )
+                                                                }
+                                                            />
+                                                            <Label
+                                                                htmlFor={opt.id}
+                                                                className="text-sm"
                                                             >
-                                                                <Checkbox
-                                                                    id={
-                                                                        option.id
-                                                                    }
-                                                                    checked={
-                                                                        category.id ===
-                                                                        "productType"
-                                                                            ? filters.productType.includes(
-                                                                                  option.id
-                                                                              )
-                                                                            : category.id ===
-                                                                              "scentFamily"
-                                                                            ? filters.scentFamily.includes(
-                                                                                  option.label
-                                                                              )
-                                                                            : category.id ===
-                                                                              "concentration"
-                                                                            ? filters.concentration.includes(
-                                                                                  option.label
-                                                                              )
-                                                                            : false
-                                                                    }
-                                                                    onCheckedChange={(
-                                                                        checked
-                                                                    ) => {
-                                                                        if (
-                                                                            category.id ===
-                                                                            "productType"
-                                                                        ) {
-                                                                            toggleArrayFilter(
-                                                                                "productType",
-                                                                                option.id
-                                                                            );
-                                                                        } else if (
-                                                                            category.id ===
-                                                                            "scentFamily"
-                                                                        ) {
-                                                                            toggleArrayFilter(
-                                                                                "scentFamily",
-                                                                                option.label
-                                                                            );
-                                                                        } else if (
-                                                                            category.id ===
-                                                                            "concentration"
-                                                                        ) {
-                                                                            toggleArrayFilter(
-                                                                                "concentration",
-                                                                                option.label
-                                                                            );
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <Label
-                                                                    htmlFor={
-                                                                        option.id
-                                                                    }
-                                                                    className="text-sm"
-                                                                >
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </Label>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                                {opt.label}
+                                                            </Label>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             )}
                                         </div>
@@ -896,9 +516,9 @@ export default function ProductsPage() {
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </aside>
 
-                    {/* Mobile Filters - Slide-in panel */}
+                    {/* Mobile slide‑in */}
                     {mobileFiltersOpen && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden">
                             <div className="absolute right-0 top-0 h-full w-80 bg-white overflow-y-auto">
@@ -917,75 +537,73 @@ export default function ProductsPage() {
                                     </Button>
                                 </div>
                                 <div className="p-4">
-                                    {filterCategories.map((category) => (
+                                    {filterCategories.map((cat) => (
                                         <div
-                                            key={category.id}
+                                            key={cat.id}
                                             className="border-b border-neutral-200 py-4"
                                         >
                                             <button
                                                 className="w-full flex justify-between items-center"
                                                 onClick={() =>
-                                                    toggleFilter(category.id)
+                                                    toggleFilter(cat.id)
                                                 }
                                             >
                                                 <span className="font-medium text-sm">
-                                                    {category.name}
+                                                    {cat.name}
                                                 </span>
                                                 {expandedFilters.includes(
-                                                    category.id
+                                                    cat.id
                                                 ) ? (
                                                     <ChevronUp className="h-4 w-4 text-neutral-500" />
                                                 ) : (
                                                     <ChevronDown className="h-4 w-4 text-neutral-500" />
                                                 )}
                                             </button>
-
                                             {expandedFilters.includes(
-                                                category.id
+                                                cat.id
                                             ) && (
                                                 <div className="mt-3 pl-1">
-                                                    {category.id === "sort" ? (
+                                                    {cat.id === "sort" ? (
                                                         <RadioGroup
                                                             value={filters.sort}
                                                             onValueChange={(
-                                                                value
+                                                                v
                                                             ) =>
                                                                 handleFilterChange(
                                                                     "sort",
-                                                                    value
+                                                                    v
                                                                 )
                                                             }
                                                             className="space-y-2"
                                                         >
-                                                            {category.options?.map(
-                                                                (option) => (
+                                                            {cat.options!.map(
+                                                                (opt) => (
                                                                     <div
                                                                         key={
-                                                                            option.id
+                                                                            opt.id
                                                                         }
                                                                         className="flex items-center space-x-2"
                                                                     >
                                                                         <RadioGroupItem
                                                                             value={
-                                                                                option.id
+                                                                                opt.id
                                                                             }
-                                                                            id={`mobile-${option.id}`}
+                                                                            id={`mob-${opt.id}`}
                                                                         />
                                                                         <Label
-                                                                            htmlFor={`mobile-${option.id}`}
+                                                                            htmlFor={`mob-${opt.id}`}
                                                                             className="text-sm"
                                                                         >
                                                                             {
-                                                                                option.label
+                                                                                opt.label
                                                                             }
                                                                         </Label>
                                                                     </div>
                                                                 )
                                                             )}
                                                         </RadioGroup>
-                                                    ) : category.id ===
-                                                      "price" ? (
-                                                        <div className="px-1 pt-6 pb-2">
+                                                    ) : cat.id === "price" ? (
+                                                        <>
                                                             <Slider
                                                                 min={minPrice}
                                                                 max={maxPrice}
@@ -994,11 +612,14 @@ export default function ProductsPage() {
                                                                     filters.priceRange
                                                                 }
                                                                 onValueChange={(
-                                                                    value
+                                                                    v
                                                                 ) =>
                                                                     handleFilterChange(
                                                                         "priceRange",
-                                                                        value
+                                                                        v as [
+                                                                            number,
+                                                                            number
+                                                                        ]
                                                                     )
                                                                 }
                                                                 className="mb-6"
@@ -1019,73 +640,47 @@ export default function ProductsPage() {
                                                                     }
                                                                 </span>
                                                             </div>
-                                                        </div>
+                                                        </>
                                                     ) : (
                                                         <div className="space-y-2">
-                                                            {category.options?.map(
-                                                                (option) => (
+                                                            {cat.options!.map(
+                                                                (opt) => (
                                                                     <div
                                                                         key={
-                                                                            option.id
+                                                                            opt.id
                                                                         }
                                                                         className="flex items-center space-x-2"
                                                                     >
                                                                         <Checkbox
-                                                                            id={`mobile-${option.id}`}
+                                                                            id={`mob-${opt.id}`}
                                                                             checked={
-                                                                                category.id ===
+                                                                                cat.id ===
                                                                                 "productType"
                                                                                     ? filters.productType.includes(
-                                                                                          option.id
+                                                                                          opt.id
                                                                                       )
-                                                                                    : category.id ===
+                                                                                    : cat.id ===
                                                                                       "scentFamily"
                                                                                     ? filters.scentFamily.includes(
-                                                                                          option.label
+                                                                                          opt.id
                                                                                       )
-                                                                                    : category.id ===
-                                                                                      "concentration"
-                                                                                    ? filters.concentration.includes(
-                                                                                          option.label
+                                                                                    : filters.concentration.includes(
+                                                                                          opt.id
                                                                                       )
-                                                                                    : false
                                                                             }
-                                                                            onCheckedChange={(
-                                                                                checked
-                                                                            ) => {
-                                                                                if (
-                                                                                    category.id ===
-                                                                                    "productType"
-                                                                                ) {
-                                                                                    toggleArrayFilter(
-                                                                                        "productType",
-                                                                                        option.id
-                                                                                    );
-                                                                                } else if (
-                                                                                    category.id ===
-                                                                                    "scentFamily"
-                                                                                ) {
-                                                                                    toggleArrayFilter(
-                                                                                        "scentFamily",
-                                                                                        option.label
-                                                                                    );
-                                                                                } else if (
-                                                                                    category.id ===
-                                                                                    "concentration"
-                                                                                ) {
-                                                                                    toggleArrayFilter(
-                                                                                        "concentration",
-                                                                                        option.label
-                                                                                    );
-                                                                                }
-                                                                            }}
+                                                                            onCheckedChange={() =>
+                                                                                toggleArrayFilter(
+                                                                                    cat.id as any,
+                                                                                    opt.id
+                                                                                )
+                                                                            }
                                                                         />
                                                                         <Label
-                                                                            htmlFor={`mobile-${option.id}`}
+                                                                            htmlFor={`mob-${opt.id}`}
                                                                             className="text-sm"
                                                                         >
                                                                             {
-                                                                                option.label
+                                                                                opt.label
                                                                             }
                                                                         </Label>
                                                                     </div>
@@ -1112,8 +707,8 @@ export default function ProductsPage() {
                         </div>
                     )}
 
-                    {/* Product Grid */}
-                    <div className="flex-1">
+                    {/* Products */}
+                    <main className="flex-1">
                         {currentProducts.length === 0 ? (
                             <div className="text-center py-12">
                                 <h3 className="text-lg font-medium mb-2">
@@ -1133,10 +728,10 @@ export default function ProductsPage() {
                                     <ProductCard
                                         key={product.id}
                                         name={product.name}
-                                        price={product.price}
+                                        price={getProductPrice(product)}
                                         tags={product.tags.slice(0, 3)}
                                         image={product.image}
-                                        size={product.size[0]}
+                                        size={product.variants[0]?.size || ""}
                                         concentration={product.concentration}
                                         productLink={`/products/${product.id}`}
                                     />
@@ -1165,60 +760,51 @@ export default function ProductsPage() {
                                                 Previous
                                             </Button>
                                         </PaginationItem>
-
                                         {[...Array(totalPages)].map((_, i) => {
-                                            const pageNumber = i + 1;
-                                            // Show current page, first, last, and pages around current
+                                            const page = i + 1;
                                             if (
-                                                pageNumber === 1 ||
-                                                pageNumber === totalPages ||
-                                                (pageNumber >=
-                                                    currentPage - 1 &&
-                                                    pageNumber <=
-                                                        currentPage + 1)
+                                                page === 1 ||
+                                                page === totalPages ||
+                                                (page >= currentPage - 1 &&
+                                                    page <= currentPage + 1)
                                             ) {
                                                 return (
-                                                    <PaginationItem
-                                                        key={pageNumber}
-                                                    >
+                                                    <PaginationItem key={page}>
                                                         <PaginationLink
                                                             isActive={
-                                                                pageNumber ===
+                                                                page ===
                                                                 currentPage
                                                             }
                                                             onClick={() =>
                                                                 handlePageChange(
-                                                                    pageNumber
+                                                                    page
                                                                 )
                                                             }
                                                         >
-                                                            {pageNumber}
+                                                            {page}
                                                         </PaginationLink>
                                                     </PaginationItem>
                                                 );
                                             }
-                                            // Show ellipsis for gaps
                                             if (
-                                                (pageNumber === 2 &&
+                                                (page === 2 &&
                                                     currentPage > 3) ||
-                                                (pageNumber ===
-                                                    totalPages - 1 &&
+                                                (page === totalPages - 1 &&
                                                     currentPage <
                                                         totalPages - 2)
                                             ) {
                                                 return (
                                                     <PaginationItem
-                                                        key={pageNumber}
+                                                        key={`dots-${page}`}
                                                     >
                                                         <span className="px-4 py-2">
-                                                            ...
+                                                            …
                                                         </span>
                                                     </PaginationItem>
                                                 );
                                             }
                                             return null;
                                         })}
-
                                         <PaginationItem>
                                             <Button
                                                 variant="ghost"
@@ -1240,7 +826,7 @@ export default function ProductsPage() {
                                 </Pagination>
                             </div>
                         )}
-                    </div>
+                    </main>
                 </div>
             </div>
         </div>

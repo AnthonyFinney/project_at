@@ -19,6 +19,12 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: "scontent.fdac5-1.fna.fbcdn.net",
             },
+            {
+                protocol: "https",
+                hostname: "picsum.photos",
+                port: "",
+                pathname: "/**",
+            },
         ],
     },
 };

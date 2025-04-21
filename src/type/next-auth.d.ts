@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { SessionUserType } from "@/lib/schemas";
 
 declare module "next-auth" {
     interface Session {

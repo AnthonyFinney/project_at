@@ -6,6 +6,7 @@ import { ChevronLeft, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CartItem } from "@/components/cart-item";
 import type { CartItemType } from "@/lib/schemas";
+import Spinner from "@/components/spinner";
 
 export default function Page() {
     const [cart, setCart] = useState<CartItemType[]>([]);
@@ -73,11 +74,7 @@ export default function Page() {
     const itemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
     if (isLoading) {
-        return (
-            <div className="mx-auto px-4 py-8 min-h-screen flex justify-center items-center">
-                <div className="animate-pulse">Loading cart...</div>
-            </div>
-        );
+        return <Spinner />;
     }
 
     return (

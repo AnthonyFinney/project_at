@@ -91,7 +91,7 @@ export function createRandomProduct(): ProductType {
         category,
         isFeatured: faker.datatype.boolean(),
         tags: faker.helpers.uniqueArray(() => faker.lorem.word(), 3),
-        image: faker.image.urlPicsumPhotos({ width: 600, height: 600 }),
+        image: "https://placehold.co/600x600/png",
         createdAt,
         updatedAt,
         concentration: faker.helpers.arrayElement([
@@ -340,7 +340,7 @@ export function createRandomCarouselProduct(
     return {
         id: faker.database.mongodbObjectId(),
         ...base,
-        image: faker.image.urlPicsumPhotos({ width: 600, height: 600 }),
+        image: "https://placehold.co/600x600/png",
     };
 }
 

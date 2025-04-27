@@ -216,14 +216,19 @@ export default function Header() {
                                         exit={{ opacity: 0, y: -10 }}
                                         transition={{ duration: 0.2 }}
                                     >
-                                        <Link href="/admin">
-                                            <Button
-                                                variant="ghost"
-                                                className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                                            >
-                                                Admin
-                                            </Button>
-                                        </Link>
+                                        {session.user.role === "admin" ? (
+                                            <Link href="/admin">
+                                                <Button
+                                                    variant="ghost"
+                                                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
+                                                >
+                                                    Admin
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <></>
+                                        )}
+
                                         <Button
                                             variant="ghost"
                                             className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100"

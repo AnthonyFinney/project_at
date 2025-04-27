@@ -11,6 +11,10 @@ const ipBuckets = new Map<string, Bucket>();
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
     const origin = req.headers.get("origin");
+    const cookieName =
+        process.env.NODE_ENV === "production"
+            ? "__Secure-authjs.session-token"
+            : "authjs.session-token";
 
     if (origin && origin !== ALLOWED_ORIGIN) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -71,12 +75,13 @@ export async function middleware(req: NextRequest) {
     const token = await getToken({
         req,
         secret: process.env.AUTH_SECRET,
-        cookieName: "__Secure-authjs.session-token",
+        cookieName,
     });
 
     if (!token || token.role !== "admin") {
         return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
     }
+
     return NextResponse.next();
 }
 

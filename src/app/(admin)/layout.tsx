@@ -5,6 +5,8 @@ import { AuthProvider } from "@/Providers/Providers";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { MobileNav } from "@/components/admin/mobile-nav";
 import { Toaster } from "@/components/ui/sonner";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
     title: "Admin Dashboard",
@@ -12,26 +14,27 @@ export const metadata: Metadata = {
     icons: [{ rel: "icon", url: Favicon.src }],
 };
 
-export default function AccountLayout({
+export default async function AccountLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
+    const session = await auth();
+    if (!session || session.user.role !== "admin") {
+        redirect("/");
+    }
+
     return (
-        <html lang="en">
-            <body className="antialiased">
-                <AuthProvider>
-                    <div className="flex min-h-screen bg-neutral-50">
-                        <AdminSidebar />
-                        <div className="flex-1 overflow-auto">
-                            <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-black px-6 md:hidden">
-                                <MobileNav />
-                                <div className="ml-auto"></div>
-                            </header>
-                            <div className="p-4 md:p-8">{children}</div>
-                            <Toaster />
-                        </div>
-                    </div>
-                </AuthProvider>
-            </body>
-        </html>
+        <AuthProvider>
+            <div className="flex min-h-screen bg-neutral-50">
+                <AdminSidebar />
+                <div className="flex-1 overflow-auto">
+                    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-black px-6 md:hidden">
+                        <MobileNav />
+                        <div className="ml-auto"></div>
+                    </header>
+                    <div className="p-4 md:p-8">{children}</div>
+                    <Toaster />
+                </div>
+            </div>
+        </AuthProvider>
     );
 }

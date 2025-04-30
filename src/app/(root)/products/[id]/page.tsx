@@ -10,6 +10,7 @@ export default async function Page({
     const sampleProduct = createRandomProduct();
 
     const { id } = await params;
+
     return (
         <div className="max-w-7x1 mx-auto px-4 py-8">
             <ProductGallery product={sampleProduct} />

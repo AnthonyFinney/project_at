@@ -226,7 +226,100 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
                                         animate="visible"
                                         exit="hidden"
                                     >
-                                        {/* ...existing content based on key... */}
+                                        {key === "description" && (
+                                            <p className="text-sm text-muted-foreground">
+                                                {product.description}
+                                            </p>
+                                        )}
+
+                                        {key === "notes" && product.notes && (
+                                            <div className="space-y-3">
+                                                {product.notes.top &&
+                                                    product.notes.top.length >
+                                                        0 && (
+                                                        <div>
+                                                            <h3 className="text-sm font-medium">
+                                                                Top Notes
+                                                            </h3>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {product.notes.top.join(
+                                                                    ", "
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                {product.notes.middle &&
+                                                    product.notes.middle
+                                                        .length > 0 && (
+                                                        <div>
+                                                            <h3 className="text-sm font-medium">
+                                                                Middle Notes
+                                                            </h3>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {product.notes.middle.join(
+                                                                    ", "
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                {product.notes.base &&
+                                                    product.notes.base.length >
+                                                        0 && (
+                                                        <div>
+                                                            <h3 className="text-sm font-medium">
+                                                                Base Notes
+                                                            </h3>
+                                                            <p className="text-sm text-muted-foreground">
+                                                                {product.notes.base.join(
+                                                                    ", "
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                            </div>
+                                        )}
+
+                                        {key === "category" && (
+                                            <div className="space-y-2">
+                                                <h3 className="font-medium">
+                                                    {product.category.name}
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground">
+                                                    {
+                                                        product.category
+                                                            .description
+                                                    }
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {key === "promotion" &&
+                                            product.category.promotion && (
+                                                <div className="space-y-2">
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {product.category.promotion.type.map(
+                                                            (promo) => (
+                                                                <Badge
+                                                                    key={promo}
+                                                                    variant="secondary"
+                                                                >
+                                                                    {promo}
+                                                                </Badge>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                    {product.category.promotion
+                                                        .details && (
+                                                        <p className="text-sm text-gray-700 mt-1">
+                                                            {
+                                                                product.category
+                                                                    .promotion
+                                                                    .details
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
                                     </motion.div>
                                 </AnimatePresence>
                             </TabsContent>

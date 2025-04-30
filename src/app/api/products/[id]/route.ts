@@ -33,6 +33,9 @@ export async function GET(req: Request) {
             image,
             createdAt,
             updatedAt,
+            concentration,
+            notes,
+            scentFamily,
         } = product;
 
         // Create the transformed product ensuring all required properties exist.
@@ -47,6 +50,9 @@ export async function GET(req: Request) {
             image,
             createdAt,
             updatedAt,
+            concentration,
+            notes,
+            scentFamily,
         };
 
         return NextResponse.json({ success: true, data: transformedProduct });

@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { SignInWithGoogle } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
@@ -142,18 +141,6 @@ export default function Page() {
                                     )}
                                 </div>
                             </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="remember" />
-                                <Label htmlFor="remember">Remember me</Label>
-                            </div>
-                            <a
-                                href="#"
-                                className="text-sm text-primary hover:underline"
-                            >
-                                Forgot password?
-                            </a>
                         </div>
                         {error && (
                             <p className="text-sm text-red-600 font-medium">

@@ -42,11 +42,22 @@ const defaultValues: ProductType = {
     isFeatured: false,
     tags: [],
     image: "",
+    concentration: "",
+    scentFamily: "",
+    notes: {
+        top: [],
+        middle: [],
+        base: [],
+    },
 };
 
 export function ProductForm({ initialData }: ProductFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+
+    const [newTopNote, setNewTopNote] = useState("");
+    const [newMiddleNote, setNewMiddleNote] = useState("");
+    const [newBaseNote, setNewBaseNote] = useState("");
 
     // Merge the defaults with any provided initial data.
     const [formData, setFormData] = useState<ProductType>({
@@ -65,6 +76,28 @@ export function ProductForm({ initialData }: ProductFormProps) {
     const [editingVariantIndex, setEditingVariantIndex] = useState<
         number | null
     >(null);
+
+    const addNote = (tier: "top" | "middle" | "base", value: string) => {
+        if (!value.trim()) return;
+
+        setFormData((prev) => ({
+            ...prev,
+            notes: {
+                ...prev.notes,
+                [tier]: [...(prev.notes?.[tier] || []), value.trim()],
+            },
+        }));
+    };
+
+    const removeNote = (tier: "top" | "middle" | "base", note: string) => {
+        setFormData((prev) => ({
+            ...prev,
+            notes: {
+                ...prev.notes,
+                [tier]: prev.notes?.[tier]?.filter((n) => n !== note) ?? [],
+            },
+        }));
+    };
 
     // Handle simple changes for top-level inputs.
     const handleChange = (
@@ -357,6 +390,143 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                         categorization.
                                     </p>
                                 </div>
+                                <div className="sm:col-span-2 space-y-2">
+                                    <Label htmlFor="concentration">
+                                        Concentration
+                                    </Label>
+                                    <Input
+                                        id="concentration"
+                                        name="concentration"
+                                        value={formData.concentration}
+                                        onChange={handleChange}
+                                        placeholder="e.g., Eau de Parfum"
+                                    />
+                                </div>
+                                <div className="sm:col-span-2 space-y-2">
+                                    <Label htmlFor="scentFamily">
+                                        Scent Family
+                                    </Label>
+                                    <Input
+                                        id="scentFamily"
+                                        name="scentFamily"
+                                        value={formData.scentFamily}
+                                        onChange={handleChange}
+                                        placeholder="e.g., Floral, Woody"
+                                    />
+                                </div>
+                                {(["top", "middle", "base"] as const).map(
+                                    (tier) => (
+                                        <div
+                                            key={tier}
+                                            className="sm:col-span-2 space-y-2"
+                                        >
+                                            <Label>
+                                                {tier.charAt(0).toUpperCase() +
+                                                    tier.slice(1)}{" "}
+                                                Notes
+                                            </Label>
+                                            <div className="flex flex-wrap gap-2 mb-2">
+                                                {formData.notes?.[tier]?.map(
+                                                    (note, i) => (
+                                                        <Badge
+                                                            key={i}
+                                                            className="gap-1 px-3 py-1"
+                                                        >
+                                                            {note}
+                                                            <Button
+                                                                type="button"
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-4 w-4 p-0 hover:bg-transparent"
+                                                                onClick={() =>
+                                                                    removeNote(
+                                                                        tier,
+                                                                        note
+                                                                    )
+                                                                }
+                                                            >
+                                                                <X className="h-3 w-3" />
+                                                            </Button>
+                                                        </Badge>
+                                                    )
+                                                )}
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Input
+                                                    placeholder={`Add a ${tier} note`}
+                                                    value={
+                                                        tier === "top"
+                                                            ? newTopNote
+                                                            : tier === "middle"
+                                                            ? newMiddleNote
+                                                            : newBaseNote
+                                                    }
+                                                    onChange={(e) =>
+                                                        tier === "top"
+                                                            ? setNewTopNote(
+                                                                  e.target.value
+                                                              )
+                                                            : tier === "middle"
+                                                            ? setNewMiddleNote(
+                                                                  e.target.value
+                                                              )
+                                                            : setNewBaseNote(
+                                                                  e.target.value
+                                                              )
+                                                    }
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            e.preventDefault();
+                                                            addNote(
+                                                                tier,
+                                                                e.currentTarget
+                                                                    .value
+                                                            );
+                                                            tier === "top"
+                                                                ? setNewTopNote(
+                                                                      ""
+                                                                  )
+                                                                : tier ===
+                                                                  "middle"
+                                                                ? setNewMiddleNote(
+                                                                      ""
+                                                                  )
+                                                                : setNewBaseNote(
+                                                                      ""
+                                                                  );
+                                                        }
+                                                    }}
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    size="sm"
+                                                    onClick={() => {
+                                                        const val =
+                                                            tier === "top"
+                                                                ? newTopNote
+                                                                : tier ===
+                                                                  "middle"
+                                                                ? newMiddleNote
+                                                                : newBaseNote;
+                                                        addNote(tier, val);
+                                                        tier === "top"
+                                                            ? setNewTopNote("")
+                                                            : tier === "middle"
+                                                            ? setNewMiddleNote(
+                                                                  ""
+                                                              )
+                                                            : setNewBaseNote(
+                                                                  ""
+                                                              );
+                                                    }}
+                                                >
+                                                    <Plus className="h-4 w-4 mr-1" />
+                                                    Add
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    )
+                                )}
                             </div>
                         </CardContent>
                     </Card>

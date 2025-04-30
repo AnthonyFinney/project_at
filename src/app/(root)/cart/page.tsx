@@ -147,8 +147,11 @@ export default function Page() {
                             </div>
                         </div>
 
-                        <Button className="w-full bg-black hover:bg-black/80">
-                            PROCEED TO CHECKOUT
+                        <Button
+                            className="w-full bg-black hover:bg-black/80"
+                            asChild
+                        >
+                            <Link href="/order">PROCEED TO CHECKOUT</Link>
                         </Button>
 
                         <div className="mt-4 text-xs text-neutral-500 text-center">

@@ -44,6 +44,7 @@ export function UserForm({ initialData }: UserFormProps) {
         ...initialData,
     });
     const [newAddress, setNewAddress] = useState<AddressType>({
+        address: "",
         street: "",
         city: "",
         postalCode: "",
@@ -107,6 +108,7 @@ export function UserForm({ initialData }: UserFormProps) {
         e.preventDefault();
 
         if (
+            !newAddress.address ||
             !newAddress.street ||
             !newAddress.city ||
             !newAddress.postalCode ||
@@ -152,6 +154,7 @@ export function UserForm({ initialData }: UserFormProps) {
 
         // Reset form
         setNewAddress({
+            address: "",
             street: "",
             city: "",
             postalCode: "",
@@ -473,6 +476,19 @@ export function UserForm({ initialData }: UserFormProps) {
                                     </h4>
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <div className="space-y-2 sm:col-span-2">
+                                            <Label htmlFor="adress">
+                                                Address
+                                            </Label>
+                                            <Input
+                                                id="address"
+                                                name="address"
+                                                value={newAddress.address}
+                                                onChange={handleAddressChange}
+                                                placeholder="123 Main St, Apt 4B"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="space-y-2 sm:col-span-2">
                                             <Label htmlFor="street">
                                                 Street Address
                                             </Label>
@@ -558,6 +574,7 @@ export function UserForm({ initialData }: UserFormProps) {
                                                 variant="outline"
                                                 onClick={() => {
                                                     setNewAddress({
+                                                        address: "",
                                                         street: "",
                                                         city: "",
                                                         postalCode: "",

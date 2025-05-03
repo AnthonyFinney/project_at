@@ -138,6 +138,7 @@ export const mockUsers: UserType[] = [
                 country: "United Kingdom",
                 district: "East London",
                 isDefault: true,
+                address: "East London",
             },
         ],
         cart: [
@@ -169,6 +170,7 @@ export const mockUsers: UserType[] = [
                 postalCode: "M1 1AD",
                 country: "United Kingdom",
                 isDefault: true,
+                address: "East London",
             },
         ],
         cart: [],
@@ -192,6 +194,7 @@ export const mockUsers: UserType[] = [
                 country: "United Kingdom",
                 district: "City Centre",
                 isDefault: true,
+                address: "East London",
             },
             {
                 street: "101 Business Avenue",
@@ -200,6 +203,7 @@ export const mockUsers: UserType[] = [
                 country: "United Kingdom",
                 district: "Business District",
                 isDefault: false,
+                address: "East London",
             },
         ],
         cart: [
@@ -246,6 +250,7 @@ export const mockUsers: UserType[] = [
                 country: "United Kingdom",
                 district: "Old Town",
                 isDefault: true,
+                address: "East London",
             },
         ],
         cart: [],
@@ -357,6 +362,7 @@ const getDefaultAddress = (userId: string): AddressType => {
             city: "Unknown City",
             postalCode: "Unknown",
             country: "Unknown Country",
+            address: "Unknown",
         };
     }
 
@@ -480,6 +486,7 @@ export const mockOrders: OrderType[] = [
             city: "Glasgow",
             postalCode: "G1 3DH",
             country: "United Kingdom",
+            address: "East London",
         },
         createdAt: "2023-04-18T16:45:00Z",
         updatedAt: "2023-04-18T16:45:00Z",

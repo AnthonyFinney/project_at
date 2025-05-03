@@ -61,6 +61,7 @@ export const CartItemSchema = z.object({
 
 // 📬 Address Schema
 export const AddressSchema = z.object({
+    address: z.string(),
     street: z.string(),
     city: z.string(),
     postalCode: z.string(),

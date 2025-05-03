@@ -30,7 +30,9 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const insertedId = await createOrder(body);
+        console.log(body);
+        //const insertedId = await createOrder(body);
+        const insertedId = "123";
 
         return NextResponse.json({
             success: true,

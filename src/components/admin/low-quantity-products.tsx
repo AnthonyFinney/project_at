@@ -20,7 +20,6 @@ import { fetcher } from "@/lib/utils";
 export function LowQuantityProducts() {
     const router = useRouter();
 
-    // Use SWR to fetch products data
     const { data, error } = useSWR(`/api/products`, fetcher, {
         revalidateOnFocus: true,
     });
@@ -33,12 +32,10 @@ export function LowQuantityProducts() {
         );
     }
 
-    // Instead of using a separate loading state, check if the data is still undefined.
     if (!data) {
         return <Spinner />;
     }
 
-    // Safe access to data using optional chaining
     const products =
         data.success && data.data ? (data.data as ProductType[]) : [];
 

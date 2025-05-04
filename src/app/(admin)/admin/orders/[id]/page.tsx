@@ -3,7 +3,6 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { AdminHeader } from "@/components/admin/admin-header";
 import { useParams, useRouter } from "next/navigation";
-import { mockOrders } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
@@ -19,45 +18,105 @@ import {
 import { ArrowLeft, Printer } from "lucide-react";
 import Image from "next/image";
 import { OrderType } from "@/lib/schemas";
+import { fetcher } from "@/lib/utils";
+import useSWR from "swr";
+import Spinner from "@/components/spinner";
+import { toast } from "sonner";
 
 export default function OrderDetailsPage() {
     const params = useParams();
     const router = useRouter();
     const orderId = params.id as string;
-    const [order, setOrder] = useState<OrderType | null>(null);
-    const [loading, setLoading] = useState(true);
+
+    const { data, error, isLoading, mutate } = useSWR<{
+        success: boolean;
+        data: OrderType;
+    }>(`/api/orders/${orderId}`, fetcher, {
+        revalidateOnFocus: true,
+    });
+
+    const order = data?.success ? data.data : null;
+
     const [status, setStatus] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("");
 
     useEffect(() => {
-        // In a real app, this would be an API call
-        const foundOrder = mockOrders.find((o) => o.id === orderId);
-        setOrder(foundOrder || null);
-        if (foundOrder) {
-            setStatus(foundOrder.status);
-            setPaymentStatus(foundOrder.paymentStatus);
+        if (order) {
+            setStatus(order.status);
+            setPaymentStatus(order.paymentStatus);
         }
-        setLoading(false);
-    }, [orderId]);
+    });
 
-    if (loading) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return <Spinner />;
     }
 
-    if (!order) {
-        return <div>Order not found</div>;
+    if (error || !order) {
+        return (
+            <div className="p-8 text-center">
+                <h2 className="text-2xl font-bold mb-4">Product Not Found</h2>
+                <p>
+                    The product you're looking for doesn't exist or has been
+                    removed.
+                </p>
+            </div>
+        );
     }
 
-    const handleStatusChange = (newStatus: SetStateAction<string>) => {
+    const handleStatusChange = async (newStatus: SetStateAction<string>) => {
+        const prevStatus = status;
+
         setStatus(newStatus);
-        // In a real app, this would update the order status via API
-        console.log(`Order ${orderId} status updated to ${newStatus}`);
+
+        const res = await fetch(`/api/orders/${orderId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            console.error("API error:", result.error);
+            setStatus(prevStatus);
+            mutate();
+
+            toast.error("Error");
+
+            return;
+        }
+
+        toast(`Order: ${newStatus}`);
+        mutate();
     };
 
-    const handlePaymentStatusChange = (newStatus: SetStateAction<string>) => {
-        setPaymentStatus(newStatus);
-        // In a real app, this would update the payment status via API
-        console.log(`Order ${orderId} payment status updated to ${newStatus}`);
+    const handlePaymentStatusChange = async (
+        newStatus: SetStateAction<string>
+    ) => {
+        const prevStatus = paymentStatus;
+
+        setStatus(newStatus);
+
+        const res = await fetch(`/api/orders/${orderId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentStatus: newStatus }),
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            console.error("API error:", result.error);
+            setStatus(prevStatus);
+            mutate();
+
+            toast.error("Error");
+
+            return;
+        }
+
+        toast(`Order: ${newStatus}`);
+        mutate();
     };
 
     const formatDate = (dateString: string) => {

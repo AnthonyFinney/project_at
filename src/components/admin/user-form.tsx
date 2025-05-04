@@ -18,6 +18,8 @@ import {
 import { Trash } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { UserType, AddressType } from "@/lib/schemas";
+import { useSWRConfig } from "swr";
+import { toast } from "sonner";
 
 export interface UserFormProps {
     initialData?: Partial<UserType>;
@@ -36,6 +38,7 @@ const defaultValues: UserType = {
 };
 
 export function UserForm({ initialData }: UserFormProps) {
+    const { mutate } = useSWRConfig();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -222,9 +225,17 @@ export function UserForm({ initialData }: UserFormProps) {
                 return;
             }
 
+            if (method === "PATCH") {
+                toast("Item has been edited.");
+            } else {
+                toast("Item has been created.");
+            }
+
+            await mutate("/api/users", undefined, { revalidate: true });
             router.push("/admin/users");
         } catch (error) {
             console.error("Error submitting form:", error);
+            toast.error("Error");
         } finally {
             setLoading(false);
         }

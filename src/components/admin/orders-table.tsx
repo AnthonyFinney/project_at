@@ -11,10 +11,12 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { mockOrders } from "@/lib/mock-data";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import { PaymentStatusBadge } from "@/components/admin/payment-status-badge";
 import type { OrderType } from "@/lib/schemas";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
+import Spinner from "../spinner";
 
 interface OrdersTableProps {
     searchQuery: string;
@@ -23,35 +25,39 @@ interface OrdersTableProps {
 
 export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
     const router = useRouter();
-    const [orders, setOrders] = useState<OrderType[]>([]);
 
-    useEffect(() => {
-        // Filter orders based on search query and status
-        let filteredOrders = mockOrders;
+    const { data, error, mutate, isLoading } = useSWR<{
+        success: boolean;
+        data: OrderType[];
+    }>(`/api/orders`, fetcher, {
+        revalidateOnFocus: true,
+    });
 
-        if (searchQuery) {
-            filteredOrders = filteredOrders.filter(
-                (order) =>
-                    (order.id || "")
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) ||
-                    order.customer.name
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase()) ||
-                    order.customer.email
-                        .toLowerCase()
-                        .includes(searchQuery.toLowerCase())
+    if (error) {
+        return (
+            <div className="p-4 text-center text-red-500">
+                {error.message || "An error occurred."}
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return <Spinner />;
+    }
+
+    const orders = data?.success ? data.data : [];
+
+    let filteredOrders = orders
+        .filter((o) => statusFilter === "all" || o.status === statusFilter)
+        .filter((o) => {
+            if (!searchQuery.trim()) return true;
+            const q = searchQuery.toLowerCase();
+            return (
+                o.id?.toLowerCase().includes(q) ||
+                o.customer.name.toLowerCase().includes(q) ||
+                o.customer.email.toLowerCase().includes(q)
             );
-        }
-
-        if (statusFilter && statusFilter !== "all") {
-            filteredOrders = filteredOrders.filter(
-                (order) => order.status === statusFilter
-            );
-        }
-
-        setOrders(filteredOrders);
-    }, [searchQuery, statusFilter]);
+        });
 
     const handleViewOrder = (orderId: string) => {
         router.push(`/admin/orders/${orderId}`);
@@ -94,7 +100,7 @@ export function OrdersTable({ searchQuery, statusFilter }: OrdersTableProps) {
                             </TableCell>
                         </TableRow>
                     ) : (
-                        orders.map((order) => (
+                        filteredOrders.map((order) => (
                             <TableRow key={order.id}>
                                 <TableCell>
                                     <div>

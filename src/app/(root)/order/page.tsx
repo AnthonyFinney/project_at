@@ -25,6 +25,14 @@ export default function Page() {
         setIsLoading(false);
     }, []);
 
+    const clearCart = () => {
+        localStorage.removeItem("cart");
+        setTimeout(() => {
+            window.dispatchEvent(new Event("cartUpdated"));
+        }, 0);
+        setCart([]);
+    };
+
     return (
         <div className="mx-auto max-w-7xl px-4 py-8 min-h-screen">
             <Link
@@ -35,7 +43,11 @@ export default function Page() {
                 Home
             </Link>
 
-            {isLoading ? <Spinner /> : <GuestCheckoutForm items={cart} />}
+            {isLoading ? (
+                <Spinner />
+            ) : (
+                <GuestCheckoutForm items={cart} clearCart={clearCart} />
+            )}
         </div>
     );
 }

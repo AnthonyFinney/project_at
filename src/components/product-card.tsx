@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Tag } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { formatPrice } from "@/lib/utils";
 
 export interface ProductCardProps {
     name: string;
@@ -37,12 +38,6 @@ export default function ProductCard({
     concentration,
     productLink,
 }: ProductCardProps) {
-    const formatPrice = (val: number) =>
-        new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-        }).format(val);
-
     return (
         <Link href={productLink} className="block">
             <motion.div

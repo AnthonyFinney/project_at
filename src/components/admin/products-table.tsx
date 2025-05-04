@@ -33,7 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import type { ProductType, VariantType } from "@/lib/schemas";
 import useSWR from "swr";
 import Spinner from "../spinner";
-import { fetcher } from "@/lib/utils";
+import { fetcher, formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface ProductsTableProps {
@@ -112,15 +112,25 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
     };
 
     const getPriceRange = (variants: VariantType[]): string => {
-        if (!variants || variants.length === 0) return "N/A";
-        const prices = variants.map((v) => v.price);
+        // No variants → upfront “N/A”
+        if (!variants?.length) return "N/A";
+
+        // Pull out numeric prices (defaulting invalid entries to 0)
+        const prices = variants.map((v) => {
+            const n = Number(v.price);
+            return isFinite(n) ? n : 0;
+        });
+
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-        return minPrice === maxPrice
-            ? `£${minPrice.toFixed(2)}`
-            : `£${minPrice.toFixed(2)} - £${maxPrice.toFixed(2)}`;
-    };
 
+        // Intl yields something like "৳ 1,234.00"
+        if (minPrice === maxPrice) {
+            return formatPrice(minPrice);
+        } else {
+            return `${formatPrice(minPrice)} – ${formatPrice(maxPrice)}`;
+        }
+    };
     const getTotalStock = (variants: VariantType[]): number => {
         if (!variants || variants.length === 0) return 0;
         return variants.reduce(

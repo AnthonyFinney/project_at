@@ -51,3 +51,13 @@ export const getIdFromUrl = (req: Request): string => {
     const id = pathParts[pathParts.length - 1];
     return id;
 };
+
+export const formatPrice = (val: number) => {
+    return new Intl.NumberFormat("bn-BD-u-nu-latn", {
+        style: "currency",
+        currency: "BDT",
+        currencyDisplay: "symbol",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(val);
+};

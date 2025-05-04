@@ -12,10 +12,33 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { mockOrders } from "@/lib/mock-data";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
+import useSWR from "swr";
+import { fetcher } from "@/lib/utils";
+import Spinner from "../spinner";
+import { OrderType } from "@/lib/schemas";
 
 export function RecentOrdersTable() {
     const router = useRouter();
-    const recentOrders = [...mockOrders]
+
+    const { data, error } = useSWR(`/api/orders`, fetcher, {
+        revalidateOnFocus: true,
+    });
+
+    if (error) {
+        return (
+            <div className="p-4 text-center text-red-500">
+                {error.message || "An error occurred."}
+            </div>
+        );
+    }
+
+    if (!data) {
+        return <Spinner />;
+    }
+
+    const orders = data.success && data.data ? (data.data as OrderType[]) : [];
+
+    const recentOrders = [...orders]
         .sort(
             (a, b) =>
                 new Date(b.createdAt ?? 0).getTime() -

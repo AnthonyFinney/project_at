@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ZoomIn, Tag, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -65,12 +65,6 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
     }, [product, selectedVariant]);
 
     const toggleZoom = () => setIsZoomed((prev) => !prev);
-
-    const formatPrice = (price: number) =>
-        new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-        }).format(price);
 
     return (
         <motion.div

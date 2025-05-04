@@ -13,10 +13,12 @@ import { Textarea } from "../ui/textarea";
 
 interface GuestCheckoutFormProps {
     items: CartItemType[];
+    clearCart?: () => void;
 }
 
 export const GuestCheckoutForm: React.FC<GuestCheckoutFormProps> = ({
     items,
+    clearCart,
 }) => {
     const router = useRouter();
 
@@ -72,8 +74,10 @@ export const GuestCheckoutForm: React.FC<GuestCheckoutFormProps> = ({
         });
 
         if (res.ok) {
-            const { orderId } = await res.json();
-            console.log(orderId);
+            const json = await res.json();
+            console.log(json.data.id);
+            clearCart?.();
+
             router.push("/");
         } else {
             const err = await res.json();

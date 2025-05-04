@@ -4,7 +4,6 @@ import { ObjectId } from "mongodb";
 import { ProductType } from "@/lib/schemas";
 import { catchError, getIdFromUrl } from "@/lib/utils";
 
-// GET /api/products/[id] - Fetch a single product by id.
 export async function GET(req: Request) {
     try {
         const id = getIdFromUrl(req);
@@ -21,7 +20,6 @@ export async function GET(req: Request) {
             );
         }
 
-        // Destructure all expected properties from the product document.
         const {
             _id,
             name,
@@ -38,7 +36,6 @@ export async function GET(req: Request) {
             scentFamily,
         } = product;
 
-        // Create the transformed product ensuring all required properties exist.
         const transformedProduct: ProductType = {
             id: _id.toString(),
             name,
@@ -61,7 +58,6 @@ export async function GET(req: Request) {
     }
 }
 
-// PATCH /api/products/[id] - Update a product by id.
 export async function PATCH(req: Request) {
     try {
         const id = getIdFromUrl(req);
@@ -69,7 +65,6 @@ export async function PATCH(req: Request) {
         const body = await req.json();
         const db = await getDb();
 
-        // Optionally, you can add validation here using your ProductSchema.
         const result = await db
             .collection("products")
             .updateOne(
@@ -90,7 +85,6 @@ export async function PATCH(req: Request) {
     }
 }
 
-// DELETE /api/products/[id] - Delete a product by id.
 export async function DELETE(req: Request) {
     try {
         const id = getIdFromUrl(req);

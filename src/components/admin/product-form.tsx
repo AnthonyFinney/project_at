@@ -20,6 +20,8 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import type { ProductType, VariantType } from "@/lib/schemas";
+import { useSWRConfig } from "swr";
+import { toast } from "sonner";
 
 // Define the component props using a Partial so that only some fields may be provided
 export interface ProductFormProps {
@@ -52,6 +54,7 @@ const defaultValues: ProductType = {
 };
 
 export function ProductForm({ initialData }: ProductFormProps) {
+    const { mutate } = useSWRConfig();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
 
@@ -268,9 +271,18 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 console.error("API error:", result.error);
                 return;
             }
+
+            if (method === "PATCH") {
+                toast("Item has been edited.");
+            } else {
+                toast("Item has been created.");
+            }
+
+            await mutate("/api/products", undefined, { revalidate: true });
             router.push("/admin/products");
         } catch (error) {
             console.error("Error submitting form:", error);
+            toast.error("Error");
         } finally {
             setLoading(false);
         }

@@ -5,6 +5,7 @@ import { createAvatar } from "@dicebear/core";
 import { lorelei } from "@dicebear/collection";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { ProductType } from "./schemas";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -61,3 +62,6 @@ export const formatPrice = (val: number) => {
         maximumFractionDigits: 2,
     }).format(val);
 };
+
+export const getProductPrice = (p: ProductType) =>
+    Math.min(...p.variants.map((v: { price: any }) => v.price));

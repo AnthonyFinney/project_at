@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { type ProductCardProps } from "./product-card";
 import ProductCard from "./product-card";
-import Link from "next/link";
 import {
     Carousel,
     CarouselContent,
@@ -13,10 +11,12 @@ import {
 } from "@/components/ui/carousel";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { ProductType } from "@/lib/schemas";
+import { getProductPrice } from "@/lib/utils";
 
 interface ProductCarouselProps {
     headline?: string;
-    products: ProductCardProps[];
+    products: ProductType[];
     className?: string;
 }
 
@@ -106,7 +106,20 @@ export default function ProductCarousel({
                                     className="basis-full xs:basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5 pl-4"
                                 >
                                     <motion.div variants={fadeInUp}>
-                                        <ProductCard {...product} />
+                                        <ProductCard
+                                            key={product.id}
+                                            name={product.name}
+                                            price={getProductPrice(product)}
+                                            tags={product.tags.slice(0, 3)}
+                                            image={product.image}
+                                            size={
+                                                product.variants[0]?.size || ""
+                                            }
+                                            concentration={
+                                                product.concentration
+                                            }
+                                            productLink={`/products/${product.id}`}
+                                        />
                                     </motion.div>
                                 </CarouselItem>
                             ))}

@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import {
     Menu,
@@ -15,6 +16,7 @@ import { userAvatar } from "@/lib/utils";
 import Image from "next/image";
 import type { CartItemType } from "@/lib/schemas";
 import { motion, Variants, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 // Framer Motion Variants
 const containerVariants: Variants = {
@@ -32,9 +34,12 @@ const fadeInUp: Variants = {
 };
 
 export default function Header() {
+    const router = useRouter();
+
     const [isOpenMenu, setIsOpenMenu] = useState(false);
     const [isOpenUser, setIsOpenUser] = useState(false);
     const [cartItemCount, setCartItemCount] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
 
     const { data: session } = useSession();
     const seed = session?.user?.email || "guest";
@@ -62,6 +67,10 @@ export default function Header() {
             window.removeEventListener("cartUpdated", onCartEvent);
         };
     }, []);
+
+    const goToSearch = () => {
+        router.push(`/search?search=${encodeURIComponent(searchQuery)}`);
+    };
 
     const handleSignOut = () => signOut();
 
@@ -128,8 +137,19 @@ export default function Header() {
                                         type="text"
                                         className="px-3 py-2 w-80"
                                         placeholder="Search..."
+                                        value={searchQuery}
+                                        onChange={(e) =>
+                                            setSearchQuery(e.target.value)
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter") goToSearch();
+                                        }}
                                     />
-                                    <Button className="px-3 py-2" size="sm">
+                                    <Button
+                                        className="px-3 py-2"
+                                        size="sm"
+                                        onClick={goToSearch}
+                                    >
                                         <Search className="h-5 w-5" />
                                     </Button>
                                 </div>
@@ -156,8 +176,17 @@ export default function Header() {
                             type="text"
                             className="px-3 py-2 w-40"
                             placeholder="Search..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") goToSearch();
+                            }}
                         />
-                        <Button variant="ghost" aria-label="Search">
+                        <Button
+                            variant="ghost"
+                            aria-label="Search"
+                            onClick={goToSearch}
+                        >
                             <Search className="h-5 w-5" />
                         </Button>
                     </div>

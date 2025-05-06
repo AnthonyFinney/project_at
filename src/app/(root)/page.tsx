@@ -1,16 +1,13 @@
 import ProductCarousel from "@/components/product-carousel";
 import Banner from "@/components/banner";
-import { mockCarouselProducts } from "@/lib/mock-data";
+import { mockProducts } from "@/lib/mock-data";
 
 export default function Home() {
     return (
         <div>
             <Banner />
 
-            <ProductCarousel
-                headline="TRENDING NOW"
-                products={mockCarouselProducts}
-            />
+            <ProductCarousel headline="TRENDING NOW" products={mockProducts} />
 
             <Banner
                 backgroundImage="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?q=80&w=2832&auto=format&fit=crop&ixlib=rb-4.0.3"
@@ -32,7 +29,7 @@ export default function Home() {
 
             <ProductCarousel
                 headline="FEATURED FRAGRANCES"
-                products={mockCarouselProducts}
+                products={mockProducts}
             />
         </div>
     );

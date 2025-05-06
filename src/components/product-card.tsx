@@ -6,7 +6,7 @@ import { Tag } from "lucide-react";
 import { motion, Variants } from "framer-motion";
 import { formatPrice } from "@/lib/utils";
 
-export interface ProductCardProps {
+interface ProductCardProps {
     name: string;
     description?: string;
     price: number;

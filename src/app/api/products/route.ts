@@ -1,14 +1,23 @@
 import { NextResponse } from "next/server";
 import { createProduct } from "@/lib/createProduct";
 import { getDb } from "@/lib/mongodb";
-import { ProductType } from "@/lib/schemas";
+import { ProductType, QuerySchema } from "@/lib/schemas";
 import { catchError } from "@/lib/utils";
 
 export async function GET(req: Request) {
     try {
-        const db = await getDb();
-        const products = await db.collection("products").find({}).toArray();
+        const { search } = QuerySchema.parse(
+            Object.fromEntries(new URL(req.url).searchParams)
+        );
 
+        const filter: Record<string, any> = {};
+        if (search) {
+            const regex = new RegExp(search, "i");
+            filter.$or = [{ name: { $regex: regex } }];
+        }
+
+        const db = await getDb();
+        const products = await db.collection("products").find(filter).toArray();
         const transformedProducts: ProductType[] = products.map(
             (product: any) => {
                 const { _id, ...rest } = product;

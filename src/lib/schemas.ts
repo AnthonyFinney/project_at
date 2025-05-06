@@ -147,6 +147,10 @@ export const ReviewSchema = z.object({
     updatedAt: z.string().optional(),
 });
 
+export const QuerySchema = z.object({
+    search: z.string().optional(),
+});
+
 export type ReviewType = z.infer<typeof ReviewSchema>;
 export type OrderType = z.infer<typeof OrderSchema>;
 export type OrderItemType = z.infer<typeof OrderItemSchema>;

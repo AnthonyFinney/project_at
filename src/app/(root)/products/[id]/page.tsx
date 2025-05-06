@@ -1,6 +1,6 @@
 import ProductCarousel from "@/components/product-carousel";
 import ProductGallery from "@/components/product-gallery";
-import { createRandomProduct, mockCarouselProducts } from "@/lib/mock-data";
+import { createRandomProduct, mockProducts } from "@/lib/mock-data";
 
 export default async function Page({
     params,
@@ -17,7 +17,7 @@ export default async function Page({
 
             <ProductCarousel
                 headline="YOU MAY ALSO LIKE"
-                products={mockCarouselProducts}
+                products={mockProducts}
             />
         </div>
     );

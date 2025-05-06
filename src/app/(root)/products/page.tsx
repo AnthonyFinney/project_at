@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { ProductType } from "@/lib/schemas";
 import { mockProducts } from "@/lib/mock-data";
 import dynamic from "next/dynamic";
+import { getProductPrice } from "@/lib/utils";
 
 const ProductCard = dynamic(() => import("@/components/product-card"), {
     ssr: false,
@@ -32,12 +33,8 @@ interface FilterState {
     sort: string;
 }
 
-export default function ProductsPage() {
+export default function Page() {
     const allProducts: ProductType[] = mockProducts;
-
-    // Helper: each product’s displayed price = lowest variant price
-    const getProductPrice = (p: ProductType) =>
-        Math.min(...p.variants.map((v) => v.price));
 
     // Compute global min/max from all variant prices
     const allPrices = allProducts.flatMap((p) =>

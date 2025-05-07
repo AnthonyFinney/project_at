@@ -30,11 +30,18 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+} from "@/components/ui/pagination";
 import type { ProductType, VariantType } from "@/lib/schemas";
 import useSWR from "swr";
 import Spinner from "../spinner";
 import { fetcher, formatPrice } from "@/lib/utils";
 import { toast } from "sonner";
+import { Separator } from "../ui/separator";
 
 interface ProductsTableProps {
     searchQuery: string;
@@ -43,13 +50,13 @@ interface ProductsTableProps {
 export function ProductsTable({ searchQuery }: ProductsTableProps) {
     const router = useRouter();
     const [deleteProductId, setDeleteProductId] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 8;
 
     const { data, error, mutate, isLoading } = useSWR<{
         success: boolean;
         data: ProductType[];
-    }>(`/api/products`, fetcher, {
-        revalidateOnFocus: true,
-    });
+    }>("/api/products", fetcher, { revalidateOnFocus: true });
 
     if (error) {
         return (
@@ -86,14 +93,11 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
 
     const confirmDelete = async () => {
         if (!deleteProductId) return;
-
         try {
             const res = await fetch(`/api/products/${deleteProductId}`, {
                 method: "DELETE",
             });
-
             const result = await res.json();
-
             if (!res.ok || !result.success) {
                 console.error(
                     "Delete failed:",
@@ -101,10 +105,8 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                 );
                 return;
             }
-
             mutate();
             setDeleteProductId(null);
-
             toast("Product deleted!");
         } catch (error) {
             console.error("Error calling delete API:", error);
@@ -112,31 +114,38 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
     };
 
     const getPriceRange = (variants: VariantType[]): string => {
-        // No variants → upfront “N/A”
         if (!variants?.length) return "N/A";
-
-        // Pull out numeric prices (defaulting invalid entries to 0)
         const prices = variants.map((v) => {
             const n = Number(v.price);
             return isFinite(n) ? n : 0;
         });
-
         const minPrice = Math.min(...prices);
         const maxPrice = Math.max(...prices);
-
-        // Intl yields something like "৳ 1,234.00"
-        if (minPrice === maxPrice) {
-            return formatPrice(minPrice);
-        } else {
-            return `${formatPrice(minPrice)} – ${formatPrice(maxPrice)}`;
-        }
+        return minPrice === maxPrice
+            ? formatPrice(minPrice)
+            : `${formatPrice(minPrice)} – ${formatPrice(maxPrice)}`;
     };
+
     const getTotalStock = (variants: VariantType[]): number => {
         if (!variants || variants.length === 0) return 0;
         return variants.reduce(
             (total, variant) => total + (variant.stock || 0),
             0
         );
+    };
+
+    // Pagination logic
+    const totalProducts = filteredProducts.length;
+    const totalPages = Math.ceil(totalProducts / productsPerPage);
+    const currentProducts = filteredProducts.slice(
+        (currentPage - 1) * productsPerPage,
+        currentPage * productsPerPage
+    );
+
+    const handlePageChange = (page: number) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     return (
@@ -162,7 +171,7 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {products.length === 0 ? (
+                        {currentProducts.length === 0 ? (
                             <TableRow>
                                 <TableCell
                                     colSpan={6}
@@ -172,7 +181,7 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            filteredProducts.map((product) => (
+                            currentProducts.map((product) => (
                                 <TableRow key={product.id}>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
@@ -284,6 +293,86 @@ export function ProductsTable({ searchQuery }: ProductsTableProps) {
                         )}
                     </TableBody>
                 </Table>
+
+                {totalPages > 1 && (
+                    <div className="mt-12">
+                        <Separator className="mb-8" />
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        disabled={currentPage === 1}
+                                        onClick={() =>
+                                            handlePageChange(currentPage - 1)
+                                        }
+                                        className="text-sm"
+                                    >
+                                        Previous
+                                    </Button>
+                                </PaginationItem>
+                                {Array.from({ length: totalPages }).map(
+                                    (_, i) => {
+                                        const page = i + 1;
+                                        if (
+                                            page === 1 ||
+                                            page === totalPages ||
+                                            (page >= currentPage - 1 &&
+                                                page <= currentPage + 1)
+                                        ) {
+                                            return (
+                                                <PaginationItem key={page}>
+                                                    <PaginationLink
+                                                        isActive={
+                                                            page === currentPage
+                                                        }
+                                                        onClick={() =>
+                                                            handlePageChange(
+                                                                page
+                                                            )
+                                                        }
+                                                    >
+                                                        {page}
+                                                    </PaginationLink>
+                                                </PaginationItem>
+                                            );
+                                        }
+                                        if (
+                                            (page === 2 && currentPage > 3) ||
+                                            (page === totalPages - 1 &&
+                                                currentPage < totalPages - 2)
+                                        ) {
+                                            return (
+                                                <PaginationItem
+                                                    key={`dots-${page}`}
+                                                >
+                                                    <span className="px-4 py-2">
+                                                        …
+                                                    </span>
+                                                </PaginationItem>
+                                            );
+                                        }
+                                        return null;
+                                    }
+                                )}
+                                <PaginationItem>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        disabled={currentPage === totalPages}
+                                        onClick={() =>
+                                            handlePageChange(currentPage + 1)
+                                        }
+                                        className="text-sm"
+                                    >
+                                        Next
+                                    </Button>
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                    </div>
+                )}
             </div>
 
             <AlertDialog

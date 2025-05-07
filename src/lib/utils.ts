@@ -58,8 +58,8 @@ export const formatPrice = (val: number) => {
         style: "currency",
         currency: "BDT",
         currencyDisplay: "symbol",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
     }).format(val);
 };
 

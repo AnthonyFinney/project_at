@@ -22,6 +22,7 @@ import {
 import type { ProductType, VariantType } from "@/lib/schemas";
 import { useSWRConfig } from "swr";
 import { toast } from "sonner";
+import { formatPrice } from "@/lib/utils";
 
 // Define the component props using a Partial so that only some fields may be provided
 export interface ProductFormProps {
@@ -568,7 +569,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                                             Size
                                                         </TableHead>
                                                         <TableHead>
-                                                            Price (£)
+                                                            Price
                                                         </TableHead>
                                                         <TableHead>
                                                             Stock
@@ -590,9 +591,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                                                     }
                                                                 </TableCell>
                                                                 <TableCell>
-                                                                    £
-                                                                    {variant.price.toFixed(
-                                                                        2
+                                                                    {formatPrice(
+                                                                        variant.price
                                                                     )}
                                                                 </TableCell>
                                                                 <TableCell>
@@ -666,7 +666,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="variant-price">
-                                                    Price (£)
+                                                    Price
                                                 </Label>
                                                 <Input
                                                     id="variant-price"

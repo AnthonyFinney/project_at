@@ -91,7 +91,7 @@ export function createRandomProduct(): ProductType {
         category,
         isFeatured: faker.datatype.boolean(),
         tags: faker.helpers.uniqueArray(() => faker.lorem.word(), 3),
-        image: "https://placehold.co/600x600/png",
+        image: "https://res.cloudinary.com/ds3hfrxjo/image/upload/v1746648558/20250507_1649_Luxurious_Perfume_Bottle_remix_01jtn5s7jvf4dbgyg0gdkcr076_yahjda.png",
         createdAt,
         updatedAt,
         concentration: faker.helpers.arrayElement([

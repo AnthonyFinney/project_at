@@ -67,7 +67,7 @@ export default function Banner({
     primaryButtonText = "EXPLORE COLLECTION",
     primaryButtonLink = "/products",
     secondaryButtonText = "FEATURED FRAGRANCES",
-    secondaryButtonLink = "/products/featured",
+    secondaryButtonLink = "/products",
     showDecorations = true,
     height = "h-[600px] sm:h-[650px]",
     className = "",

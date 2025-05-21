@@ -68,7 +68,7 @@ export default function ProductGallery({ product }: ProductGalleryProps) {
 
     return (
         <motion.div
-            className="w-full grid gap-8 md:grid-cols-2"
+            className="w-full grid gap-8 md:grid-cols-2 my-5"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"

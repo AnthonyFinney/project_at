@@ -63,7 +63,9 @@ export async function middleware(req: NextRequest) {
 
     if (
         req.method === "GET" &&
-        ["/api/products", "/api/users", "/api/orders"].includes(pathname)
+        ["/api/products", "/api/users", "/api/orders"].some((prefix) =>
+            pathname.startsWith(prefix)
+        )
     ) {
         return NextResponse.next();
     }

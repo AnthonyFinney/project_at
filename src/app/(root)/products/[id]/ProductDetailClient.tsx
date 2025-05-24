@@ -21,11 +21,19 @@ export default function ProductDetailClient({ id }: { id: string }) {
         return <div className="p-4 text-center text-red-500">{msg}</div>;
     }
 
+    const recommendedProducts = products
+        .filter((p) => p.id !== product.id)
+        .filter((p) => p.scentFamily === product.scentFamily)
+        .slice(0, 8);
+
     return (
         <>
             <ProductGallery product={product} />
 
-            <ProductCarousel headline="YOU MAY ALSO LIKE" products={products} />
+            <ProductCarousel
+                headline="YOU MAY ALSO LIKE"
+                products={recommendedProducts}
+            />
         </>
     );
 }

@@ -16,9 +16,10 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ProductType } from "@/lib/schemas";
-import { mockProducts } from "@/lib/mock-data";
 import dynamic from "next/dynamic";
 import { getProductPrice } from "@/lib/utils";
+import { useProducts } from "@/hooks/useProducts";
+import Spinner from "@/components/spinner";
 
 const ProductCard = dynamic(() => import("@/components/product-card"), {
     ssr: false,
@@ -34,7 +35,9 @@ interface FilterState {
 }
 
 export default function Page() {
-    const allProducts: ProductType[] = mockProducts;
+    const { products, error, isLoading } = useProducts();
+
+    const allProducts: ProductType[] = products || [];
 
     // Compute global min/max from all variant prices
     const allPrices = allProducts.flatMap((p) =>
@@ -60,56 +63,85 @@ export default function Page() {
         setCurrentPage(1);
     }, [filters]);
 
-    // Define filter categories & options
-    const filterCategories = [
-        {
-            id: "sort",
-            name: "Sort By",
-            options: [
-                { id: "newest", label: "Newest Arrivals" },
-                { id: "featured", label: "Featured" },
-                { id: "price-low", label: "Price: Low to High" },
-                { id: "price-high", label: "Price: High to Low" },
-                { id: "bestselling", label: "Best Selling" },
-            ],
-        },
-        {
-            id: "productType",
-            name: "Product Type",
-            options: [
-                { id: "attar-oil", label: "Attar Oil" },
-                { id: "perfume-oil", label: "Perfume Oil" },
-                { id: "spray", label: "Spray Perfume" },
-                { id: "gift-set", label: "Gift Sets" },
-            ],
-        },
-        {
-            id: "scentFamily",
-            name: "Scent Family",
-            options: [
-                { id: "woody", label: "Woody" },
-                { id: "floral", label: "Floral" },
-                { id: "oriental", label: "Oriental" },
-                { id: "fresh", label: "Fresh" },
-                { id: "spicy", label: "Spicy" },
-                { id: "citrus", label: "Citrus" },
-            ],
-        },
-        { id: "price", name: "Price Range", component: "slider" },
-        {
-            id: "concentration",
-            name: "Concentration",
-            options: [
-                { id: "pure-attar-oil", label: "Pure Attar Oil" },
-                {
-                    id: "concentrated-perfume-oil",
-                    label: "Concentrated Perfume Oil",
-                },
-                { id: "eau-de-parfum", label: "Eau de Parfum" },
-                { id: "eau-de-toilette", label: "Eau de Toilette" },
-            ],
-        },
-    ];
+    const filterCategories = useMemo(() => {
+        const sortOptions = [
+            { id: "newest", label: "Newest Arrivals" },
+            { id: "featured", label: "Featured" },
+            { id: "price-low", label: "Price: Low to High" },
+            { id: "price-high", label: "Price: High to Low" },
+            { id: "bestselling", label: "Best Selling" },
+        ];
+
+        const scentFamilyIds = Array.from(
+            new Set(
+                allProducts
+                    .map((p) => p.scentFamily)
+                    .filter((sf): sf is string => !!sf)
+            )
+        );
+        const scentFamilyOptions = scentFamilyIds.map((id) => ({
+            id,
+            label: id[0].toUpperCase() + id.slice(1), // simple title-case
+        }));
+
+        const concentrationIds = Array.from(
+            new Set(allProducts.map((p) => p.concentration || ""))
+        ).filter((c) => c);
+
+        const concentrationOptions = concentrationIds.map((id) => ({
+            id,
+            label: id
+                .split("-")
+                .map((w) => w[0].toUpperCase() + w.slice(1))
+                .join(" "),
+        }));
+
+        return [
+            { id: "sort", name: "Sort By", options: sortOptions },
+            {
+                id: "scentFamily",
+                name: "Scent Family",
+                options: scentFamilyOptions,
+            },
+            { id: "price", name: "Price Range", component: "slider" },
+            {
+                id: "concentration",
+                name: "Concentration",
+                options: concentrationOptions,
+            },
+        ];
+    }, [allProducts]);
+
+    // Build up human‐readable badges
+    const activeFilterLabels = useMemo(() => {
+        const labels: string[] = [];
+
+        // helper to find label by id
+        const findLabel = (catId: string, id: string) =>
+            filterCategories
+                .find((c) => c.id === catId)
+                ?.options?.find((o) => o.id === id)?.label;
+
+        filters.scentFamily.forEach((id) => {
+            const l = findLabel("scentFamily", id);
+            if (l) labels.push(l);
+        });
+        filters.concentration.forEach((id) => {
+            const l = findLabel("concentration", id);
+            if (l) labels.push(l);
+        });
+        // price
+        if (
+            filters.priceRange[0] > minPrice ||
+            filters.priceRange[1] < maxPrice
+        ) {
+            labels.push(
+                `$${filters.priceRange[0]} - $${filters.priceRange[1]}`
+            );
+        }
+
+        return labels;
+    }, [filters, minPrice, maxPrice]);
 
     const productsPerPage = 8;
 
@@ -129,14 +161,9 @@ export default function Page() {
 
     // Toggle an ID in an array‐typed filter
     const toggleArrayFilter = (
-        key: "productType" | "scentFamily" | "concentration",
+        key: "scentFamily" | "concentration",
         id: string
     ) => {
-        // If 'All Products' clicked in productType, clear that filter
-        if (key === "productType" && id === "all") {
-            setFilters((prev) => ({ ...prev, productType: [] }));
-            return;
-        }
         setFilters((prev) => {
             const list = prev[key];
             const next = list.includes(id)
@@ -160,25 +187,10 @@ export default function Page() {
     const filteredProducts = useMemo(() => {
         let result = [...allProducts];
 
-        // --- productType (via concentration proxy) ---
-        if (filters.productType.length) {
-            result = result.filter((p) =>
-                filters.productType.some((id) => {
-                    if (id === "attar-oil")
-                        return p.concentration?.includes("attar");
-                    if (id === "perfume-oil")
-                        return p.concentration?.includes("perfume");
-                    if (id === "spray")
-                        return p.concentration?.includes("Eau de");
-                    return false;
-                })
-            );
-        }
-
         // --- scentFamily (via tags) ---
         if (filters.scentFamily.length) {
             result = result.filter((p) =>
-                filters.scentFamily.some((id) => p.tags.includes(id))
+                filters.scentFamily.includes(p.scentFamily || "")
             );
         }
 
@@ -226,6 +238,10 @@ export default function Page() {
                     return sumA - sumB;
                 });
                 break;
+            case "featured":
+                // <-- NEW: only keep featured products
+                result = result.filter((p) => p.isFeatured);
+                break;
             // "featured" and default
             default:
                 result.sort((a, b) => {
@@ -237,41 +253,6 @@ export default function Page() {
 
         return result;
     }, [allProducts, filters]);
-
-    // Build up human‐readable badges
-    const activeFilterLabels = useMemo(() => {
-        const labels: string[] = [];
-
-        // helper to find label by id
-        const findLabel = (catId: string, id: string) =>
-            filterCategories
-                .find((c) => c.id === catId)
-                ?.options?.find((o) => o.id === id)?.label;
-
-        filters.productType.forEach((id) => {
-            const l = findLabel("productType", id);
-            if (l) labels.push(l);
-        });
-        filters.scentFamily.forEach((id) => {
-            const l = findLabel("scentFamily", id);
-            if (l) labels.push(l);
-        });
-        filters.concentration.forEach((id) => {
-            const l = findLabel("concentration", id);
-            if (l) labels.push(l);
-        });
-        // price
-        if (
-            filters.priceRange[0] > minPrice ||
-            filters.priceRange[1] < maxPrice
-        ) {
-            labels.push(
-                `$${filters.priceRange[0]} - $${filters.priceRange[1]}`
-            );
-        }
-
-        return labels;
-    }, [filters, minPrice, maxPrice]);
 
     // Pagination logic
     const totalProducts = filteredProducts.length;
@@ -290,11 +271,7 @@ export default function Page() {
     // Remove a specific badge
     const removeFilter = (label: string) => {
         // Try each category by label → id
-        for (const cat of [
-            "productType",
-            "scentFamily",
-            "concentration",
-        ] as const) {
+        for (const cat of ["scentFamily", "concentration"] as const) {
             const opt = filterCategories
                 .find((c) => c.id === cat)
                 ?.options?.find((o) => o.label === label);
@@ -308,6 +285,18 @@ export default function Page() {
             handleFilterChange("priceRange", [minPrice, maxPrice]);
         }
     };
+
+    if (error) {
+        return (
+            <div className="p-4 text-center text-red-500">
+                {error.message || "An error occurred."}
+            </div>
+        );
+    }
+
+    if (isLoading) {
+        return <Spinner />;
+    }
 
     return (
         <div className="bg-neutral-50 min-h-screen">

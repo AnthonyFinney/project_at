@@ -20,6 +20,16 @@ export default function Home() {
         return <Spinner />;
     }
 
+    const featuredProducts = products.filter((p) => p.isFeatured).slice(0, 8);
+
+    const newlyAdded = [...products]
+        .sort(
+            (a, b) =>
+                new Date(b.createdAt ?? b.updatedAt ?? 0).getTime() -
+                new Date(a.createdAt ?? b.updatedAt ?? 0).getTime()
+        )
+        .slice(0, 8);
+
     return (
         <div>
             <Banner
@@ -28,7 +38,10 @@ export default function Home() {
                 secondaryButtonLink=""
             />
 
-            <ProductCarousel headline="TRENDING NOW" products={products} />
+            <ProductCarousel
+                headline="FEATURED FRAGRANCES"
+                products={featuredProducts}
+            />
 
             <Banner
                 backgroundImage="/images/Moonlit Perfume.png"
@@ -48,10 +61,7 @@ export default function Home() {
                 className="mt-12"
             />
 
-            <ProductCarousel
-                headline="FEATURED FRAGRANCES"
-                products={products}
-            />
+            <ProductCarousel headline="Newly Added" products={newlyAdded} />
         </div>
     );
 }

@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { mockOrders } from "@/lib/mock-data";
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
 import useSWR from "swr";
 import { fetcher } from "@/lib/utils";

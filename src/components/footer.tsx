@@ -48,9 +48,12 @@ export default function Footer() {
                 className="container px-4 py-12 mx-auto"
                 variants={fadeInUp}
             >
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
                     {/* Brand Column */}
-                    <motion.div className="space-y-4" variants={fadeInUp}>
+                    <motion.div
+                        className="space-y-4 md:ml-10"
+                        variants={fadeInUp}
+                    >
                         <h3 className="text-lg font-medium tracking-wider">
                             THE KANZA ROYAL PERFUMERY
                         </h3>
@@ -86,48 +89,11 @@ export default function Footer() {
                         </div>
                     </motion.div>
 
-                    {/* Quick Links */}
-                    <motion.div className="space-y-4" variants={fadeInUp}>
-                        <h3 className="text-sm font-medium tracking-widest uppercase">
-                            Shop
-                        </h3>
-                        <ul className="space-y-2 text-sm text-neutral-400">
-                            {[
-                                {
-                                    href: "/collections/attar",
-                                    label: "Attar Collection",
-                                },
-                                {
-                                    href: "/collections/perfume",
-                                    label: "Perfume Oils",
-                                },
-                                {
-                                    href: "/collections/gift-sets",
-                                    label: "Gift Sets",
-                                },
-                                {
-                                    href: "/collections/new-arrivals",
-                                    label: "New Arrivals",
-                                },
-                                {
-                                    href: "/collections/bestsellers",
-                                    label: "Bestsellers",
-                                },
-                            ].map((link) => (
-                                <li key={link.href}>
-                                    <Link
-                                        href={link.href}
-                                        className="hover:text-white transition-colors"
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </motion.div>
-
                     {/* Information */}
-                    <motion.div className="space-y-4" variants={fadeInUp}>
+                    <motion.div
+                        className="space-y-4 md:ml-auto md:mr-24"
+                        variants={fadeInUp}
+                    >
                         <h3 className="text-sm font-medium tracking-widest uppercase">
                             Information
                         </h3>
@@ -152,27 +118,6 @@ export default function Footer() {
                                 </li>
                             ))}
                         </ul>
-                    </motion.div>
-
-                    {/* Newsletter */}
-                    <motion.div className="space-y-4" variants={fadeInUp}>
-                        <h3 className="text-sm font-medium tracking-widest uppercase">
-                            Newsletter
-                        </h3>
-                        <p className="text-sm text-neutral-400">
-                            Subscribe to receive updates, access to exclusive
-                            deals, and more.
-                        </p>
-                        <div className="flex flex-col space-y-2">
-                            <Input
-                                type="email"
-                                placeholder="Your email address"
-                                className="bg-neutral-900 border-neutral-800 text-white focus:ring-neutral-700 h-10"
-                            />
-                            <Button className="bg-white text-black hover:bg-neutral-200 rounded-none h-10">
-                                Subscribe
-                            </Button>
-                        </div>
                     </motion.div>
                 </div>
 

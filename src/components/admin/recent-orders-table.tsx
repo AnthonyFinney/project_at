@@ -65,7 +65,7 @@ export function RecentOrdersTable() {
                         <TableRow key={order.id}>
                             <TableCell>
                                 <div>
-                                    #{order.id}
+                                    {order.id}
                                     <div className="text-xs text-muted-foreground sm:hidden">
                                         {order.customer.name}
                                     </div>

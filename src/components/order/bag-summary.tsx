@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { CartItemType } from "@/lib/schemas";
+import { formatPrice, getShippingPrice } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
 
 interface BagSummaryProps {
     items: CartItemType[];
@@ -17,6 +19,8 @@ export const BagSummary: React.FC<BagSummaryProps> = ({ items }) => {
         (sum, { price, quantity }) => sum + price * quantity,
         0
     );
+    const shipping = getShippingPrice();
+    const total = subtotal + shipping;
 
     // Variants for collapse container
     const containerVariants = {
@@ -100,9 +104,8 @@ export const BagSummary: React.FC<BagSummaryProps> = ({ items }) => {
                                         </div>
                                     </Link>
                                     <span className="font-medium">
-                                        £
-                                        {(item.price * item.quantity).toFixed(
-                                            2
+                                        {formatPrice(
+                                            item.price * item.quantity
                                         )}
                                     </span>
                                 </motion.div>
@@ -115,7 +118,16 @@ export const BagSummary: React.FC<BagSummaryProps> = ({ items }) => {
                             >
                                 <span className="font-semibold">Subtotal:</span>
                                 <span className="font-semibold">
-                                    £{subtotal.toFixed(2)}
+                                    {formatPrice(subtotal)}
+                                </span>
+                                <span className="font-semibold">Shipping:</span>
+                                <span className="font-semibold">
+                                    {formatPrice(shipping)}
+                                </span>
+                                <Separator />
+                                <span className="font-semibold">Total:</span>
+                                <span className="font-semibold">
+                                    {formatPrice(total)}
                                 </span>
                             </motion.div>
                         </motion.div>

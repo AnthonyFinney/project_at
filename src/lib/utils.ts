@@ -65,3 +65,7 @@ export const formatPrice = (val: number) => {
 
 export const getProductPrice = (p: ProductType) =>
     Math.min(...p.variants.map((v: { price: any }) => v.price));
+
+export const getShippingPrice = (): number => {
+    return 50;
+};

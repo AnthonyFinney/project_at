@@ -6,6 +6,7 @@ import { Minus, Plus, X } from "lucide-react";
 import type { CartItemType } from "@/lib/schemas";
 import { Button } from "@/components/ui/button";
 import { motion, Variants, AnimatePresence } from "framer-motion";
+import { formatPrice } from "@/lib/utils";
 
 // Create a motion-enabled version of our custom Button
 const MotionButton = motion(Button);
@@ -75,7 +76,7 @@ export function CartItem({ item, onRemove, onUpdateQuantity }: CartItemProps) {
                     </div>
 
                     <div className="font-medium mt-2">
-                        £{item.price.toFixed(2)}
+                        {formatPrice(item.price)}
                     </div>
 
                     <div className="flex items-center mt-3">
@@ -104,8 +105,9 @@ export function CartItem({ item, onRemove, onUpdateQuantity }: CartItemProps) {
                             </MotionButton>
                         </div>
                         <div className="ml-4 text-sm text-neutral-500">
-                            Item total: £
-                            {(item.price * item.quantity).toFixed(2)}
+                            {`Item total: ${formatPrice(
+                                item.price * item.quantity
+                            )}`}
                         </div>
                     </div>
                 </div>

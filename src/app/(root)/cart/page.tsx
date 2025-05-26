@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CartItem } from "@/components/cart-item";
 import type { CartItemType } from "@/lib/schemas";
 import Spinner from "@/components/spinner";
+import { formatPrice, getShippingPrice } from "@/lib/utils";
 
 export default function Page() {
     const [cart, setCart] = useState<CartItemType[]>([]);
@@ -69,7 +70,7 @@ export default function Page() {
         (total, item) => total + item.price * item.quantity,
         0
     );
-    const shipping = cart.length > 0 ? 10 : 0;
+    const shipping = cart.length > 0 ? getShippingPrice() : 0;
     const total = subtotal + shipping;
     const itemCount = cart.reduce((count, item) => count + item.quantity, 0);
 
@@ -135,15 +136,15 @@ export default function Page() {
                                     Subtotal ({itemCount}{" "}
                                     {itemCount === 1 ? "item" : "items"})
                                 </span>
-                                <span>£{subtotal.toFixed(2)}</span>
+                                <span>{formatPrice(subtotal)}</span>
                             </div>
                             <div className="flex justify-between">
                                 <span>Shipping</span>
-                                <span>£{shipping.toFixed(2)}</span>
+                                <span>{formatPrice(shipping)}</span>
                             </div>
                             <div className="pt-3 border-t flex justify-between font-medium">
                                 <span>Total</span>
-                                <span>£{total.toFixed(2)}</span>
+                                <span>{formatPrice(total)}</span>
                             </div>
                         </div>
 

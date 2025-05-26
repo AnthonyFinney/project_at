@@ -75,10 +75,11 @@ export const GuestCheckoutForm: React.FC<GuestCheckoutFormProps> = ({
 
         if (res.ok) {
             const json = await res.json();
-            console.log(json.data.id);
             clearCart?.();
 
-            router.push("/");
+            let orderId = json.data.id;
+
+            router.push(`/order/thank-you?orderId=${orderId}`);
         } else {
             const err = await res.json();
             console.error(`Order failed: ${err}`);

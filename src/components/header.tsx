@@ -160,8 +160,14 @@ export default function Header() {
 
                 {/* Logo */}
                 <motion.div variants={fadeInUp}>
-                    <Link href="/" className="font-bold text-xl lg:ml-52">
-                        KANZA
+                    <Link href="/">
+                        <Image
+                            src="Kanza Logo.svg"
+                            alt="Kanza logo"
+                            width={64}
+                            height={64}
+                            className="object-contain lg:ml-72"
+                        />
                     </Link>
                 </motion.div>
 

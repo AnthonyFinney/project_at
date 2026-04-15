@@ -26,7 +26,7 @@ export default function Home() {
         .sort(
             (a, b) =>
                 new Date(b.createdAt ?? b.updatedAt ?? 0).getTime() -
-                new Date(a.createdAt ?? b.updatedAt ?? 0).getTime()
+                new Date(a.createdAt ?? b.updatedAt ?? 0).getTime(),
         )
         .slice(0, 8);
 
@@ -57,8 +57,7 @@ export default function Home() {
                 primaryButtonLink="/products"
                 secondaryButtonText=""
                 secondaryButtonLink=""
-                overlayGradient="bg-gradient-to-r from-black/50 to-black/20"
-                className="mt-12"
+                className=""
             />
 
             <ProductCarousel headline="Newly Added" products={newlyAdded} />

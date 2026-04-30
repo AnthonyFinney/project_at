@@ -42,7 +42,7 @@ export default function Home() {
             <section className="relative w-full h-[500px] md:h-[700px] overflow-hidden flex items-center justify-center">
                 <Image
                     src="/images/Exquisite Perfume Collection.png"
-                    alt="Kholzi's Treasure Fragrance background"
+                    alt="Kanza Royal Perfumery Fragrance background"
                     fill
                     priority
                     className="object-cover object-center"
@@ -68,8 +68,8 @@ export default function Home() {
                         }}
                         className="text-yellow-500 font-serif text-5xl md:text-7xl tracking-widest uppercase font-bold flex flex-col items-center drop-shadow-lg"
                     >
-                        <span className="mb-2">KHOLZI'S</span>
-                        <span className="text-sm md:text-xl tracking-[0.4em] font-sans font-medium text-white mb-6">TREASURE</span>
+                        <span className="mb-2">KANZA ROYAL</span>
+                        <span className="text-sm md:text-xl tracking-[0.4em] font-sans font-medium text-white mb-6">PERFUMERY</span>
                     </motion.div>
                     <motion.div 
                         variants={{
@@ -112,7 +112,7 @@ export default function Home() {
                     className="container mx-auto px-4 max-w-4xl text-center"
                 >
                     <h2 className="text-2xl md:text-3xl font-serif font-bold tracking-widest uppercase mb-6">
-                        DISCOVER TIMELESS ELEGANCE WITH KHOLZI'S TREASURE
+                        DISCOVER TIMELESS ELEGANCE WITH KANZA ROYAL PERFUMERY
                     </h2>
                     <p className="text-neutral-600 leading-relaxed mb-10 max-w-3xl mx-auto text-sm md:text-base">
                         Our exclusive fragrance collection is an exploration of timeless luxury. Discover a world of unparalleled perfumery and immerse yourself in the finest scents crafted precisely for the most refined senses. Experience elegance in every drop.
@@ -145,10 +145,10 @@ export default function Home() {
                 >
                     <h2 className="text-white text-3xl md:text-4xl lg:text-5xl font-serif font-bold tracking-widest uppercase mb-4 leading-tight">
                         TIMELESS SCENTS,<br />
-                        MAKE TREASURES
+                        MAKE MEMORIES
                     </h2>
                     <p className="text-neutral-200 text-sm md:text-base font-medium tracking-widest uppercase mb-8">
-                        KHOLZI'S TREASURE FOR THE<br />
+                        KANZA ROYAL PERFUMERY FOR THE<br />
                         DISCERNING CONNOISSEUR
                     </p>
                     <Link href="/contact">
@@ -271,7 +271,7 @@ export default function Home() {
                     </h2>
                     <p className="text-neutral-600 leading-relaxed text-sm md:text-base mb-8">
                         Experience the ultimate destination for luxury fragrances. We bring you handpicked collections from world-renowned perfumers. 
-                        Our curated selections ensure that you find the perfect scent for every moment, making Kholzi's Treasure the most trusted perfume boutique.
+                        Our curated selections ensure that you find the perfect scent for every moment, making Kanza Royal Perfumery the most trusted perfume boutique.
                     </p>
                     <Link href="/about">
                         <Button className="bg-black text-white hover:bg-neutral-800 rounded-none px-10 py-5 uppercase tracking-wider text-sm font-semibold">
@@ -326,7 +326,7 @@ export default function Home() {
                                 className="rounded"
                             />
                             <div>
-                                <h4 className="font-bold text-sm">Kholzi's Treasure</h4>
+                                <h4 className="font-bold text-sm">Kanza Royal Perfumery</h4>
                                 <a href="https://maps.google.com" target="_blank" className="text-blue-600 text-xs hover:underline mt-1 block">View larger map</a>
                             </div>
                         </motion.div>

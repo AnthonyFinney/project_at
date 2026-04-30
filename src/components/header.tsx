@@ -124,9 +124,9 @@ export default function Header() {
                                 <div className="w-8 h-8 md:w-10 md:h-10 border-2 border-yellow-600 flex items-center justify-center rounded-sm">
                                     <span className="text-yellow-600 font-bold text-lg md:text-xl font-serif">K</span>
                                 </div>
-                                <span className="font-serif font-bold text-xl md:text-2xl tracking-[0.2em] leading-tight">KHOLZI'S</span>
+                                <span className="font-serif font-bold text-xl md:text-2xl tracking-[0.2em] leading-tight">KANZA ROYAL</span>
                             </div>
-                            <span className="font-sans text-[10px] md:text-xs tracking-[0.4em] text-yellow-600 uppercase">Treasure</span>
+                            <span className="font-sans text-[10px] md:text-xs tracking-[0.4em] text-yellow-600 uppercase">Perfumery</span>
                         </Link>
                     </div>
 

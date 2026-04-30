@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: "Project AT",
-    description: "Project AT",
+    title: "Kanza Royal Perfumery",
+    description: "Kanza Royal Perfumery",
     icons: [{ rel: "icon", url: Favicon.src }],
 };
 

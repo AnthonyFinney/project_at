@@ -53,7 +53,7 @@ export default function NotFound() {
                     
                     <p className="text-neutral-400 max-w-md mx-auto text-sm md:text-base leading-relaxed tracking-wide">
                         We are currently crafting something extraordinary for this page. 
-                        The essence of Kholzi's Treasure will soon be revealed here.
+                        The essence of Kanza Royal Perfumery will soon be revealed here.
                     </p>
                 </motion.div>
 

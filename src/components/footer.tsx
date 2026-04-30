@@ -78,12 +78,12 @@ export default function Footer() {
                     <div className="flex justify-center mb-2">
                         {/* Golden Logo Representation */}
                         <div className="text-yellow-500 font-serif text-3xl md:text-4xl tracking-widest uppercase font-bold flex flex-col items-center">
-                            <span className="mb-1">KHOLZI'S</span>
-                            <span className="text-xs tracking-[0.3em] font-sans font-normal opacity-80">TREASURE</span>
+                            <span className="mb-1">KANZA ROYAL</span>
+                            <span className="text-xs tracking-[0.3em] font-sans font-normal opacity-80">PERFUMERY</span>
                         </div>
                     </div>
                     <p className="text-sm text-neutral-400 max-w-md italic tracking-wide">
-                        Where every spray inspires. Kholzi's endless collections...
+                        Where every spray inspires. Kanza Royal's endless collections...
                     </p>
 
                     {/* Newsletter Subscription */}
@@ -101,7 +101,7 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    <p className="text-xs tracking-widest uppercase pt-6 font-medium text-neutral-300">Get Connect With Kholzi's Treasure</p>
+                    <p className="text-xs tracking-widest uppercase pt-6 font-medium text-neutral-300">Get Connect With Kanza Royal Perfumery</p>
                     <div className="flex space-x-4 pt-2">
                         <Link href="#" aria-label="Facebook" className="w-10 h-10 border border-neutral-700 flex items-center justify-center hover:border-yellow-500 hover:text-yellow-500 transition-colors">
                             <Facebook className="h-5 w-5" />
@@ -184,7 +184,7 @@ export default function Footer() {
                             </div>
                             <div className="flex items-center space-x-3">
                                 <Mail className="h-4 w-4 text-yellow-500 shrink-0" />
-                                <span>info@kholzistreasure.com</span>
+                                <span>info@kanzaroyalperfumery.com</span>
                             </div>
                         </div>
                     </motion.div>
@@ -225,7 +225,7 @@ export default function Footer() {
             >
                 <div className="container px-4 mx-auto flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
                     <p className="text-xs tracking-wider text-neutral-500 font-medium">
-                        © {currentYear} KHOLZI'S TREASURE. ALL RIGHTS RESERVED.
+                        © {currentYear} KANZA ROYAL PERFUMERY. ALL RIGHTS RESERVED.
                     </p>
                     <div className="flex space-x-2">
                         {/* Payment Icons Placeholders */}

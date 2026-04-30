@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import type { CartItemType } from "@/lib/schemas";
 import { formatPrice, getShippingPrice } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -23,7 +23,7 @@ export const BagSummary: React.FC<BagSummaryProps> = ({ items }) => {
     const total = subtotal + shipping;
 
     // Variants for collapse container
-    const containerVariants = {
+    const containerVariants: Variants = {
         enter: {
             opacity: 1,
             height: "auto",
@@ -33,7 +33,7 @@ export const BagSummary: React.FC<BagSummaryProps> = ({ items }) => {
     };
 
     // Variants for each item
-    const itemVariants = {
+    const itemVariants: Variants = {
         enter: { opacity: 1, y: 0 },
         exit: { opacity: 0, y: -10 },
     };

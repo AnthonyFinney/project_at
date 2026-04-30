@@ -319,12 +319,6 @@ export default function Home() {
                             transition={{ duration: 0.5, delay: 0.3 }}
                             className="bg-white p-4 rounded shadow-lg flex items-center space-x-3 pointer-events-auto"
                         >
-                            <Image 
-                                src="https://images.unsplash.com/photo-1594913366159-1832035d105e?q=80&w=50&h=50&auto=format&fit=crop" 
-                                alt="Store thumb" 
-                                width={40} height={40} 
-                                className="rounded"
-                            />
                             <div>
                                 <h4 className="font-bold text-sm">Kanza Royal Perfumery</h4>
                                 <a href="https://maps.google.com" target="_blank" className="text-blue-600 text-xs hover:underline mt-1 block">View larger map</a>

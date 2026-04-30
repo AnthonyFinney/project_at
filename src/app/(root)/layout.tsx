@@ -8,7 +8,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <div className="lg:w-full lg:px-32">
+        <div className="lg:w-full">
             <AuthProvider>
                 <Header />
 

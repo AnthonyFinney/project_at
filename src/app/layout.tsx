@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Favicon from "../../public/favicon.ico";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -16,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
     title: "Kanza Royal Perfumery",
     description: "Kanza Royal Perfumery",
-    icons: [{ rel: "icon", url: Favicon.src }],
+    icons: [{ rel: "icon", url: "/favicon2.ico" }],
 };
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../globals.css";
-import Favicon from "../../../public/favicon.ico";
+import Favicon from "../../../public/favicon2.ico";
 import { AuthProvider } from "@/Providers/Providers";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { MobileNav } from "@/components/admin/mobile-nav";

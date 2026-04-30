@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Favicon from "../../../public/favicon.ico";
 import { AuthProvider } from "@/Providers/Providers";
 
 export const metadata: Metadata = {
     title: "Account",
     description: "Account",
-    icons: [{ rel: "icon", url: Favicon.src }],
+    icons: [{ rel: "icon", url: "/favicon2.ico" }],
 };
 
 export default function AccountLayout({

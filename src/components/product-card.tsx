@@ -117,7 +117,44 @@ export default function ProductCard({
                     onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        // Add to cart logic here
+                        
+                        const productId = productLink.split('/').pop() || "unknown";
+                        
+                        // Create cart item
+                        const newItem = {
+                            productId,
+                            name,
+                            price,
+                            image: image || "/placeholder.svg",
+                            size: size || "Standard",
+                            quantity: 1
+                        };
+
+                        // Add to cart in localStorage
+                        try {
+                            const stored = localStorage.getItem("cart");
+                            const cart = stored ? JSON.parse(stored) : [];
+                            
+                            const existingIndex = cart.findIndex(
+                                (item: any) => item.productId === newItem.productId && item.size === newItem.size
+                            );
+                            
+                            if (existingIndex >= 0) {
+                                cart[existingIndex].quantity += 1;
+                            } else {
+                                cart.push(newItem);
+                            }
+                            
+                            localStorage.setItem("cart", JSON.stringify(cart));
+                            window.dispatchEvent(new Event("cartUpdated"));
+                            
+                            // Open sticky cart
+                            setTimeout(() => {
+                                window.dispatchEvent(new Event("openCart"));
+                            }, 50);
+                        } catch (err) {
+                            console.error("Failed to add to cart", err);
+                        }
                     }}
                 >
                     <ShoppingCart className="w-4 h-4" />

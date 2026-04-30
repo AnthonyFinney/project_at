@@ -183,7 +183,7 @@ export default function Header() {
                     </div>
 
                     {/* Cart */}
-                    <Link href="/cart" className="flex items-center space-x-2 hover:text-yellow-500 transition-colors gap-2">
+                    <Link href="/cart" className="flex items-center space-x-2 hover:text-yellow-500 transition-colors gap-2 cursor-pointer">
                         <div className="relative">
                             <ShoppingBag className="h-6 w-6 text-yellow-600" />
                             <span className="absolute -top-2 -right-2 bg-yellow-600 text-black text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">

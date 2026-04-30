@@ -75,6 +75,11 @@ export default function ProductAction({
         toast(
             `Added to cart ${cartItem.name} (${cartItem.size}) has been added to your cart.`
         );
+        
+        // Open the sticky cart
+        setTimeout(() => {
+            window.dispatchEvent(new Event("openCart"));
+        }, 50); // slight delay to ensure storage event fires first
 
         // Reset button state after delay
         setTimeout(() => {

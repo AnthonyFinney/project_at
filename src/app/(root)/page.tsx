@@ -32,7 +32,7 @@ export default function Home() {
         .sort(
             (a, b) =>
                 new Date(b.createdAt ?? b.updatedAt ?? 0).getTime() -
-                new Date(a.createdAt ?? b.updatedAt ?? 0).getTime()
+                new Date(a.createdAt ?? b.updatedAt ?? 0).getTime(),
         )
         .slice(0, 8);
 
@@ -49,39 +49,53 @@ export default function Home() {
                     sizes="100vw"
                 />
                 <div className="absolute inset-0 bg-black/60" />
-                <motion.div 
+                <motion.div
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: false, amount: 0.3 }}
                     variants={{
                         hidden: {},
                         visible: {
-                            transition: { staggerChildren: 0.2 }
-                        }
+                            transition: { staggerChildren: 0.2 },
+                        },
                     }}
                     className="relative z-10 flex flex-col items-center justify-center p-4"
                 >
-                    <motion.div 
+                    <motion.div
                         variants={{
                             hidden: { opacity: 0, y: 30 },
-                            visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+                            visible: {
+                                opacity: 1,
+                                y: 0,
+                                transition: { duration: 0.8, ease: "easeOut" },
+                            },
                         }}
-                        className="text-yellow-500 font-serif text-5xl md:text-7xl tracking-widest uppercase font-bold flex flex-col items-center drop-shadow-lg"
+                        className="text-yellow-500 font-serif text-5xl md:text-7xl tracking-widest uppercase font-bold flex flex-col items-center text-center drop-shadow-lg"
                     >
                         <span className="mb-2">KANZA ROYAL</span>
-                        <span className="text-sm md:text-xl tracking-[0.4em] font-sans font-medium text-white mb-6">PERFUMERY</span>
+                        <span className="text-sm md:text-xl tracking-[0.4em] font-sans font-medium text-white mb-6">
+                            PERFUMERY
+                        </span>
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                         variants={{
                             hidden: { opacity: 0, scale: 0 },
-                            visible: { opacity: 1, scale: 1, transition: { duration: 0.6 } }
+                            visible: {
+                                opacity: 1,
+                                scale: 1,
+                                transition: { duration: 0.6 },
+                            },
                         }}
                         className="w-16 md:w-24 h-0.5 bg-yellow-500 mb-6 shadow-sm"
                     ></motion.div>
-                    <motion.p 
+                    <motion.p
                         variants={{
                             hidden: { opacity: 0, y: 20 },
-                            visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+                            visible: {
+                                opacity: 1,
+                                y: 0,
+                                transition: { duration: 0.8, ease: "easeOut" },
+                            },
                         }}
                         className="text-white text-xl md:text-2xl font-light tracking-wide uppercase italic mb-8"
                     >
@@ -90,7 +104,11 @@ export default function Home() {
                     <motion.div
                         variants={{
                             hidden: { opacity: 0, y: 20 },
-                            visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+                            visible: {
+                                opacity: 1,
+                                y: 0,
+                                transition: { duration: 0.8, ease: "easeOut" },
+                            },
                         }}
                     >
                         <Link href="/products">
@@ -104,7 +122,7 @@ export default function Home() {
 
             {/* Discover Timeless Elegance */}
             <section className="py-20 bg-white">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, amount: 0.3 }}
@@ -115,7 +133,11 @@ export default function Home() {
                         DISCOVER TIMELESS ELEGANCE WITH KANZA ROYAL PERFUMERY
                     </h2>
                     <p className="text-neutral-600 leading-relaxed mb-10 max-w-3xl mx-auto text-sm md:text-base">
-                        Our exclusive fragrance collection is an exploration of timeless luxury. Discover a world of unparalleled perfumery and immerse yourself in the finest scents crafted precisely for the most refined senses. Experience elegance in every drop.
+                        Our exclusive fragrance collection is an exploration of
+                        timeless luxury. Discover a world of unparalleled
+                        perfumery and immerse yourself in the finest scents
+                        crafted precisely for the most refined senses.
+                        Experience elegance in every drop.
                     </p>
                     <Link href="/products">
                         <Button className="bg-black text-white hover:bg-neutral-800 rounded-none px-12 py-6 uppercase tracking-wider text-sm font-semibold">
@@ -136,7 +158,7 @@ export default function Home() {
                     className="absolute inset-0 w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-black/50" />
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, amount: 0.3 }}
@@ -144,11 +166,13 @@ export default function Home() {
                     className="relative z-10 flex flex-col items-center justify-center p-4 text-center max-w-3xl"
                 >
                     <h2 className="text-white text-3xl md:text-4xl lg:text-5xl font-serif font-bold tracking-widest uppercase mb-4 leading-tight">
-                        TIMELESS SCENTS,<br />
+                        TIMELESS SCENTS,
+                        <br />
                         MAKE MEMORIES
                     </h2>
                     <p className="text-neutral-200 text-sm md:text-base font-medium tracking-widest uppercase mb-8">
-                        KANZA ROYAL PERFUMERY FOR THE<br />
+                        KANZA ROYAL PERFUMERY FOR THE
+                        <br />
                         DISCERNING CONNOISSEUR
                     </p>
                     <Link href="/contact">
@@ -162,7 +186,7 @@ export default function Home() {
             {/* Our Best Selling Products */}
             <section className="py-16 pt-24 bg-white">
                 <div className="container mx-auto px-4">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false, amount: 0.5 }}
@@ -172,7 +196,10 @@ export default function Home() {
                         <h2 className="text-2xl md:text-3xl font-serif tracking-widest font-bold uppercase mb-2">
                             OUR BEST SELLING PRODUCTS
                         </h2>
-                        <Link href="/products" className="text-sm font-semibold text-neutral-500 hover:text-yellow-600 underline uppercase tracking-wider">
+                        <Link
+                            href="/products"
+                            className="text-sm font-semibold text-neutral-500 hover:text-yellow-600 underline uppercase tracking-wider"
+                        >
                             View All
                         </Link>
                     </motion.div>
@@ -183,7 +210,7 @@ export default function Home() {
             {/* Shop Almas Dospor */}
             <section className="py-16 bg-neutral-50 border-t border-neutral-100">
                 <div className="container mx-auto px-4">
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false, amount: 0.5 }}
@@ -193,7 +220,10 @@ export default function Home() {
                         <h2 className="text-2xl md:text-3xl font-serif tracking-widest font-bold uppercase mb-2">
                             SHOP ALMAS DOSPOR
                         </h2>
-                        <Link href="/collections/almas-dospor" className="text-sm font-semibold text-neutral-500 hover:text-yellow-600 underline uppercase tracking-wider">
+                        <Link
+                            href="/collections/almas-dospor"
+                            className="text-sm font-semibold text-neutral-500 hover:text-yellow-600 underline uppercase tracking-wider"
+                        >
                             View All
                         </Link>
                     </motion.div>
@@ -210,7 +240,7 @@ export default function Home() {
             {/* Top Brands */}
             <section className="py-16 bg-white border-y border-neutral-200 text-center">
                 <div className="container mx-auto px-4">
-                    <motion.h2 
+                    <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: false, amount: 0.5 }}
@@ -219,32 +249,36 @@ export default function Home() {
                     >
                         TOP BRANDS
                     </motion.h2>
-                    <motion.div 
+                    <motion.div
                         initial="hidden"
                         whileInView="visible"
                         viewport={{ once: false, amount: 0.2 }}
                         variants={{
                             hidden: {},
-                            visible: { transition: { staggerChildren: 0.1 } }
+                            visible: { transition: { staggerChildren: 0.1 } },
                         }}
                         className="flex flex-wrap justify-center items-center gap-6 md:gap-12 lg:gap-16"
                     >
                         {[
-                            '/images/brand1.png',
-                            '/images/brand2.jpg',
-                            '/images/brand3.png',
-                            '/images/brand4.jpg',
-                            '/images/brand5.jpg'
+                            "/images/brand1.png",
+                            "/images/brand2.jpg",
+                            "/images/brand3.png",
+                            "/images/brand4.jpg",
+                            "/images/brand5.jpg",
                         ].map((src, index) => (
-                            <motion.div 
-                                key={index} 
+                            <motion.div
+                                key={index}
                                 variants={{
                                     hidden: { opacity: 0, scale: 0.8 },
-                                    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
+                                    visible: {
+                                        opacity: 1,
+                                        scale: 1,
+                                        transition: { duration: 0.5 },
+                                    },
                                 }}
                                 className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-yellow-500/20 shadow-sm flex items-center justify-center overflow-hidden bg-white"
                             >
-                                <Image 
+                                <Image
                                     src={src}
                                     alt={`Brand ${index + 1}`}
                                     width={120}
@@ -259,7 +293,7 @@ export default function Home() {
 
             {/* SEO Description Block */}
             <section className="py-16 bg-neutral-50 text-center">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, amount: 0.3 }}
@@ -270,8 +304,11 @@ export default function Home() {
                         BEST PERFUME SHOP IN DHAKA
                     </h2>
                     <p className="text-neutral-600 leading-relaxed text-sm md:text-base mb-8">
-                        Experience the ultimate destination for luxury fragrances. We bring you handpicked collections from world-renowned perfumers. 
-                        Our curated selections ensure that you find the perfect scent for every moment, making Kanza Royal Perfumery the most trusted perfume boutique.
+                        Experience the ultimate destination for luxury
+                        fragrances. We bring you handpicked collections from
+                        world-renowned perfumers. Our curated selections ensure
+                        that you find the perfect scent for every moment, making
+                        Kanza Royal Perfumery the most trusted perfume boutique.
                     </p>
                     <Link href="/about">
                         <Button className="bg-black text-white hover:bg-neutral-800 rounded-none px-10 py-5 uppercase tracking-wider text-sm font-semibold">
@@ -283,7 +320,7 @@ export default function Home() {
 
             {/* Map Location */}
             <section className="w-full">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: false, amount: 0.5 }}
@@ -297,7 +334,7 @@ export default function Home() {
                         153, ALAMGIR & KAMARUZZAMAN TOWER, RUPSHA BUS STAND
                     </p>
                 </motion.div>
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: false, amount: 0.2 }}
@@ -312,7 +349,7 @@ export default function Home() {
                         className="object-cover opacity-80 mix-blend-multiply"
                     />
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <motion.div 
+                        <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             whileInView={{ scale: 1, opacity: 1 }}
                             viewport={{ once: false }}
@@ -320,8 +357,16 @@ export default function Home() {
                             className="bg-white p-4 rounded shadow-lg flex items-center space-x-3 pointer-events-auto"
                         >
                             <div>
-                                <h4 className="font-bold text-sm">Kanza Royal Perfumery</h4>
-                                <a href="https://maps.google.com" target="_blank" className="text-blue-600 text-xs hover:underline mt-1 block">View larger map</a>
+                                <h4 className="font-bold text-sm">
+                                    Kanza Royal Perfumery
+                                </h4>
+                                <a
+                                    href="https://maps.google.com"
+                                    target="_blank"
+                                    className="text-blue-600 text-xs hover:underline mt-1 block"
+                                >
+                                    View larger map
+                                </a>
                             </div>
                         </motion.div>
                     </div>
